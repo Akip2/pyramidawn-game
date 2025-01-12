@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
+import Room from "./room.js";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -9,7 +10,7 @@ const port = 3000;
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
-const parties = [];
+const rooms = [];
 
 app.prepare().then(() => {
   const httpServer = createServer(handler);
@@ -24,7 +25,23 @@ app.prepare().then(() => {
     });
 
     socket.on("quick-play", function(){
+      let freeRoomFound = false;
+      let room;
+      let i = 0;
+      while(!freeRoomFound && i < rooms.length){
+        room = rooms[i];
+        if(room.isFree()){
+          freeRoomFound = true;
+        }
+        i++;
+      }
 
+      if(!freeRoomFound) {
+        room = new Room(io, socket.id);
+        rooms.push(room);
+      }
+
+      room.addPlayer(socket);
     });
   });
 

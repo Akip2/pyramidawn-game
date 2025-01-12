@@ -11,10 +11,8 @@ export default function MainMenu() {
   const router = useRouter();
 
   const quickPlay = () => {
-    setTimeout(() => {
-      socket.emit("quick-play", 1);
-      router.push('/game');
-    }, 2000);
+    socket.emit("quick-play", 1);
+    router.push('/game');
   };
 
   return (
