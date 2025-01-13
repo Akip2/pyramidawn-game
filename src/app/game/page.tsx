@@ -1,7 +1,9 @@
 'use client'
 
 import Chat from "./chat";
+import PlayerContainer from "./player-container";
 import { useEffect } from "react";
+import styles from "../styles.module.css";
 
 export default function GamePage() {
   useEffect(() => {
@@ -9,8 +11,9 @@ export default function GamePage() {
   }, []);
 
   return (
-    <div className="h-screen flex flex-column">
+    <div className="flex flex-row w-screen h-screen">
       {Chat()}
+      {PlayerContainer()}
     </div>
   );
 }
