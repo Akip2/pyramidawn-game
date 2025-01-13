@@ -1,10 +1,19 @@
 import { useState } from "react";
+import { socket } from "@/socket";
+
+socket.on("chat-message", function(data){
+    console.log(data);
+});
 
 export default function Chat(){
     const [inputValue, setInputValue] = useState('');
 
-    const handleKeyDown = (event: any) => {
+    const sendMessage = (event: any) => {
         if (event.key === 'Enter') {
+            let trimedValue = inputValue.trim();
+            if(trimedValue.length > 0){
+                socket.emit("send-message", trimedValue);
+            }
             setInputValue('');
         }
     };
@@ -19,7 +28,7 @@ export default function Chat(){
                     className="w-full h-full bg-inherit outline-none" 
                     placeholder="Message chat"
                     value={inputValue}
-                    onKeyDown={handleKeyDown}
+                    onKeyDown={sendMessage}
                     onChange={(event) => setInputValue(event.target.value)}
                 />
             </div>
