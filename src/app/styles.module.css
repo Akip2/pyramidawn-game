@@ -2,18 +2,6 @@
     background-color: red;
 }
 
-.landscape {
-    display: flex;
-    flex-direction: column;
-
-    height: 100vh;
-
-    background-image: url("../../public/background.png"); 
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: 0px -500px;
-}
-
 .player-box {
     border-right: solid 4px black;
     border-bottom: solid 4px black;
