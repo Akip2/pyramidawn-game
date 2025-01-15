@@ -1,18 +1,27 @@
-import { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { socket } from "@/socket";
-
-socket.on("chat-message", function(data){
-    console.log(data);
-});
 
 export default function Chat(){
     const [inputValue, setInputValue] = useState('');
+    const [messages, setMessages] = useState<string[]>([]);
 
-    const sendMessage = (event: any) => {
+    useEffect(() => {
+        socket.on("chat-message", receiveMessage);
+
+        return () => {
+            socket.off("chat-message", receiveMessage);
+        }
+    });
+
+    const receiveMessage = (data: string) => {
+        setMessages(messages.concat(data));
+    }
+
+    const sendMessage = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === 'Enter') {
-            let trimedValue = inputValue.trim();
-            if(trimedValue.length > 0){
-                socket.emit("send-message", trimedValue);
+            const trimmedValue = inputValue.trim();
+            if(trimmedValue.length > 0){
+                socket.emit("send-message", trimmedValue);
             }
             setInputValue('');
         }
@@ -20,7 +29,11 @@ export default function Chat(){
 
     return (
         <div className="flex flex-col min-w-[200px] w-1/4 h-full">
-            <div className="w-full h-[95vh] bg-gray-900 border-solid"></div>
+            <div className="w-full h-[95vh] bg-gray-900 border-solid">
+                { messages.map((message, index) => (
+                    <p key={index}>{message}</p>
+                ))}
+            </div>
 
             <div className="w-full h-[5vh] bg-gray-700 border-solid px-2">
                 <input 
