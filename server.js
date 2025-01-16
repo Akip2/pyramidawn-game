@@ -43,6 +43,18 @@ app.prepare().then(() => {
 
       room.addPlayer(socket);
     });
+
+    socket.on("send-message", function(message){
+      let rooms = socket.rooms;
+      let room = Array.from(rooms).pop();
+
+      /*
+      console.log(message);
+      console.log(room);
+       */
+
+      io.to(room).emit("chat-message", message);
+    });
   });
 
   httpServer
