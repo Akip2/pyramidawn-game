@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import styles from "./styles.module.css";
+import styles from "../app/styles.module.css";
 import Link from 'next/link';
 
 import { useEffect, useState } from "react";

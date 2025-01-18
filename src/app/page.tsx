@@ -1,17 +1,22 @@
 "use client";
 
-import MainMenu from "./main-menu";
-import { socket } from "../socket";
-import { useEffect } from "react";
+import MainMenu from "@/components/main-menu";
+import {useSession} from "next-auth/react";
+import {useEffect} from "react";
 
 export default function Home() {
-  useEffect(() => {
-    console.log(socket);
-  }, []);
+    const {data: session, status} = useSession();
 
-  return (
-    <div className="w-screen h-screen flex justify-center">
-      {MainMenu()}
-    </div>
-  );
+    useEffect(() => {
+        console.log(status);
+        if(status=="authenticated") {
+            console.log(session);
+        }
+    }, [status])
+
+    return (
+        <div className="w-screen h-screen flex justify-center">
+            <MainMenu/>
+        </div>
+    );
 }

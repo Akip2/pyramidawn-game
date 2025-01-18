@@ -1,4 +1,4 @@
-import styles from "../styles.module.css";
+import styles from "../app/styles.module.css";
 
 export default function PlayerContainer(){
     return (
