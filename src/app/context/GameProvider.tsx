@@ -9,16 +9,18 @@ const GameContext = createContext<{
     setDaytime: React.Dispatch<React.SetStateAction<string>>;
 }>({
     roles: [],
-    setRoles: () => {},
+    setRoles: () => {
+    },
     daytime: 'day',
-    setDaytime: () => {},
+    setDaytime: () => {
+    },
 });
 
-export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [roles, setRoles] = useState<string[]>([]);
     const [daytime, setDaytime] = useState<string>('day');
 
-    const value = { roles, setRoles, daytime, setDaytime };
+    const value = {roles, setRoles, daytime, setDaytime};
 
     return (
         <GameContext.Provider value={value}>
