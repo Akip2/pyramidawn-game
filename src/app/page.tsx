@@ -1,17 +1,55 @@
 "use client";
 
-import MainMenu from "./main-menu";
-import { socket } from "../socket";
-import { useEffect } from "react";
+import { socket } from "@/socket";
+import styles from "@/app/styles.module.css";
+import {useRouter} from "next/navigation";
+import {useEffect, useState} from "react";
+
+const defaultUsername = "Random_Egyptian";
+
+function setUpUsername(username: string){
+    if(username == null || username == ""){
+        localStorage.setItem("username", defaultUsername);
+    }
+    else{
+        localStorage.setItem("username", username);
+    }
+
+}
 
 export default function Home() {
-  useEffect(() => {
-    console.log(socket);
-  }, []);
+    const [username, setUsername] = useState("");
+    const router = useRouter();
+    
+    useEffect(() => {
+        if(typeof window !== "undefined"){
+            const lastName= localStorage.getItem("username");
+            if(lastName != null && lastName!=defaultUsername){
+                setUsername(lastName);
+            }
+        }
+    }, [])
+
+    const quickPlay = () => {
+        setUpUsername(username);
+        socket.emit("quick-play", localStorage.getItem("username"));
+        router.push('/game');
+    };
 
   return (
-    <div className="w-screen h-screen flex justify-center">
-      {MainMenu()}
-    </div>
+      <div className="h-screen w-screen flex flex-col justify-center">
+          <div className="h-fit w-fit p-4 flex flex-col justify-center bg-gray-800 justify-self-center self-center">
+                  <input
+                      className="text-black text-center"
+                      type="text"
+                      placeholder={defaultUsername}
+                      value={username}
+                      onChange={(event) => setUsername(event.target.value)}
+                  />
+                  <button className={styles["button-main"]} onClick={quickPlay}>Quick Play</button>
+                  <button className={styles["button-main"]}>Join Game</button>
+                  <button className={styles["button-main"]}>Create Game</button>
+          </div>
+      </div>
   );
 }
