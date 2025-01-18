@@ -1,9 +1,21 @@
 import React, {useEffect, useState} from "react";
 import { socket } from "@/socket";
+import {usePlayer} from "@/app/context/PlayerProvider";
+
+class Message{
+    content: string;
+    author: string;
+
+    constructor(c: string, a:string){
+        this.content = c;
+        this.author = a;
+    }
+}
 
 export default function Chat(){
     const [inputValue, setInputValue] = useState('');
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const {playerName} = usePlayer();
 
     useEffect(() => {
         socket.on("chat-message", receiveMessage);
@@ -13,7 +25,7 @@ export default function Chat(){
         }
     });
 
-    const receiveMessage = (data: string) => {
+    const receiveMessage = (data : Message) => {
         setMessages(messages.concat(data));
     }
 
@@ -21,7 +33,7 @@ export default function Chat(){
         if (event.key === 'Enter') {
             const trimmedValue = inputValue.trim();
             if(trimmedValue.length > 0){
-                socket.emit("send-message", trimmedValue);
+                socket.emit("send-message", new Message(trimmedValue, playerName));
             }
             setInputValue('');
         }
@@ -31,7 +43,7 @@ export default function Chat(){
         <div className="flex flex-col min-w-[200px] w-1/4 h-full">
             <div className="w-full h-[95vh] bg-gray-900 border-solid">
                 { messages.map((message, index) => (
-                    <p key={index}>{message}</p>
+                    <p key={index}>{message.author} : {message.content}</p>
                 ))}
             </div>
 
