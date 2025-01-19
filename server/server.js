@@ -13,7 +13,7 @@ const handler = app.getRequestHandler();
 const rooms = [];
 let nextRoomId = 0;
 
-function getPlayerRoom(socket){
+function getPlayerRoom(socket) {
     let roomsIds = socket.rooms;
     let roomId = Array.from(roomsIds).pop();
 
@@ -25,10 +25,9 @@ function getPlayerRoom(socket){
         i++;
     }
 
-    if(room.id === roomId) {
+    if (room.id === roomId) {
         return room;
-    }
-    else{
+    } else {
         return null;
     }
 }
@@ -73,7 +72,7 @@ app.prepare().then(() => {
             io.to(roomId).emit("chat-message", message);
         });
 
-        socket.on("get-room-data", function() {
+        socket.on("get-room-data", function () {
             let room = getPlayerRoom(socket);
             io.to(socket.id).emit("room-data", room.serialize());
         });

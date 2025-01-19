@@ -38,7 +38,7 @@ class Room {
         socket.join(this.id);
     }
 
-    serialize(){
+    serialize() {
         return {
             players: this.players.map(player => player.serialize()),
             roles: this.roles,
