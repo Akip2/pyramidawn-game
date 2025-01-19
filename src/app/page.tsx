@@ -35,11 +35,13 @@ export default function Home() {
 
         setPlayerName(newUsername);
         localStorage.setItem("username", newUsername);
+
+        return newUsername;
     }
 
     const quickPlay = () => {
-        setUpUsername();
-        socket.emit("quick-play", playerName);
+        const newUsername = setUpUsername();
+        socket.emit("quick-play", newUsername);
         router.push('/game');
     };
 
