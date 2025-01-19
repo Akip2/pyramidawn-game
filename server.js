@@ -11,6 +11,27 @@ const app = next({dev, hostname, port});
 const handler = app.getRequestHandler();
 
 const rooms = [];
+let nextRoomId = 0;
+
+function getPlayerRoom(socket){
+    let roomsIds = socket.rooms;
+    let roomId = Array.from(roomsIds).pop();
+
+    let room = rooms[0];
+    let i = 1;
+
+    while (room.id !== roomId && i < rooms.length) {
+        room = rooms[i];
+        i++;
+    }
+
+    if(room.id === roomId) {
+        return room;
+    }
+    else{
+        return null;
+    }
+}
 
 app.prepare().then(() => {
     const httpServer = createServer(handler);
@@ -24,7 +45,7 @@ app.prepare().then(() => {
             console.log('Socket disconnected');
         });
 
-        socket.on("quick-play", function () {
+        socket.on("quick-play", function (playerName) {
             let freeRoomFound = false;
             let room;
             let i = 0;
@@ -37,23 +58,24 @@ app.prepare().then(() => {
             }
 
             if (!freeRoomFound) {
-                room = new Room(io, socket.id);
+                room = new Room(io, nextRoomId);
                 rooms.push(room);
+                nextRoomId++;
             }
 
-            room.addPlayer(socket);
+            room.addPlayer(socket, playerName);
         });
 
         socket.on("send-message", function (message) {
-            let rooms = socket.rooms;
-            let room = Array.from(rooms).pop();
+            let roomsIds = socket.rooms;
+            let roomId = Array.from(roomsIds).pop();
 
-            /*
-            console.log(message);
-            console.log(room);
-             */
+            io.to(roomId).emit("chat-message", message);
+        });
 
-            io.to(room).emit("chat-message", message);
+        socket.on("get-room-data", function() {
+            let room = getPlayerRoom(socket);
+            io.to(socket.id).emit("room-data", room.serialize());
         });
     });
 
