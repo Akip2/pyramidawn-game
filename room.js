@@ -14,7 +14,7 @@ class Room {
         this.remainingColors = possibleColors;
 
         this.started = false;
-        this.dayTime = "day";
+        this.phase = "day";
     }
 
     isFree() {
@@ -34,15 +34,15 @@ class Room {
         let player = new Player(socket, playerName, this.getFreeColor());
         this.players.push(player);
 
-        socket.join(this.id);
         this.io.to(this.id).emit("player-join", player.serialize());
+        socket.join(this.id);
     }
 
     serialize(){
         return {
             players: this.players.map(player => player.serialize()),
             roles: this.roles,
-            dayTime: this.dayTime
+            phase: this.phase
         }
     }
 }
