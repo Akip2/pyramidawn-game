@@ -1,17 +1,17 @@
 import styles from "../styles.module.css";
+import {useGame} from "@/app/context/GameProvider";
+import PlayerAvatar from "@/components/player-avatar";
 
 export default function PlayerContainer() {
+    const {players} = useGame();
+
     return (
-        <div
-            className="bg-gray-800 w-3/4 h-full grid grid-cols-2 border border-black border-l-4 border-t-4 border-r-0 border-b-0">
-            <div className={styles["player-box"]}><p>A</p></div>
-            <div className={styles["player-box"]}><p>b</p></div>
-            <div className={styles["player-box"]}><p>c</p></div>
-            <div className={styles["player-box"]}><p>d</p></div>
-            <div className={styles["player-box"]}><p>e</p></div>
-            <div className={styles["player-box"]}><p>f</p></div>
-            <div className={styles["player-box"]}><p>g</p></div>
-            <div className={styles["player-box"]}><p>h</p></div>
+        <div className={styles.background}>
+            <div className="flex row justify-around items-center w-full h-1/6 absolute bottom-0">
+                {players.map((player, index) => (
+                    <PlayerAvatar key={index} name={player.name} color={player.color}/>
+                ))}
+            </div>
         </div>
     );
 }

@@ -2,7 +2,11 @@
     background-color: red;
 }
 
-.player-box {
-    border-right: solid 4px black;
-    border-bottom: solid 4px black;
+.background {
+    background-image: url("../../public/background.jpg");
+    background-size: cover;
+    background-position: center top;
+    width: 75%;
+
+    position: relative;
 }
