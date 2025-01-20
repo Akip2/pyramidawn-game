@@ -7,7 +7,7 @@ export default function PlayerContainer() {
 
     return (
         <div className={styles.background}>
-            <div className="flex row justify-around items-center w-full h-1/5 absolute bottom-0">
+            <div className="flex row justify-around items-center w-full h-1/6 absolute bottom-0">
                 {players.map((player, index) => (
                     <PlayerAvatar key={index} name={player.name} color={player.color}/>
                 ))}

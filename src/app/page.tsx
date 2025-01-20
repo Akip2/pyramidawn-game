@@ -26,11 +26,10 @@ export default function Home() {
 
     const setUpUsername = () => {
         let newUsername: string;
-        if (username == null || username == "") {
-
+        if (username == null || username.trim() == "") {
             newUsername = defaultUsername;
         } else {
-            newUsername = username;
+            newUsername = username.trim();
         }
 
         setPlayerName(newUsername);
@@ -51,6 +50,7 @@ export default function Home() {
                 <input
                     className="text-black text-center"
                     type="text"
+                    maxLength={12}
                     placeholder={defaultUsername}
                     value={username}
                     onChange={(event) => setUsername(event.target.value)}
