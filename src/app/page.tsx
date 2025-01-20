@@ -6,7 +6,7 @@ import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 import {usePlayer} from "@/app/context/PlayerProvider";
 
-const defaultUsername = "Random_Egyptian";
+const defaultUsername = "Seth";
 
 
 export default function Home() {
