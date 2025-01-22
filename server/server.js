@@ -13,23 +13,8 @@ const handler = app.getRequestHandler();
 const rooms = [];
 let nextRoomId = 0;
 
-function getPlayerRoom(socket) {
-    let roomsIds = socket.rooms;
-    let roomId = Array.from(roomsIds).pop();
-
-    let room = rooms[0];
-    let i = 1;
-
-    while (room.id !== roomId && i < rooms.length) {
-        room = rooms[i];
-        i++;
-    }
-
-    if (room.id === roomId) {
-        return room;
-    } else {
-        return null;
-    }
+function getPlayerRoom(playerId) {
+    return rooms.find(room => room.hasPlayer(playerId));
 }
 
 app.prepare().then(() => {
@@ -42,27 +27,24 @@ app.prepare().then(() => {
 
         socket.on('disconnect', function () {
             console.log('Socket disconnected');
+
+            let room = getPlayerRoom(socket.id);
+            room.disconnectPlayer(socket.id);
+
+            if (room.getNbPlayers === 0) {
+                rooms.splice(rooms.indexOf(room), 1);
+            }
         });
 
         socket.on("quick-play", function (playerName) {
-            let freeRoomFound = false;
-            let room;
-            let i = 0;
-            while (!freeRoomFound && i < rooms.length) {
-                room = rooms[i];
-                if (room.isFree()) {
-                    freeRoomFound = true;
-                }
-                i++;
-            }
-
-            if (!freeRoomFound) {
-                room = new Room(io, nextRoomId);
-                rooms.push(room);
+            let freeRoom = rooms.find(room => room.isFree());
+            if (!freeRoom) {
+                freeRoom = new Room(io, nextRoomId);
+                rooms.push(freeRoom);
                 nextRoomId++;
             }
 
-            room.addPlayer(socket, playerName);
+            freeRoom.addPlayer(socket, playerName);
         });
 
         socket.on("send-message", function (message) {
@@ -73,7 +55,7 @@ app.prepare().then(() => {
         });
 
         socket.on("get-room-data", function () {
-            let room = getPlayerRoom(socket);
+            let room = getPlayerRoom(socket.id);
             io.to(socket.id).emit("room-data", room.serialize());
         });
     });
