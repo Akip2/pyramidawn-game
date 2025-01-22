@@ -31,7 +31,7 @@ class Room {
     }
 
     isEmpty() {
-        return !!this.io.sockets.adapter.rooms.get(this.id);
+        return this.io.sockets.adapter.rooms.get(this.id) === undefined;
     }
 
     getFreeColor() {
