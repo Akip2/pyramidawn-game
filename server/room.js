@@ -26,7 +26,12 @@ class Room {
     }
 
     getNbPlayers() {
-        return this.io.sockets.adapter.rooms.get(this.id).size;
+        let socketRoom = this.io.sockets.adapter.rooms.get(this.id);
+        return socketRoom ? socketRoom.size : 0;
+    }
+
+    isEmpty() {
+        return !!this.io.sockets.adapter.rooms.get(this.id);
     }
 
     getFreeColor() {

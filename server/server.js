@@ -31,7 +31,8 @@ app.prepare().then(() => {
             let room = getPlayerRoom(socket.id);
             room.disconnectPlayer(socket.id);
 
-            if (room.getNbPlayers === 0) {
+            if (room.isEmpty() === 0) {
+                console.log("empty room, removing it");
                 rooms.splice(rooms.indexOf(room), 1);
             }
         });

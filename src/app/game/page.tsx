@@ -15,10 +15,12 @@ export default function GamePage() {
 
         socket.on("room-data", receiveRoomData);
         socket.on("player-join", playerJoin);
+        socket.on("player-leave", playerLeave);
 
         return () => {
             socket.off("room-data", receiveRoomData);
             socket.off("player-join", playerJoin);
+            socket.off("player-leave", playerLeave);
         }
     }, []);
 
@@ -30,6 +32,10 @@ export default function GamePage() {
 
     const playerJoin = (player: PlayerData) => {
         setPlayers((prevPlayers) => [...prevPlayers, player]);
+    }
+
+    const playerLeave = (player: PlayerData) => {
+        setPlayers((prevPlayers) => prevPlayers.filter((p) => p.color !== player.color));
     }
 
     return (
