@@ -1,7 +1,7 @@
 'use client'
 
 import React, {createContext, useState, useContext} from 'react';
-import PlayerData from "@/player-data";
+import PlayerData from "@/data/player-data";
 
 const GameContext = createContext<{
     players: PlayerData[];

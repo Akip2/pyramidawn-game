@@ -21,8 +21,17 @@ class Room {
         return (!this.started && this.getNbPlayers() < this.maxPlayers);
     }
 
+    hasPlayer(playerId) {
+        return !!this.players.find(player => player.id === playerId);
+    }
+
     getNbPlayers() {
-        return this.io.sockets.adapter.rooms.get(this.id).size;
+        let socketRoom = this.io.sockets.adapter.rooms.get(this.id);
+        return socketRoom ? socketRoom.size : 0;
+    }
+
+    isEmpty() {
+        return !!this.io.sockets.adapter.rooms.get(this.id);
     }
 
     getFreeColor() {
@@ -31,11 +40,23 @@ class Room {
     }
 
     addPlayer(socket, playerName) {
-        let player = new Player(socket, playerName, this.getFreeColor());
+        let player = new Player(socket.id, playerName, this.getFreeColor());
         this.players.push(player);
 
         this.io.to(this.id).emit("player-join", player.serialize());
         socket.join(this.id);
+    }
+
+    disconnectPlayer(playerId) {
+        let player = this.players.find(player => player.id === playerId);
+
+        if(this.started) {
+
+        }
+        else {
+            this.players.splice(this.players.indexOf(player), 1);
+            this.io.to(this.id).emit("player-leave", player.serialize());
+        }
     }
 
     serialize() {

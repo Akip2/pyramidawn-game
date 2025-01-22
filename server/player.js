@@ -1,6 +1,6 @@
 class Player {
-    constructor(sock, n, c) {
-        this.socket = sock;
+    constructor(id, n, c) {
+        this.id = id;
         this.name = n;
         this.color = c;
         this.isAlive = true;
@@ -8,10 +8,6 @@ class Player {
 
     setRole(r) {
         this.role = r;
-    }
-
-    setSocket(sock) {
-        this.socket = sock;
     }
 
     isRole(r) {
