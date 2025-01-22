@@ -1,47 +1,10 @@
-import React, {JSX, useEffect, useState} from "react";
-import {socket} from "@/socket";
+import React, {useEffect, useState} from "react";
+import {socket} from "@/data/socket";
 import {usePlayer} from "@/app/context/PlayerProvider";
-import PlayerData from "@/player-data";
-
-interface IMessage {
-    content: string;
-    type: string;
-    author?: string;
-
-    getHTML(key: string): JSX.Element;
-}
-
-class PlayerMessage implements IMessage {
-    content: string;
-    author: string;
-    type: string = "player";
-
-    constructor(c: string, a: string) {
-        this.content = c;
-        this.author = a;
-    }
-
-    getHTML(key: string) {
-        return (
-            <p key={key}>{this.author} : {this.content}</p>
-        );
-    }
-}
-
-class InfoMessage implements IMessage {
-    content: string;
-    type: string = "info";
-
-    constructor(c: string) {
-        this.content = c;
-    }
-
-    getHTML(key: string): React.JSX.Element {
-        return (
-            <p key={key}>{this.content}</p>
-        );
-    }
-}
+import PlayerData from "@/data/player-data";
+import InfoMessage from "@/data/message/info-message";
+import IMessage from "@/data/message/imessage";
+import PlayerMessage from "@/data/message/player-message";
 
 export default function Chat() {
     const [inputValue, setInputValue] = useState('');

@@ -24,6 +24,6 @@
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts",
     "server/server.js",
-    "src/socket", "src/app/api/socket/route.js"],
+    "src/data/socket", "src/app/api/socket/route.js"],
   "exclude": ["node_modules"]
 }

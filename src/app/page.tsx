@@ -1,6 +1,6 @@
 "use client";
 
-import {socket} from "@/socket";
+import {socket} from "@/data/socket";
 import styles from "@/app/styles.module.css";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";

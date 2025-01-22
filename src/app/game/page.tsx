@@ -2,10 +2,10 @@
 
 import Chat from "./chat";
 import PlayerContainer from "./player-container";
-import {socket} from "@/socket";
+import {socket} from "@/data/socket";
 import React, {useEffect} from "react";
 import {useGame} from "@/app/context/GameProvider";
-import PlayerData from "@/player-data";
+import PlayerData from "@/data/player-data";
 
 export default function GamePage() {
     const {setRoles, setPlayers, setPhase} = useGame();
