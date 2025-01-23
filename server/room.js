@@ -4,21 +4,20 @@ const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "p
 const defaultRoles = ["slave", "slave", "priest", "guard", "cursed"];
 
 class Room {
-    constructor(io, id, maxPlayers = 5, roles = defaultRoles) {
+    constructor(io, id, roles = defaultRoles) {
         this.io = io;
         this.id = id;
 
-        this.maxPlayers = maxPlayers;
         this.players = [];
         this.roles = roles;
         this.remainingColors = possibleColors;
 
         this.started = false;
-        this.phase = "day";
+        this.phase = "Waiting";
     }
 
     isFree() {
-        return (!this.started && this.getNbPlayers() < this.maxPlayers);
+        return (!this.started && this.getNbPlayers() < this.roles.length);
     }
 
     hasPlayer(playerId) {
