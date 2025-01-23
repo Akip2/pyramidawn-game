@@ -11,7 +11,7 @@ export default function PhaseDisplayer() {
         return () => {
             clearInterval(secondInterval);
         }
-    }, []);
+    }, [phaseEndTime]);
 
     const updateTimer = () => {
         let secondsLeft = Math.floor((phaseEndTime - Date.now()) / 1000);

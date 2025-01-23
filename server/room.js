@@ -1,7 +1,15 @@
 import Player from "./player.js";
+import {setTimeout} from "node:timers";
 
 const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
 const defaultRoles = ["slave", "slave", "priest", "guard", "cursed"];
+
+function createPhase(name, duration) {
+    return {
+        name: name,
+        duration: duration,
+    }
+}
 
 class Room {
     constructor(io, id, roles = defaultRoles) {
@@ -14,6 +22,8 @@ class Room {
 
         this.started = false;
         this.phase = "Waiting";
+
+        this.timer = null;
     }
 
     isFree() {
@@ -44,15 +54,32 @@ class Room {
 
         this.io.to(this.id).emit("player-join", player.serialize());
         socket.join(this.id);
+
+        if (this.players.length === this.roles.length) {
+            this.phase = "Starting";
+
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => {
+                if (this.players.length === this.roles.length) {
+                    this.phase = "Role"
+
+                    this.distributeRoles();
+                    this.io.to(this.id).emit("phase-change", createPhase("Role", 20));
+                }
+            }, 10000);
+        }
+    }
+
+    distributeRoles() {
+
     }
 
     disconnectPlayer(playerId) {
         let player = this.players.find(player => player.id === playerId);
 
-        if(this.started) {
+        if (this.started) {
 
-        }
-        else {
+        } else {
             this.players.splice(this.players.indexOf(player), 1);
             this.io.to(this.id).emit("player-leave", player.serialize());
         }

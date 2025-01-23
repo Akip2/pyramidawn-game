@@ -8,7 +8,7 @@ import {useGame} from "@/app/context/GameProvider";
 import PlayerData from "@/data/player-data";
 
 export default function GamePage() {
-    const {setRoles, setPlayers, setPhase} = useGame();
+    const {roles, setRoles, players, setPlayers, setPhase, setPhaseEndTime} = useGame();
 
     useEffect(() => {
         socket.emit("get-room-data");
@@ -16,11 +16,13 @@ export default function GamePage() {
         socket.on("room-data", receiveRoomData);
         socket.on("player-join", playerJoin);
         socket.on("player-leave", playerLeave);
+        socket.on("phase-change", phaseChange);
 
         return () => {
             socket.off("room-data", receiveRoomData);
             socket.off("player-join", playerJoin);
             socket.off("player-leave", playerLeave);
+            socket.off("phase-change", phaseChange);
         }
     }, []);
 
@@ -36,6 +38,11 @@ export default function GamePage() {
 
     const playerLeave = (player: PlayerData) => {
         setPlayers((prevPlayers) => prevPlayers.filter((p) => p.color !== player.color));
+    }
+
+    const phaseChange = (newPhase: { name: string, duration: number }) => {
+        setPhaseEndTime(Date.now() + newPhase.duration * 1000);
+        setPhase(newPhase.name);
     }
 
     return (
