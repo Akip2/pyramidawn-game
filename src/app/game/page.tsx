@@ -30,10 +30,18 @@ export default function GamePage() {
         setPlayers(data.players);
         setRoles(data.roles);
         setPhase(data.phase);
+
+        if(data.phase === "Starting"){
+            startingGame();
+        }
     }
 
     const playerJoin = (player: PlayerData) => {
         setPlayers((prevPlayers) => [...prevPlayers, player]);
+
+        if(players.length == roles.length) {
+            startingGame();
+        }
     }
 
     const playerLeave = (player: PlayerData) => {
@@ -43,6 +51,11 @@ export default function GamePage() {
     const phaseChange = (newPhase: { name: string, duration: number }) => {
         setPhaseEndTime(Date.now() + newPhase.duration * 1000);
         setPhase(newPhase.name);
+    }
+
+    const startingGame = () => {
+        setPhase("Starting");
+        setPhaseEndTime(Date.now() + 10000);
     }
 
     return (

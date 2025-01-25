@@ -6,15 +6,16 @@ export default function PhaseDisplayer() {
     const [timer, setTimer] = useState("0:00");
 
     useEffect(() => {
+        updateTimer();
         const secondInterval = setInterval(updateTimer, 1000);
 
         return () => {
             clearInterval(secondInterval);
         }
-    }, [phaseEndTime]);
+    }, [phase]);
 
     const updateTimer = () => {
-        let secondsLeft = Math.floor((phaseEndTime - Date.now()) / 1000);
+        let secondsLeft = Math.round((phaseEndTime - Date.now()) / 1000);
         let minutesLeft = Math.floor(secondsLeft / 60);
         secondsLeft %= 60;
 
