@@ -1,4 +1,4 @@
-import {useGame} from "@/app/context/GameProvider";
+import {useGame} from "@/app/context/game-provider";
 import {useEffect, useState} from "react";
 
 export default function PhaseDisplayer() {

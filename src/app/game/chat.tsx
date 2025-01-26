@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {socket} from "@/data/socket";
-import {usePlayer} from "@/app/context/PlayerProvider";
+import {usePlayer} from "@/app/context/player-provider";
 import PlayerData from "@/data/player-data";
 import InfoMessage from "@/data/message/info-message";
 import IMessage from "@/data/message/imessage";

@@ -1,5 +1,5 @@
 import styles from "../styles.module.css";
-import {useGame} from "@/app/context/GameProvider";
+import {useGame} from "@/app/context/game-provider";
 import PlayerAvatar from "@/components/player-avatar";
 import PhaseDisplayer from "@/app/game/phase-displayer";
 

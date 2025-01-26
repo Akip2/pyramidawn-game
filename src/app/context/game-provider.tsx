@@ -17,16 +17,20 @@ const GameContext = createContext<{
     setPhaseEndTime: React.Dispatch<React.SetStateAction<number>>;
 }>({
     players: [],
-    setPlayers: () => {},
+    setPlayers: () => {
+    },
 
     roles: [],
-    setRoles: () => {},
+    setRoles: () => {
+    },
 
     phase: 'day',
-    setPhase: () => {},
+    setPhase: () => {
+    },
 
     phaseEndTime: 0,
-    setPhaseEndTime: () => {}
+    setPhaseEndTime: () => {
+    }
 });
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -35,7 +39,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const [phase, setPhase] = useState<string>('day');
     const [phaseEndTime, setPhaseEndTime] = useState<number>(0);
 
-    const value = {players, setPlayers, roles, setRoles, phase, setPhase,  phaseEndTime, setPhaseEndTime};
+    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime};
 
     return (
         <GameContext.Provider value={value}>
