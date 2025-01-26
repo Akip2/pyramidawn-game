@@ -4,7 +4,7 @@ import {socket} from "@/data/socket";
 import styles from "@/app/styles.module.css";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
-import {usePlayer} from "@/app/context/player-provider";
+import {usePlayer} from "@/context/player-provider";
 
 const defaultUsername = "Seth";
 

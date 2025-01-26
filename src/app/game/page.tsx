@@ -4,9 +4,9 @@ import Chat from "../../components/game/chat";
 import PlayerContainer from "../../components/game/player-container";
 import {socket} from "@/data/socket";
 import React, {useEffect} from "react";
-import {useGame} from "@/app/context/game-provider";
+import {useGame} from "@/context/game-provider";
 import PlayerData from "@/data/player-data";
-import {usePlayer} from "@/app/context/player-provider";
+import {usePlayer} from "@/context/player-provider";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime} = useGame();
