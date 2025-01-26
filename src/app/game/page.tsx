@@ -31,7 +31,7 @@ export default function GamePage() {
     }, []);
 
     useEffect(() => {
-        if(phase==="Starting" && players.length < roles.length) {
+        if (phase === "Starting" && players.length < roles.length) {
             setPhase("Waiting");
         }
     }, [players, roles]);
@@ -44,7 +44,7 @@ export default function GamePage() {
         let playerInfo = data.players[data.players.length - 1];
         setColor(playerInfo.color);
 
-        if(data.phase === "Starting"){
+        if (data.phase === "Starting") {
             startingGame();
         }
     }
@@ -52,7 +52,7 @@ export default function GamePage() {
     const playerJoin = (player: PlayerData) => {
         setPlayers((prevPlayers) => [...prevPlayers, player]);
 
-        if(players.length == roles.length) {
+        if (players.length == roles.length) {
             startingGame();
         }
     }

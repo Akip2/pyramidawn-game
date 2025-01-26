@@ -92,7 +92,7 @@ class Room {
         if (this.started) {
 
         } else {
-            if(this.phase === "Starting") {
+            if (this.phase === "Starting") {
                 this.phase = "Waiting";
                 clearTimeout(this.timer);
             }
