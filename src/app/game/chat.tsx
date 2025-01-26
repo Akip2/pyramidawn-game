@@ -15,11 +15,13 @@ export default function Chat() {
         socket.on("chat-message", receiveMessage);
         socket.on("player-join", playerJoin);
         socket.on("player-leave", playerLeave);
+        socket.on("role", roleMessage);
 
         return () => {
             socket.off("chat-message", receiveMessage);
             socket.off("player-join", playerJoin);
             socket.off("player-leave", playerLeave);
+            socket.off("role", roleMessage);
         }
     });
 
@@ -29,6 +31,10 @@ export default function Chat() {
 
     const playerLeave = (playerJoin: PlayerData) => {
         setMessages(messages.concat(new InfoMessage(`${playerJoin.name} left`)));
+    }
+
+    const roleMessage = (role: string) => {
+        setMessages(messages.concat(new InfoMessage(`Your role is : ${role} !`)));
     }
 
     const receiveMessage = (data: IMessage) => {

@@ -59,19 +59,33 @@ class Room {
             this.phase = "Starting";
 
             clearTimeout(this.timer);
-            this.timer = setTimeout(() => {
-                if (this.players.length === this.roles.length) {
-                    this.phase = "Role"
+            this.timer = setTimeout(() => this.startGame(), 10000);
+        }
+    }
 
-                    this.distributeRoles();
-                    this.io.to(this.id).emit("phase-change", createPhase("Role", 20));
-                }
-            }, 10000);
+    startGame() {
+        if (this.players.length === this.roles.length) {
+            this.started = true;
+            this.phase = "Role";
+
+            this.send("phase-change", createPhase("Role", 20));
+            //this.io.to(this.id).emit("phase-change", createPhase("Role", 20));
+
+            this.distributeRoles();
         }
     }
 
     distributeRoles() {
+        let remainingRoles = this.roles;
+        let playerIndex = 0;
 
+        while (playerIndex < this.players.length) {
+            let roleIndex = Math.floor(Math.random() * remainingRoles.length);
+            let role = remainingRoles.splice(roleIndex, 1)[0];
+
+            this.send("role", role, this.players[playerIndex].id);
+            playerIndex++;
+        }
     }
 
     disconnectPlayer(playerId) {
@@ -83,6 +97,10 @@ class Room {
             this.players.splice(this.players.indexOf(player), 1);
             this.io.to(this.id).emit("player-leave", player.serialize());
         }
+    }
+
+    send(requestName, data = {}, receiver = this.id) {
+        this.io.to(receiver).emit(requestName, data);
     }
 
     serialize() {

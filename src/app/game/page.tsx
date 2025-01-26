@@ -6,9 +6,11 @@ import {socket} from "@/data/socket";
 import React, {useEffect} from "react";
 import {useGame} from "@/app/context/GameProvider";
 import PlayerData from "@/data/player-data";
+import {usePlayer} from "@/app/context/PlayerProvider";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, setPhase, setPhaseEndTime} = useGame();
+    const {role, setRole, color, setColor} = usePlayer();
 
     useEffect(() => {
         socket.emit("get-room-data");
@@ -17,12 +19,14 @@ export default function GamePage() {
         socket.on("player-join", playerJoin);
         socket.on("player-leave", playerLeave);
         socket.on("phase-change", phaseChange);
+        socket.on("role", receiveRole);
 
         return () => {
             socket.off("room-data", receiveRoomData);
             socket.off("player-join", playerJoin);
             socket.off("player-leave", playerLeave);
             socket.off("phase-change", phaseChange);
+            socket.off("role", receiveRole);
         }
     }, []);
 
@@ -30,6 +34,9 @@ export default function GamePage() {
         setPlayers(data.players);
         setRoles(data.roles);
         setPhase(data.phase);
+
+        let playerInfo = data.players[data.players.length - 1];
+        setColor(playerInfo.color);
 
         if(data.phase === "Starting"){
             startingGame();
@@ -56,6 +63,11 @@ export default function GamePage() {
     const startingGame = () => {
         setPhase("Starting");
         setPhaseEndTime(Date.now() + 10000);
+    }
+
+    const receiveRole = (role: string) => {
+        console.log(role);
+        setRole(role);
     }
 
     return (
