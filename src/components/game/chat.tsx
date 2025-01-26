@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {socket} from "@/data/socket";
-import {usePlayer} from "@/app/context/PlayerProvider";
+import {usePlayer} from "@/context/player-provider";
 import PlayerData from "@/data/player-data";
 import InfoMessage from "@/data/message/info-message";
 import IMessage from "@/data/message/imessage";
@@ -23,18 +23,21 @@ export default function Chat() {
             socket.off("player-leave", playerLeave);
             socket.off("role", roleMessage);
         }
-    });
+    }, []);
 
     const playerJoin = (playerJoin: PlayerData) => {
-        setMessages(messages.concat(new InfoMessage(`${playerJoin.name} joined the game`)));
+        let message = new InfoMessage(`${playerJoin.name} joined`);
+        setMessages((prevMessages) => prevMessages.concat(message));
     }
 
     const playerLeave = (playerJoin: PlayerData) => {
-        setMessages(messages.concat(new InfoMessage(`${playerJoin.name} left`)));
+        let message = new InfoMessage(`${playerJoin.name} left`);
+        setMessages((prevMessages) => prevMessages.concat(message));
     }
 
     const roleMessage = (role: string) => {
-        setMessages(messages.concat(new InfoMessage(`Your role is : ${role} !`)));
+        let message = new InfoMessage(`Your role is : ${role} !`);
+        setMessages((prevMessages) => prevMessages.concat(message));
     }
 
     const receiveMessage = (data: IMessage) => {
@@ -49,14 +52,16 @@ export default function Chat() {
                 break;
         }
 
-        setMessages(messages.concat(message));
+        setMessages((prevMessages) => prevMessages.concat(message));
     }
 
     const sendMessage = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === 'Enter') {
             const trimmedValue = inputValue.trim();
             if (trimmedValue.length > 0) {
-                socket.emit("send-message", new PlayerMessage(trimmedValue, playerName));
+                let message = new PlayerMessage(trimmedValue, playerName);
+                socket.emit("send-message", message);
+                setMessages((prevMessages) => prevMessages.concat(message));
             }
             setInputValue('');
         }

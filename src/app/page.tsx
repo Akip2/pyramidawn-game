@@ -4,16 +4,15 @@ import {socket} from "@/data/socket";
 import styles from "@/app/styles.module.css";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
-import {usePlayer} from "@/app/context/PlayerProvider";
+import {usePlayer} from "@/context/player-provider";
 
 const defaultUsername = "Seth";
-
 
 export default function Home() {
     const [username, setUsername] = useState("");
     const router = useRouter();
 
-    const {playerName, setPlayerName} = usePlayer();
+    const {setPlayerName} = usePlayer();
 
     useEffect(() => {
         if (typeof window !== "undefined") {

@@ -69,8 +69,6 @@ class Room {
             this.phase = "Role";
 
             this.send("phase-change", createPhase("Role", 20));
-            //this.io.to(this.id).emit("phase-change", createPhase("Role", 20));
-
             this.distributeRoles();
         }
     }
@@ -94,7 +92,7 @@ class Room {
         if (this.started) {
 
         } else {
-            if(this.phase === "Starting") {
+            if (this.phase === "Starting") {
                 this.phase = "Waiting";
                 clearTimeout(this.timer);
             }

@@ -1,7 +1,7 @@
-import styles from "../styles.module.css";
-import {useGame} from "@/app/context/GameProvider";
+import styles from "../../app/styles.module.css";
+import {useGame} from "@/context/game-provider";
 import PlayerAvatar from "@/components/player-avatar";
-import PhaseDisplayer from "@/app/game/phase-displayer";
+import PhaseDisplayer from "@/components/game/phase-displayer";
 
 export default function PlayerContainer() {
     const {players} = useGame();

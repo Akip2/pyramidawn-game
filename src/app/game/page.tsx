@@ -1,16 +1,16 @@
 'use client'
 
-import Chat from "./chat";
-import PlayerContainer from "./player-container";
+import Chat from "../../components/game/chat";
+import PlayerContainer from "../../components/game/player-container";
 import {socket} from "@/data/socket";
 import React, {useEffect} from "react";
-import {useGame} from "@/app/context/GameProvider";
+import {useGame} from "@/context/game-provider";
 import PlayerData from "@/data/player-data";
-import {usePlayer} from "@/app/context/PlayerProvider";
+import {usePlayer} from "@/context/player-provider";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime} = useGame();
-    const {role, setRole, color, setColor} = usePlayer();
+    const {setRole, setColor} = usePlayer();
 
     useEffect(() => {
         socket.emit("get-room-data");
@@ -31,9 +31,7 @@ export default function GamePage() {
     }, []);
 
     useEffect(() => {
-        console.log(phase);
-        if(phase==="Starting" && players.length < roles.length) {
-            console.log("aborting game start");
+        if (phase === "Starting" && players.length < roles.length) {
             setPhase("Waiting");
         }
     }, [players, roles]);
@@ -46,7 +44,7 @@ export default function GamePage() {
         let playerInfo = data.players[data.players.length - 1];
         setColor(playerInfo.color);
 
-        if(data.phase === "Starting"){
+        if (data.phase === "Starting") {
             startingGame();
         }
     }
@@ -54,7 +52,7 @@ export default function GamePage() {
     const playerJoin = (player: PlayerData) => {
         setPlayers((prevPlayers) => [...prevPlayers, player]);
 
-        if(players.length == roles.length) {
+        if (players.length == roles.length) {
             startingGame();
         }
     }
@@ -74,7 +72,6 @@ export default function GamePage() {
     }
 
     const receiveRole = (role: string) => {
-        console.log(role);
         setRole(role);
     }
 

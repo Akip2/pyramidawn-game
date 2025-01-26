@@ -52,7 +52,7 @@ app.prepare().then(() => {
             let roomsIds = socket.rooms;
             let roomId = Array.from(roomsIds).pop();
 
-            io.to(roomId).emit("chat-message", message);
+            socket.to(roomId).emit("chat-message", message);
         });
 
         socket.on("get-room-data", function () {
