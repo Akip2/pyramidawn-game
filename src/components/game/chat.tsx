@@ -23,18 +23,21 @@ export default function Chat() {
             socket.off("player-leave", playerLeave);
             socket.off("role", roleMessage);
         }
-    });
+    }, []);
 
     const playerJoin = (playerJoin: PlayerData) => {
-        setMessages(messages.concat(new InfoMessage(`${playerJoin.name} joined the game`)));
+        let message = new InfoMessage(`${playerJoin.name} joined`);
+        setMessages((prevMessages) => prevMessages.concat(message));
     }
 
     const playerLeave = (playerJoin: PlayerData) => {
-        setMessages(messages.concat(new InfoMessage(`${playerJoin.name} left`)));
+        let message = new InfoMessage(`${playerJoin.name} left`);
+        setMessages((prevMessages) => prevMessages.concat(message));
     }
 
     const roleMessage = (role: string) => {
-        setMessages(messages.concat(new InfoMessage(`Your role is : ${role} !`)));
+        let message = new InfoMessage(`Your role is : ${role} !`);
+        setMessages((prevMessages) => prevMessages.concat(message));
     }
 
     const receiveMessage = (data: IMessage) => {
@@ -49,7 +52,7 @@ export default function Chat() {
                 break;
         }
 
-        setMessages(messages.concat(message));
+        setMessages((prevMessages) => prevMessages.concat(message));
     }
 
     const sendMessage = (event: React.KeyboardEvent<HTMLDivElement>) => {
