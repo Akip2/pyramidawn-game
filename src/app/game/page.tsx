@@ -9,7 +9,7 @@ import PlayerData from "@/data/player-data";
 import {usePlayer} from "@/app/context/PlayerProvider";
 
 export default function GamePage() {
-    const {roles, setRoles, players, setPlayers, setPhase, setPhaseEndTime} = useGame();
+    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime} = useGame();
     const {role, setRole, color, setColor} = usePlayer();
 
     useEffect(() => {
@@ -29,6 +29,14 @@ export default function GamePage() {
             socket.off("role", receiveRole);
         }
     }, []);
+
+    useEffect(() => {
+        console.log(phase);
+        if(phase==="Starting" && players.length < roles.length) {
+            console.log("aborting game start");
+            setPhase("Waiting");
+        }
+    }, [players, roles]);
 
     const receiveRoomData = (data: { players: PlayerData[], roles: string[], phase: string }) => {
         setPlayers(data.players);

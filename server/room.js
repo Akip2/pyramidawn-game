@@ -94,6 +94,11 @@ class Room {
         if (this.started) {
 
         } else {
+            if(this.phase === "Starting") {
+                this.phase = "Waiting";
+                clearTimeout(this.timer);
+            }
+
             this.players.splice(this.players.indexOf(player), 1);
             this.io.to(this.id).emit("player-leave", player.serialize());
         }
