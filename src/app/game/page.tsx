@@ -1,7 +1,7 @@
 'use client'
 
-import Chat from "./chat";
-import PlayerContainer from "./player-container";
+import Chat from "../../components/game/chat";
+import PlayerContainer from "../../components/game/player-container";
 import {socket} from "@/data/socket";
 import React, {useEffect} from "react";
 import {useGame} from "@/app/context/game-provider";
