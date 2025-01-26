@@ -59,7 +59,9 @@ export default function Chat() {
         if (event.key === 'Enter') {
             const trimmedValue = inputValue.trim();
             if (trimmedValue.length > 0) {
-                socket.emit("send-message", new PlayerMessage(trimmedValue, playerName));
+                let message = new PlayerMessage(trimmedValue, playerName);
+                socket.emit("send-message", message);
+                setMessages((prevMessages) => prevMessages.concat(message));
             }
             setInputValue('');
         }
