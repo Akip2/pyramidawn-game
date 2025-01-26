@@ -31,9 +31,7 @@ export default function GamePage() {
     }, []);
 
     useEffect(() => {
-        console.log(phase);
         if(phase==="Starting" && players.length < roles.length) {
-            console.log("aborting game start");
             setPhase("Waiting");
         }
     }, [players, roles]);
@@ -74,7 +72,6 @@ export default function GamePage() {
     }
 
     const receiveRole = (role: string) => {
-        console.log(role);
         setRole(role);
     }
 
