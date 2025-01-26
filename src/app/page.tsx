@@ -8,12 +8,11 @@ import {usePlayer} from "@/context/player-provider";
 
 const defaultUsername = "Seth";
 
-
 export default function Home() {
     const [username, setUsername] = useState("");
     const router = useRouter();
 
-    const {playerName, setPlayerName} = usePlayer();
+    const {setPlayerName} = usePlayer();
 
     useEffect(() => {
         if (typeof window !== "undefined") {

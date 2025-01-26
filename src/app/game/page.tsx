@@ -10,7 +10,7 @@ import {usePlayer} from "@/context/player-provider";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime} = useGame();
-    const {role, setRole, color, setColor} = usePlayer();
+    const {setRole, setColor} = usePlayer();
 
     useEffect(() => {
         socket.emit("get-room-data");
