@@ -44,7 +44,7 @@ export default function Home() {
     };
 
     return (
-        <div className="h-screen w-screen flex flex-col justify-center">
+        <div className="h-screen w-screen flex flex-col justify-center bg-gray-950 text-white">
             <div className="h-fit w-fit p-4 flex flex-col justify-center bg-gray-800 justify-self-center self-center">
                 <input
                     className="text-black text-center"

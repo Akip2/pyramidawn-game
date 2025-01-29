@@ -76,7 +76,7 @@ export default function GamePage() {
     }
 
     return (
-        <div className="flex flex-row w-screen h-screen">
+        <div className="flex flex-row w-screen h-screen text-white">
             <Chat/>
             <PlayerContainer/>
         </div>

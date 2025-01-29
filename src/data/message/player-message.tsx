@@ -13,7 +13,9 @@ class PlayerMessage implements IMessage {
 
     getHTML(key: string) {
         return (
-            <p key={key}>{this.author} : {this.content}</p>
+            <div key={key} className="bg-gray-800 p-4 text-white">
+                <p key={key}><b>{this.author}</b> : {this.content}</p>
+            </div>
         );
     }
 }
