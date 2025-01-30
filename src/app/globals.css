@@ -70,3 +70,24 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+  direction: ltr;
+}
+
+::-webkit-scrollbar-track {
+  background: #2d3748;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #718096;
+}
+
+.scroll-left {
+  direction: rtl;
+}
+
+.scroll-left > * {
+  direction: ltr;
+}

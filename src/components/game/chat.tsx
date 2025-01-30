@@ -69,13 +69,14 @@ export default function Chat() {
 
     return (
         <div className="flex flex-col min-w-[200px] w-1/4 h-full">
-            <div className="w-full h-[95vh] bg-gray-900 border-solid">
+            <div className="flex flex-col px-2 gap-2 w-full h-[95vh] bg-gray-900 border-solid overflow-y-scroll scroll-left">
                 {messages.map((message, index) => message.getHTML(index.toString()))}
             </div>
 
             <div className="w-full h-[5vh] bg-gray-700 border-solid px-2">
                 <input
                     type="text"
+                    maxLength={80}
                     className="w-full h-full bg-inherit outline-none"
                     placeholder="Message chat"
                     value={inputValue}
