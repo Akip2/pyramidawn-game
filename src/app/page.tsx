@@ -1,10 +1,11 @@
 "use client";
 
 import {socket} from "@/data/socket";
-import styles from "@/app/styles.module.css";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 import {usePlayer} from "@/context/player-provider";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 
 const defaultUsername = "Seth";
 
@@ -45,18 +46,18 @@ export default function Home() {
 
     return (
         <div className="h-screen w-screen flex flex-col justify-center bg-gray-950 text-white">
-            <div className="h-fit w-fit p-4 flex flex-col justify-center bg-gray-800 justify-self-center self-center">
-                <input
-                    className="text-black text-center"
+            <div className="h-fit w-fit p-4 flex flex-col justify-center gap-2.5 bg-gray-800 justify-self-center self-center">
+                <Input
                     type="text"
                     maxLength={12}
                     placeholder={defaultUsername}
                     value={username}
                     onChange={(event) => setUsername(event.target.value)}
                 />
-                <button className={styles["button-main"]} onClick={quickPlay}>Quick Play</button>
-                <button className={styles["button-main"]}>Join Game</button>
-                <button className={styles["button-main"]}>Create Game</button>
+
+                <Button size="lg" onClick={quickPlay}>Quick Play</Button>
+                <Button size="lg">Join Game</Button>
+                <Button size="lg">Create Game</Button>
             </div>
         </div>
     );
