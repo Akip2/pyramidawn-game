@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {socket} from "@/data/socket";
 import {usePlayer} from "@/context/player-provider";
 import PlayerData from "@/data/player-data";
@@ -10,6 +10,8 @@ export default function Chat() {
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<IMessage[]>([]);
     const {playerName} = usePlayer();
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         socket.on("chat-message", receiveMessage);
@@ -24,6 +26,15 @@ export default function Chat() {
             socket.off("role", roleMessage);
         }
     }, []);
+
+    useEffect(() => {
+        const containerCurrent = messagesContainerRef.current;
+        const isAtBottom = containerCurrent!.scrollTop >= containerCurrent!.scrollHeight-containerCurrent!.clientHeight-300;
+
+        if(isAtBottom){
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [messages]);
 
     const playerJoin = (playerJoin: PlayerData) => {
         let message = new InfoMessage(`${playerJoin.name} joined`);
@@ -69,8 +80,9 @@ export default function Chat() {
 
     return (
         <div className="flex flex-col min-w-[200px] w-1/4 h-full">
-            <div className="flex flex-col px-2 gap-2 w-full h-[95vh] bg-gray-900 border-solid overflow-y-scroll scroll-left">
+            <div className="flex flex-col px-2 gap-2 w-full h-[95vh] bg-gray-900 border-solid overflow-y-scroll scroll-left" ref={messagesContainerRef}>
                 {messages.map((message, index) => message.getHTML(index.toString()))}
+                <div ref={messagesEndRef}/>
             </div>
 
             <div className="w-full h-[5vh] bg-gray-700 border-solid px-2">
