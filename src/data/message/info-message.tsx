@@ -1,7 +1,7 @@
 import React from "react";
 import IMessage from "./imessage";
 
-class InfoMessage implements IMessage {
+export default class InfoMessage implements IMessage {
     content: string;
     type: string = "info";
 
@@ -11,9 +11,9 @@ class InfoMessage implements IMessage {
 
     getHTML(key: string): React.JSX.Element {
         return (
-            <p key={key}>{this.content}</p>
+            <div key={key} className="py-2 text-gray-400 italic">
+                <p className="ml-4">{this.content}</p>
+            </div>
         );
     }
 }
-
-export default InfoMessage;
