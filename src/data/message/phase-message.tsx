@@ -1,7 +1,7 @@
 import React from "react";
 import IMessage from "./imessage";
 
-class PhaseMessage implements IMessage {
+export default class PhaseMessage implements IMessage {
     content: string;
     type: string = "phase";
 
@@ -17,5 +17,3 @@ class PhaseMessage implements IMessage {
         );
     }
 }
-
-export default PhaseMessage;

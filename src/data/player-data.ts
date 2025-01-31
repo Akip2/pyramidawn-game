@@ -1,4 +1,4 @@
-class PlayerData {
+export default class PlayerData {
     name: string;
     color: string;
     isAlive: boolean;
@@ -9,5 +9,3 @@ class PlayerData {
         this.isAlive = isAlive;
     }
 }
-
-export default PlayerData;

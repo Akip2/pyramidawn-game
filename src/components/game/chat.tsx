@@ -30,10 +30,10 @@ export default function Chat() {
 
     useEffect(() => {
         const containerCurrent = messagesContainerRef.current;
-        const isAtBottom = containerCurrent!.scrollTop >= containerCurrent!.scrollHeight-containerCurrent!.clientHeight-300;
+        const isAtBottom = containerCurrent!.scrollTop >= containerCurrent!.scrollHeight - containerCurrent!.clientHeight - 300;
 
-        if(isAtBottom){
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (isAtBottom) {
+            messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
         }
     }, [messages]);
 
@@ -81,7 +81,9 @@ export default function Chat() {
 
     return (
         <div className="flex flex-col min-w-[200px] w-1/4 h-full">
-            <div className="flex flex-col px-2 gap-2 w-full h-[95vh] bg-gray-900 border-solid overflow-y-scroll scroll-left" ref={messagesContainerRef}>
+            <div
+                className="flex flex-col px-2 gap-2 w-full h-[95vh] bg-gray-900 border-solid overflow-y-scroll scroll-left"
+                ref={messagesContainerRef}>
                 {messages.map((message, index) => message.getHTML(index.toString()))}
                 <div ref={messagesEndRef}/>
             </div>

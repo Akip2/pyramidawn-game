@@ -46,7 +46,8 @@ export default function Home() {
 
     return (
         <div className="h-screen w-screen flex flex-col justify-center bg-gray-950 text-white">
-            <div className="h-fit w-fit p-4 flex flex-col justify-center gap-2.5 bg-gray-800 justify-self-center self-center">
+            <div
+                className="h-fit w-fit p-4 flex flex-col justify-center gap-2.5 bg-gray-800 justify-self-center self-center">
                 <Input
                     type="text"
                     maxLength={12}

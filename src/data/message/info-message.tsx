@@ -1,7 +1,7 @@
 import React from "react";
 import IMessage from "./imessage";
 
-class InfoMessage implements IMessage {
+export default class InfoMessage implements IMessage {
     content: string;
     type: string = "info";
 
@@ -17,5 +17,3 @@ class InfoMessage implements IMessage {
         );
     }
 }
-
-export default InfoMessage;
