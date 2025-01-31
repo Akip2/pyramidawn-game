@@ -1,4 +1,4 @@
-class Player {
+export default class Player {
     constructor(id, n, c) {
         this.id = id;
         this.name = n;
@@ -22,5 +22,3 @@ class Player {
         }
     }
 }
-
-export default Player;

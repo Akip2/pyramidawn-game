@@ -11,14 +11,14 @@ function createPhase(name, duration) {
     }
 }
 
-class Room {
-    constructor(io, id, roles = defaultRoles) {
+export default class Room {
+    constructor(io, id, roles = [...defaultRoles]) {
         this.io = io;
         this.id = id;
 
         this.players = [];
         this.roles = roles;
-        this.remainingColors = possibleColors;
+        this.remainingColors = [...possibleColors];
 
         this.started = false;
         this.phase = "Waiting";
@@ -97,6 +97,7 @@ class Room {
                 clearTimeout(this.timer);
             }
 
+            this.remainingColors.push(player.color);
             this.players.splice(this.players.indexOf(player), 1);
             this.io.to(this.id).emit("player-leave", player.serialize());
         }
@@ -114,5 +115,3 @@ class Room {
         }
     }
 }
-
-export default Room;
