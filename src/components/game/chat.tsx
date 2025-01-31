@@ -5,6 +5,7 @@ import PlayerData from "@/data/player-data";
 import InfoMessage from "@/data/message/info-message";
 import IMessage from "@/data/message/imessage";
 import PlayerMessage from "@/data/message/player-message";
+import PhaseMessage from "@/data/message/phase-message";
 
 export default function Chat() {
     const [inputValue, setInputValue] = useState('');
@@ -47,7 +48,7 @@ export default function Chat() {
     }
 
     const roleMessage = (role: string) => {
-        let message = new InfoMessage(`Your role is : ${role} !`);
+        let message = new PhaseMessage(`Your role is : ${role} !`);
         setMessages((prevMessages) => prevMessages.concat(message));
     }
 
