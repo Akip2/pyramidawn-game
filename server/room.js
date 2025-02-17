@@ -70,7 +70,7 @@ export default class Room {
             this.started = true;
             this.phase = "Role";
 
-            this.send("phase-change", createPhase("Role", 20));
+            this.send("phase-change", createPhase("Role", 15));
             this.distributeRoles();
         }
     }
@@ -124,20 +124,20 @@ export default class Room {
         switch (this.phase) {
             case "Golem":
             case "Priest":
-                time = 30*1000;
+                time = 20;
                 const roleName = this.phase.toLowerCase();
                 validPhase = this.roleAction(roleName);
                 break;
 
             case "Temple":
-                time = 30*1000;
+                time = 20;
                 break;
         }
 
         if (validPhase) {
             this.send("phase-change", createPhase(this.phase, time));
             clearTimeout(this.timer);
-            this.timer = setTimeout(() => this.nextPhase(), time + 5000);
+            this.timer = setTimeout(() => this.nextPhase(), (time + 2)*1000);
         } else {
             this.nextPhase();
         }
