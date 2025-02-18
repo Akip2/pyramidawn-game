@@ -2,7 +2,7 @@ import Player from "./player.js";
 import {setTimeout} from "node:timers";
 
 const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
-const defaultRoles = ["priest", "golem", "cursed"];
+const defaultRoles = ["priest", "golem", "cursed", "slave", "slave"];
 const phases = ["Golem", "Priest", "Temple", "Cursed", "Morning", "Vote", "Judge"]
 
 function createPhase(name, duration) {
@@ -90,7 +90,7 @@ export default class Room {
         }
 
         clearTimeout(this.timer);
-        this.timer = setTimeout(() => this.nextPhase(), 20000);
+        this.timer = setTimeout(() => this.nextPhase(), 15000);
     }
 
     disconnectPlayer(playerId) {
@@ -126,7 +126,7 @@ export default class Room {
             case "Priest":
                 time = 20;
                 const roleName = this.phase.toLowerCase();
-                validPhase = this.roleAction(roleName);
+                validPhase = this.roleAction(roleName, 1);
                 break;
 
             case "Temple":
@@ -137,7 +137,7 @@ export default class Room {
         if (validPhase) {
             this.send("phase-change", createPhase(this.phase, time));
             clearTimeout(this.timer);
-            this.timer = setTimeout(() => this.nextPhase(), (time + 2)*1000);
+            this.timer = setTimeout(() => this.nextPhase(), time*1000);
         } else {
             this.nextPhase();
         }
@@ -147,10 +147,10 @@ export default class Room {
         return this.players.find(player => player.isRole(role));
     }
 
-    roleAction(role) {
+    roleAction(role, selectNb = 1) {
         const concernedPlayer = this.getPlayerByRole(role);
         if (concernedPlayer != null && concernedPlayer.isAlive) {
-            this.send(role + "-action", {}, concernedPlayer.id);
+            this.send("role-action", {actionName: role, selectNb: selectNb}, concernedPlayer.id);
             return true;
         } else {
             return false;
