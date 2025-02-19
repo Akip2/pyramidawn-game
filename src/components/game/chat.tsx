@@ -40,17 +40,17 @@ export default function Chat() {
     }, [messages]);
 
     function playerJoin(playerJoin: PlayerData) {
-        let message = new InfoMessage(`${playerJoin.name} joined`);
+        const message = new InfoMessage(`${playerJoin.name} joined`);
         setMessages((prevMessages) => prevMessages.concat(message));
     }
 
     function playerLeave(playerJoin: PlayerData) {
-        let message = new InfoMessage(`${playerJoin.name} left`);
+        const message = new InfoMessage(`${playerJoin.name} left`);
         setMessages((prevMessages) => prevMessages.concat(message));
     }
 
     function roleMessage(role: string) {
-        let message = new PhaseMessage(`Your role is : ${role} !`);
+        const message = new PhaseMessage(`Your role is : ${role} !`);
         setMessages((prevMessages) => prevMessages.concat(message));
         canTalk = false;
     }
@@ -74,7 +74,7 @@ export default function Chat() {
         if (event.key === 'Enter') {
             const trimmedValue = inputValue.trim();
             if (trimmedValue.length > 0) {
-                let message = new PlayerMessage(trimmedValue, new PlayerData(playerName, color));
+                const message = new PlayerMessage(trimmedValue, new PlayerData(playerName, color));
                 socket.emit("send-message", message);
                 setMessages((prevMessages) => prevMessages.concat(message));
             }

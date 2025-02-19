@@ -1,20 +1,11 @@
 import {useGame} from "@/context/game-provider";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 export default function PhaseDisplayer() {
     const {phase, players, roles, phaseEndTime} = useGame();
     const [timer, setTimer] = useState("0:00");
 
-    useEffect(() => {
-        updateTimer();
-        const secondInterval = setInterval(updateTimer, 1000);
-
-        return () => {
-            clearInterval(secondInterval);
-        }
-    }, [phase]);
-
-    function updateTimer() {
+    const updateTimer = useCallback(() => {
         let secondsLeft = Math.round((phaseEndTime - Date.now()) / 1000);
         let minutesLeft = Math.floor(secondsLeft / 60);
         secondsLeft %= 60;
@@ -31,7 +22,16 @@ export default function PhaseDisplayer() {
         } else {
             setTimer(`${minutesLeft}:${secondsLeft}`);
         }
-    }
+    }, [phaseEndTime])
+
+    useEffect(() => {
+        updateTimer();
+        const secondInterval = setInterval(updateTimer, 1000);
+
+        return () => {
+            clearInterval(secondInterval);
+        }
+    }, [phase, updateTimer]);
 
     return (
         <div
