@@ -11,7 +11,7 @@ export default function PlayerContainer() {
             <PhaseDisplayer/>
             <div className="flex row justify-around items-center w-full h-1/6 absolute bottom-0">
                 {players.map((player, index) => (
-                    <PlayerAvatar key={index} name={player.name} color={player.color}/>
+                    <PlayerAvatar key={index} player={player}/>
                 ))}
             </div>
         </div>

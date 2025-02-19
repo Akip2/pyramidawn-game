@@ -5,9 +5,11 @@ import {useState} from "react";
 import PlayerData from "@/data/player-data";
 import Avatar from "../../public/egyptian_0.svg";
 
-export default function PlayerAvatar(player: PlayerData) {
+export default function PlayerAvatar(props: {player: PlayerData}) {
     const [selected, setSelected] = useState(false);
     const {action, addPlayer, removePlayer} = useAction();
+
+    const player = props.player;
 
     let classNames = "";
     if(action) {
