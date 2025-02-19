@@ -7,6 +7,8 @@ import IMessage from "@/data/message/imessage";
 import PlayerMessage from "@/data/message/player-message";
 import PhaseMessage from "@/data/message/phase-message";
 
+let canTalk = true;
+
 export default function Chat() {
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<IMessage[]>([]);
@@ -50,6 +52,7 @@ export default function Chat() {
     const roleMessage = (role: string) => {
         let message = new PhaseMessage(`Your role is : ${role} !`);
         setMessages((prevMessages) => prevMessages.concat(message));
+        canTalk = false;
     }
 
     const receiveMessage = (data: IMessage) => {
@@ -88,13 +91,14 @@ export default function Chat() {
                 <div ref={messagesEndRef}/>
             </div>
 
-            <div className="w-full h-[5vh] bg-gray-700 border-solid px-2">
+            <div className={"w-full h-[5vh] border-solid px-5 "+(canTalk ? "bg-gray-700" : "bg-gray-800")}>
                 <input
+                    disabled={!canTalk}
                     type="text"
                     maxLength={80}
-                    className="w-full h-full bg-inherit outline-none"
-                    placeholder="Message chat"
-                    value={inputValue}
+                    className={"w-full h-full outline-none bg-inherit "+(!canTalk ? "read-only cursor-not-allowed" : "")}
+                    placeholder={canTalk ? "Write in chat" : "Unable to write"}
+                    value={canTalk ? inputValue : ""}
                     onKeyDown={sendMessage}
                     onChange={(event) => setInputValue(event.target.value)}
                 />

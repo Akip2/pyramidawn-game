@@ -7,9 +7,11 @@ import React, {useEffect} from "react";
 import {useGame} from "@/context/game-provider";
 import PlayerData from "@/data/player-data";
 import {usePlayer} from "@/context/player-provider";
+import {useAction} from "@/context/action-provider";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime} = useGame();
+    const {setAction, setSelectNb} = useAction();
     const {setRole, setColor} = usePlayer();
 
     useEffect(() => {
@@ -20,6 +22,7 @@ export default function GamePage() {
         socket.on("player-leave", playerLeave);
         socket.on("phase-change", phaseChange);
         socket.on("role", receiveRole);
+        socket.on("role-action", action);
 
         return () => {
             socket.off("room-data", receiveRoomData);
@@ -27,6 +30,7 @@ export default function GamePage() {
             socket.off("player-leave", playerLeave);
             socket.off("phase-change", phaseChange);
             socket.off("role", receiveRole);
+            socket.off("role-action", action);
         }
     }, []);
 
@@ -73,6 +77,11 @@ export default function GamePage() {
 
     const receiveRole = (role: string) => {
         setRole(role);
+    }
+
+    const action = (data: { actionName: string, selectNb: number}) => {
+        setAction(true);
+        setSelectNb(data.selectNb);
     }
 
     return (
