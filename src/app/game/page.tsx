@@ -40,7 +40,7 @@ export default function GamePage() {
         }
     }, [players, roles]);
 
-    const receiveRoomData = (data: { players: PlayerData[], roles: string[], phase: string }) => {
+    function receiveRoomData(data: { players: PlayerData[], roles: string[], phase: string }) {
         setPlayers(data.players);
         setRoles(data.roles);
         setPhase(data.phase);
@@ -53,7 +53,7 @@ export default function GamePage() {
         }
     }
 
-    const playerJoin = (player: PlayerData) => {
+    function playerJoin(player: PlayerData) {
         setPlayers((prevPlayers) => [...prevPlayers, player]);
 
         if (players.length == roles.length) {
@@ -61,25 +61,25 @@ export default function GamePage() {
         }
     }
 
-    const playerLeave = (player: PlayerData) => {
+    function playerLeave(player: PlayerData) {
         setPlayers((prevPlayers) => prevPlayers.filter((p) => p.color !== player.color));
     }
 
-    const phaseChange = (newPhase: { name: string, duration: number }) => {
+    function phaseChange(newPhase: { name: string, duration: number }) {
         setPhaseEndTime(Date.now() + newPhase.duration * 1000);
         setPhase(newPhase.name);
     }
 
-    const startingGame = () => {
+    function startingGame() {
         setPhase("Starting");
         setPhaseEndTime(Date.now() + 10000);
     }
 
-    const receiveRole = (role: string) => {
+    function receiveRole(role: string) {
         setRole(role);
     }
 
-    const action = (data: { actionName: string, selectNb: number}) => {
+    function action(data: { actionName: string, selectNb: number }) {
         setAction(true);
         setSelectNb(data.selectNb);
     }

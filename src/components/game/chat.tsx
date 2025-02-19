@@ -39,23 +39,23 @@ export default function Chat() {
         }
     }, [messages]);
 
-    const playerJoin = (playerJoin: PlayerData) => {
+    function playerJoin(playerJoin: PlayerData) {
         let message = new InfoMessage(`${playerJoin.name} joined`);
         setMessages((prevMessages) => prevMessages.concat(message));
     }
 
-    const playerLeave = (playerJoin: PlayerData) => {
+    function playerLeave(playerJoin: PlayerData) {
         let message = new InfoMessage(`${playerJoin.name} left`);
         setMessages((prevMessages) => prevMessages.concat(message));
     }
 
-    const roleMessage = (role: string) => {
+    function roleMessage(role: string) {
         let message = new PhaseMessage(`Your role is : ${role} !`);
         setMessages((prevMessages) => prevMessages.concat(message));
         canTalk = false;
     }
 
-    const receiveMessage = (data: IMessage) => {
+    function receiveMessage(data: IMessage) {
         let message: IMessage;
         switch (data.type) {
             case "player":
@@ -70,7 +70,7 @@ export default function Chat() {
         setMessages((prevMessages) => prevMessages.concat(message));
     }
 
-    const sendMessage = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    function sendMessage(event: React.KeyboardEvent<HTMLDivElement>) {
         if (event.key === 'Enter') {
             const trimmedValue = inputValue.trim();
             if (trimmedValue.length > 0) {
@@ -80,7 +80,7 @@ export default function Chat() {
             }
             setInputValue('');
         }
-    };
+    }
 
     return (
         <div className="flex flex-col min-w-[200px] w-1/4 h-full">
@@ -91,12 +91,12 @@ export default function Chat() {
                 <div ref={messagesEndRef}/>
             </div>
 
-            <div className={"w-full h-[5vh] border-solid px-5 "+(canTalk ? "bg-gray-700" : "bg-gray-800")}>
+            <div className={"w-full h-[5vh] border-solid px-5 " + (canTalk ? "bg-gray-700" : "bg-gray-800")}>
                 <input
                     disabled={!canTalk}
                     type="text"
                     maxLength={80}
-                    className={"w-full h-full outline-none bg-inherit "+(!canTalk ? "read-only cursor-not-allowed" : "")}
+                    className={"w-full h-full outline-none bg-inherit " + (!canTalk ? "read-only cursor-not-allowed" : "")}
                     placeholder={canTalk ? "Write in chat" : "Unable to write"}
                     value={canTalk ? inputValue : ""}
                     onKeyDown={sendMessage}

@@ -14,7 +14,7 @@ export default function PhaseDisplayer() {
         }
     }, [phase]);
 
-    const updateTimer = () => {
+    function updateTimer() {
         let secondsLeft = Math.round((phaseEndTime - Date.now()) / 1000);
         let minutesLeft = Math.floor(secondsLeft / 60);
         secondsLeft %= 60;
