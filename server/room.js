@@ -17,8 +17,8 @@ export default class Room {
         this.io = io;
         this.id = id;
 
-        this.players = [];
         this.roles = roles;
+        this.players = [];
         this.remainingColors = [...possibleColors];
 
         this.started = false;
@@ -93,6 +93,11 @@ export default class Room {
         this.timer = setTimeout(() => this.nextPhase(), 15000);
     }
 
+    /**
+     * Handles player disconnection
+     * If the game hasn't started, the player is removed from the room
+     * @param playerId
+     */
     disconnectPlayer(playerId) {
         let player = this.players.find(player => player.id === playerId);
 
@@ -110,6 +115,10 @@ export default class Room {
         }
     }
 
+    /**
+     * Passes the game to its next phase
+     * If a phase requirements are not met it is skipped
+     */
     nextPhase() {
         this.phaseIndex++;
         if (this.phaseIndex >= phases.length) {
@@ -147,6 +156,12 @@ export default class Room {
         return this.players.find(player => player.isRole(role));
     }
 
+    /**
+     * Activates the power of a player if a given role
+     * @param role role we are activating the power of
+     * @param selectNb number of players that the player doing the action has to select
+     * @returns {boolean} true if at least one player with this role exists and is still alive, false if not
+     */
     roleAction(role, selectNb = 1) {
         const concernedPlayer = this.getPlayerByRole(role);
         if (concernedPlayer != null && concernedPlayer.isAlive) {
@@ -157,6 +172,12 @@ export default class Room {
         }
     }
 
+    /**
+     * Sends a request to one or multiple players
+     * @param requestName name of the request
+     * @param data content of the request
+     * @param receiver id of the receiving socket/room
+     */
     send(requestName, data = {}, receiver = this.id) {
         this.io.to(receiver).emit(requestName, data);
     }

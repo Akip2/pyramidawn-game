@@ -24,7 +24,7 @@ export default function Home() {
         }
     }, [])
 
-    const setUpUsername = () => {
+    function setUpUsername() {
         let newUsername: string;
         if (username == null || username.trim() == "") {
             newUsername = defaultUsername;
@@ -38,11 +38,11 @@ export default function Home() {
         return newUsername;
     }
 
-    const quickPlay = () => {
+    function quickPlay() {
         const newUsername = setUpUsername();
         socket.emit("quick-play", newUsername);
         router.push('/game');
-    };
+    }
 
     return (
         <div className="h-screen w-screen flex flex-col justify-center bg-gray-950 text-white">
