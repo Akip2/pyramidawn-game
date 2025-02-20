@@ -2,6 +2,7 @@
 
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import PlayerData from "@/data/player-data";
+import {ChoiceType} from "@/context/choice-provider";
 
 const ActionContext = createContext<{
     action: boolean;
@@ -22,14 +23,7 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
     const [selectedPlayers, setSelectedPlayers] = useState<PlayerData[]>([]);
     const [selectNb, setSelectNb] = useState(1);
 
-    useEffect(() => {
-        console.log(selectedPlayers);
-    }, [selectedPlayers]);
-
     const addPlayer = (player: PlayerData) => {
-        if(selectNb === selectedPlayers.length) {
-            removePlayer(selectedPlayers[0]);
-        }
         setSelectedPlayers((prevPlayers) => [...prevPlayers, player]);
     };
 
