@@ -59,6 +59,16 @@ app.prepare().then(() => {
             let room = getPlayerRoom(socket.id);
             io.to(socket.id).emit("room-data", room.serialize());
         });
+
+        socket.on("pass", function () {
+            const room = getPlayerRoom(socket.id);
+            room.nextPhase();
+        });
+
+        socket.on("role-action", function (selectedPlayers) {
+            const room = getPlayerRoom(socket.id);
+            room.executeAction(selectedPlayers);
+        });
     });
 
     httpServer

@@ -8,10 +8,12 @@ import {useGame} from "@/context/game-provider";
 import PlayerData from "@/data/player-data";
 import {usePlayer} from "@/context/player-provider";
 import {useAction} from "@/context/action-provider";
+import {ChoiceType, useChoice} from "@/context/choice-provider";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime} = useGame();
-    const {setAction, setSelectNb} = useAction();
+    const {setSelectNb} = useAction();
+    const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {setRole, setColor} = usePlayer();
 
     const startingGame = useCallback(() => {
@@ -54,9 +56,31 @@ export default function GamePage() {
     }, [setRole])
 
     const action = useCallback((data: { actionName: string, selectNb: number }) => {
-        setAction(true);
         setSelectNb(data.selectNb);
-    }, [setAction, setSelectNb])
+        const actionName = data.actionName;
+
+        if (actionName !== "cursed") {
+            let question: string;
+
+            switch (actionName) {
+                case "golem":
+                    setChoiceType(ChoiceType.OK);
+                    question = "Choose a player to protect for this night.";
+                    break;
+
+                case "priest":
+                    setChoiceType(ChoiceType.ACTIVATE_POWER);
+                    question = "Summon Anubis?";
+                    break;
+
+                default:
+                    question = "Unknown";
+            }
+
+            setQuestion(question);
+            setVisibility(true);
+        }
+    }, [setSelectNb])
 
     useEffect(() => {
         socket.emit("get-room-data");

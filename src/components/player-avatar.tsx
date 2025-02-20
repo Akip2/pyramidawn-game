@@ -21,21 +21,6 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
         } else if (!selected && selectedPlayers.includes(player)) {
             setSelected(true);
         }
-
-        if(selectedPlayers.length === selectNb) { //Enough players selected to do the action
-            let question;
-            if (phase === "Golem") {
-                question = `From dust and stone, the Golem rises. Shall it protect ${player.name} tonight?`;
-            } else if (phase === "Priest") {
-                question = `Shall ${player.name} become the chosen Avatar of Anubis?`
-            } else {
-                question = "Unknown";
-            }
-
-            setChoiceType(ChoiceType.VALIDATE_CHOICE);
-            setQuestion(question)
-            setVisibility(true);
-        }
     }, [selectedPlayers]);
 
     let classNames = "";

@@ -2,7 +2,7 @@ import Player from "./player.js";
 import {setTimeout} from "node:timers";
 
 const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
-const defaultRoles = ["priest", "golem", "cursed", "slave", "slave"];
+const defaultRoles = ["priest", "golem", "cursed"]//, "slave", "slave"];
 const phases = ["Golem", "Priest", "Temple", "Cursed", "Morning", "Vote", "Judge"]
 
 function createPhase(name, duration) {
@@ -120,6 +120,8 @@ export default class Room {
      * If a phase requirements are not met it is skipped
      */
     nextPhase() {
+        clearTimeout(this.timer);
+
         this.phaseIndex++;
         if (this.phaseIndex >= phases.length) {
             this.phaseIndex = 0;
@@ -145,7 +147,6 @@ export default class Room {
 
         if (validPhase) {
             this.send("phase-change", createPhase(this.phase, time));
-            clearTimeout(this.timer);
             this.timer = setTimeout(() => this.nextPhase(), time*1000);
         } else {
             this.nextPhase();
@@ -170,6 +171,14 @@ export default class Room {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Execute the action of a player's role
+     * @param selectedPlayers players selected by the action
+     */
+    executeAction(selectedPlayers) {
+        console.log(selectedPlayers);
     }
 
     /**

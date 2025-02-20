@@ -5,7 +5,8 @@ import React, {createContext, useContext, useState} from 'react';
 export enum ChoiceType {
     OK = 0,
     VALIDATE_CHOICE = 1,
-    EVENTS = 2,
+    ACTIVATE_POWER = 2,
+    EVENTS = 3,
 }
 
 const ChoiceContext = createContext<{

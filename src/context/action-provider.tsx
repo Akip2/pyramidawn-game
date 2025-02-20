@@ -2,7 +2,8 @@
 
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import PlayerData from "@/data/player-data";
-import {ChoiceType} from "@/context/choice-provider";
+import {ChoiceType, useChoice} from "@/context/choice-provider";
+import {useGame} from "@/context/game-provider";
 
 const ActionContext = createContext<{
     action: boolean;
@@ -22,6 +23,25 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
     const [action, setAction] = useState(false);
     const [selectedPlayers, setSelectedPlayers] = useState<PlayerData[]>([]);
     const [selectNb, setSelectNb] = useState(1);
+    const {setChoiceType, setQuestion, setVisibility} = useChoice();
+    const {phase} = useGame();
+
+    useEffect(() => {
+        if(selectedPlayers.length === selectNb) { //Enough players selected to do the action
+            let question;
+            if (phase === "Golem") {
+                question = `From dust and stone, the Golem rises. Shall it protect ${selectedPlayers[0].name} tonight?`;
+            } else if (phase === "Priest") {
+                question = `Shall ${selectedPlayers[0].name} become the chosen Avatar of Anubis?`
+            } else {
+                question = "Unknown";
+            }
+
+            setChoiceType(ChoiceType.VALIDATE_CHOICE);
+            setQuestion(question);
+            setVisibility(true);
+        }
+    }, [selectedPlayers]);
 
     const addPlayer = (player: PlayerData) => {
         setSelectedPlayers((prevPlayers) => [...prevPlayers, player]);
