@@ -1,5 +1,6 @@
 import Player from "./player.js";
 import {setTimeout} from "node:timers";
+import Game from "./game.js";
 
 const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
 const defaultRoles = ["priest", "golem", "cursed"]//, "slave", "slave"];
@@ -17,9 +18,13 @@ export default class Room {
         this.io = io;
         this.id = id;
 
+        this.game = new Game();
+
         this.roles = roles;
         this.players = [];
         this.remainingColors = [...possibleColors];
+
+        this.activePlayersIds = []; //Array containing the id(s) of player(s) doing an action during this phase
 
         this.started = false;
         this.phase = "Waiting";
@@ -122,6 +127,11 @@ export default class Room {
     nextPhase() {
         clearTimeout(this.timer);
 
+        this.activePlayersIds.forEach((id) => {
+            this.send("stop-action", {}, id);
+        })
+        this.activePlayersIds = [];
+
         this.phaseIndex++;
         if (this.phaseIndex >= phases.length) {
             this.phaseIndex = 0;
@@ -137,17 +147,22 @@ export default class Room {
             case "Priest":
                 time = 20;
                 const roleName = this.phase.toLowerCase();
-                validPhase = this.roleAction(roleName, 1);
-                break;
+                const concernedPlayer = this.getPlayerByRole(roleName);
+                const powerAvailable = (roleName === "priest" ? this.game.isPowerAvailable(roleName) : true);
 
-            case "Temple":
-                time = 20;
+                if (concernedPlayer != null && concernedPlayer.isAlive && powerAvailable) {
+                    this.activePlayersIds.push(concernedPlayer.id);
+                    this.playerAction(concernedPlayer, 1);
+                } else {
+                    validPhase = false;
+                }
                 break;
+            //TODO
         }
 
         if (validPhase) {
             this.send("phase-change", createPhase(this.phase, time));
-            this.timer = setTimeout(() => this.nextPhase(), time*1000);
+            this.timer = setTimeout(() => this.nextPhase(), time * 1000);
         } else {
             this.nextPhase();
         }
@@ -158,27 +173,22 @@ export default class Room {
     }
 
     /**
-     * Activates the power of a player if a given role
-     * @param role role we are activating the power of
+     * Activates the power of a player
+     * @param player player we are activating the power of
      * @param selectNb number of players that the player doing the action has to select
-     * @returns {boolean} true if at least one player with this role exists and is still alive, false if not
      */
-    roleAction(role, selectNb = 1) {
-        const concernedPlayer = this.getPlayerByRole(role);
-        if (concernedPlayer != null && concernedPlayer.isAlive) {
-            this.send("role-action", {actionName: role, selectNb: selectNb}, concernedPlayer.id);
-            return true;
-        } else {
-            return false;
-        }
+    playerAction(player, selectNb = 1) {
+        console.log(player.role);
+        this.send("role-action", {actionName: player.role, selectNb: selectNb}, player.id);
     }
 
     /**
-     * Execute the action of a player's role
+     * Executes the action of a player's role
      * @param selectedPlayers players selected by the action
      */
     executeAction(selectedPlayers) {
-        console.log(selectedPlayers);
+        this.game.usePower(this.phase.toLowerCase(), selectedPlayers);
+        this.nextPhase();
     }
 
     /**

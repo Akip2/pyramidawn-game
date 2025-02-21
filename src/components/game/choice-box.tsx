@@ -2,7 +2,7 @@ import {useChoice} from "@/context/choice-provider";
 import {motion} from "framer-motion";
 import {Button} from "@/components/ui/button";
 import {ChoiceType} from "@/context/choice-provider";
-import {JSX, useCallback, useEffect} from "react";
+import {JSX, useCallback} from "react";
 import {useAction} from "@/context/action-provider";
 import {socket} from "@/data/socket";
 
@@ -70,7 +70,7 @@ export default function ChoiceBox() {
 
     return (
         <motion.div
-            className="flex flex-col text-center p-4 rounded-2xl min-h-[200px] h-1/3 min-w-[200px] max-w-[350px] bg-gray-800 self-center z-10 text-2xl justify-around"
+            className="flex flex-col text-center p-4 rounded-2xl min-h-[200px] h-1/3 min-w-[400px] max-w-[350px] bg-gray-800 self-center z-10 text-2xl justify-around"
             initial={{y: "-100vh"}}
             animate={visible ? {y: 0} : {y: "-100vh"}}
             transition={{duration: 0.8, ease: "easeInOut"}}

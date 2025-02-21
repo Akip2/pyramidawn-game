@@ -4,14 +4,10 @@ import {useAction} from "@/context/action-provider";
 import {useEffect, useState} from "react";
 import PlayerData from "@/data/player-data";
 import Avatar from "../../public/egyptian_0.svg";
-import {ChoiceType, useChoice} from "@/context/choice-provider";
-import {useGame} from "@/context/game-provider";
 
 export default function PlayerAvatar(props: { player: PlayerData }) {
     const [selected, setSelected] = useState(false);
-    const {action, addPlayer, removePlayer, selectedPlayers, selectNb} = useAction();
-    const {setVisibility, setChoiceType, setQuestion} = useChoice();
-    const {phase} = useGame();
+    const {action, addPlayer, removePlayer, selectedPlayers} = useAction();
 
     const player = props.player;
 
@@ -21,7 +17,7 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
         } else if (!selected && selectedPlayers.includes(player)) {
             setSelected(true);
         }
-    }, [selectedPlayers]);
+    }, [player, selected, selectedPlayers]);
 
     let classNames = "";
     if (action) {

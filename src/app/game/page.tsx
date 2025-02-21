@@ -12,7 +12,7 @@ import {ChoiceType, useChoice} from "@/context/choice-provider";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime} = useGame();
-    const {setSelectNb} = useAction();
+    const {setSelectNb, setAction} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {setRole, setColor} = usePlayer();
 
@@ -80,7 +80,12 @@ export default function GamePage() {
             setQuestion(question);
             setVisibility(true);
         }
-    }, [setSelectNb])
+    }, [setChoiceType, setQuestion, setSelectNb, setVisibility])
+
+    const stopAction = useCallback(() => {
+        setAction(false);
+        setVisibility(false);
+    }, [setAction, setVisibility]);
 
     useEffect(() => {
         socket.emit("get-room-data");
@@ -91,6 +96,7 @@ export default function GamePage() {
         socket.on("phase-change", phaseChange);
         socket.on("role", receiveRole);
         socket.on("role-action", action);
+        socket.on("stop-action", stopAction);
 
         return () => {
             socket.off("room-data", receiveRoomData);
@@ -99,8 +105,9 @@ export default function GamePage() {
             socket.off("phase-change", phaseChange);
             socket.off("role", receiveRole);
             socket.off("role-action", action);
+            socket.off("stop-action", stopAction);
         }
-    }, [action, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData]);
+    }, [action, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, stopAction]);
 
     useEffect(() => {
         if (phase === "Starting" && players.length < roles.length) {

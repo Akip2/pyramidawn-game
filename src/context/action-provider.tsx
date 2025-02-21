@@ -30,7 +30,7 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
         if(selectedPlayers.length === selectNb) { //Enough players selected to do the action
             let question;
             if (phase === "Golem") {
-                question = `From dust and stone, the Golem rises. Shall it protect ${selectedPlayers[0].name} tonight?`;
+                question = `Shall ${selectedPlayers[0].name} be protected tonight?`;
             } else if (phase === "Priest") {
                 question = `Shall ${selectedPlayers[0].name} become the chosen Avatar of Anubis?`
             } else {
@@ -41,7 +41,7 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
             setQuestion(question);
             setVisibility(true);
         }
-    }, [selectedPlayers]);
+    }, [phase, selectNb, selectedPlayers, setChoiceType, setQuestion, setVisibility]);
 
     const addPlayer = (player: PlayerData) => {
         setSelectedPlayers((prevPlayers) => [...prevPlayers, player]);
