@@ -3,7 +3,7 @@ import {setTimeout} from "node:timers";
 import Game from "./game.js";
 
 const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
-const defaultRoles = ["priest", "golem", "cursed"]//, "slave", "slave"];
+const defaultRoles = ["priest", "cursed", "cursed"]//, "slave", "slave"];
 const phases = ["Golem", "Priest", "Temple", "Cursed", "Morning", "Vote", "Judge"]
 
 function createPhase(name, duration) {
@@ -157,6 +157,16 @@ export default class Room {
                     validPhase = false;
                 }
                 break;
+
+            case "Cursed":
+                time = 300;
+                const cursed = this.getCursed();
+                if (cursed.length > 0) {
+                    this.allowVote(cursed);
+                } else {
+                    validPhase = false;
+                }
+                break;
             //TODO
         }
 
@@ -173,13 +183,35 @@ export default class Room {
     }
 
     /**
+     * Returns every living cursed players
+     * @returns {*} array containing all cursed players that are still alive
+     */
+    getCursed() {
+        return this.players.filter(player =>
+            (player.isRole("cursed") || player.isRole("judge"))
+            &&
+            player.isAlive
+        );
+    }
+
+    /**
      * Activates the power of a player
      * @param player player we are activating the power of
      * @param selectNb number of players that the player doing the action has to select
      */
     playerAction(player, selectNb = 1) {
-        console.log(player.role);
-        this.send("role-action", {actionName: player.role, selectNb: selectNb}, player.id);
+        this.send("action", {actionName: player.role, selectNb: selectNb}, player.id);
+    }
+
+    /**
+     * Sends requests to allow players to vote
+     * @param players array of players allowed to vote
+     */
+    allowVote(players) {
+        players.forEach((player) => {
+            this.send("action", {actionName: "vote", selectNb: 1}, player.id);
+            this.activePlayersIds.push(player.id);
+        })
     }
 
     /**
@@ -191,14 +223,44 @@ export default class Room {
         this.nextPhase();
     }
 
+    vote(voteData, voterSocket) {
+        const unvoted = voteData["unvoted"];
+        const voted = voteData["voted"];
+
+        if(unvoted != null) {
+            this.game.unvote(unvoted); //remove previous vote
+        }
+        if(voted != null) {
+            this.game.vote(voted);
+        }
+
+        console.log("NEW VOTE MAP :")
+        console.log(this.game.votes);
+
+        const updateData = {
+            unvoted: unvoted,
+            voted: voted
+        };
+
+        if(this.phase !== "Cursed") { //Village vote, we send the vote to everyone
+            this.send("voteUpdate", updateData, this.id, voterSocket);
+        } else {
+            const otherCursedIds = this.activePlayersIds.filter(playerId => playerId !== voterSocket.id);
+            otherCursedIds.forEach((playerId) => {
+                this.send("voteUpdate", updateData, playerId);
+            })
+        }
+    }
+
     /**
      * Sends a request to one or multiple players
      * @param requestName name of the request
      * @param data content of the request
      * @param receiver id of the receiving socket/room
+     * @param emitter socket of the author of the event (a player socket or the server)
      */
-    send(requestName, data = {}, receiver = this.id) {
-        this.io.to(receiver).emit(requestName, data);
+    send(requestName, data = {}, receiver = this.id, emitter = this.io) {
+        emitter.to(receiver).emit(requestName, data);
     }
 
     serialize() {

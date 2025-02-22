@@ -7,12 +7,12 @@ import React, {useCallback, useEffect} from "react";
 import {useGame} from "@/context/game-provider";
 import PlayerData from "@/data/player-data";
 import {usePlayer} from "@/context/player-provider";
-import {useAction} from "@/context/action-provider";
+import {ActionType, useAction} from "@/context/action-provider";
 import {ChoiceType, useChoice} from "@/context/choice-provider";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime} = useGame();
-    const {setSelectNb, setAction} = useAction();
+    const {setSelectNb, setAction, setActionType} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {setRole, setColor} = usePlayer();
 
@@ -59,9 +59,9 @@ export default function GamePage() {
         setSelectNb(data.selectNb);
         const actionName = data.actionName;
 
-        if (actionName !== "cursed") {
-            let question: string;
-
+        let question: string;
+        if (actionName !== "vote") {
+            setActionType(ActionType.POWER);
             switch (actionName) {
                 case "golem":
                     setChoiceType(ChoiceType.OK);
@@ -76,11 +76,15 @@ export default function GamePage() {
                 default:
                     question = "Unknown";
             }
-
-            setQuestion(question);
-            setVisibility(true);
+        } else {
+            setActionType(ActionType.VOTE);
+            setChoiceType(ChoiceType.OK);
+            question = "Vote a player to eliminate.";
         }
-    }, [setChoiceType, setQuestion, setSelectNb, setVisibility])
+
+        setQuestion(question);
+        setVisibility(true);
+    }, [setActionType, setChoiceType, setQuestion, setSelectNb, setVisibility])
 
     const stopAction = useCallback(() => {
         setAction(false);
@@ -95,7 +99,7 @@ export default function GamePage() {
         socket.on("player-leave", playerLeave);
         socket.on("phase-change", phaseChange);
         socket.on("role", receiveRole);
-        socket.on("role-action", action);
+        socket.on("action", action);
         socket.on("stop-action", stopAction);
 
         return () => {
@@ -104,7 +108,7 @@ export default function GamePage() {
             socket.off("player-leave", playerLeave);
             socket.off("phase-change", phaseChange);
             socket.off("role", receiveRole);
-            socket.off("role-action", action);
+            socket.off("action", action);
             socket.off("stop-action", stopAction);
         }
     }, [action, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, stopAction]);

@@ -8,11 +8,15 @@ export default class Game {
     }
 
     vote(player) {
-        if (this.votes.has(player.id)) {
-            this.votes.set(player.id, this.votes.get(player.id) + 1); //increase vote count on player
+        if (this.votes.has(player.color)) {
+            this.votes.set(player.color, this.votes.get(player.color) + 1); //increase vote count on player
         } else {
-            this.votes.set(player.id, 1);
+            this.votes.set(player.color, 1);
         }
+    }
+
+    unvote(player) {
+        this.votes.set(player.color, this.votes.get(player.color) - 1); //decrease vote count on player
     }
 
      /**

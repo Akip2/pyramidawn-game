@@ -56,7 +56,7 @@ app.prepare().then(() => {
         });
 
         socket.on("get-room-data", function () {
-            let room = getPlayerRoom(socket.id);
+            const room = getPlayerRoom(socket.id);
             io.to(socket.id).emit("room-data", room.serialize());
         });
 
@@ -69,6 +69,11 @@ app.prepare().then(() => {
             const room = getPlayerRoom(socket.id);
             room.executeAction(selectedPlayers);
         });
+
+        socket.on("vote", function (voteData) {
+            const room = getPlayerRoom(socket.id);
+            room.vote(voteData, socket);
+        })
     });
 
     httpServer
