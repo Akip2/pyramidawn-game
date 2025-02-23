@@ -6,6 +6,7 @@ import {GameProvider} from "@/context/game-provider";
 import React from "react";
 import {ActionProvider} from "@/context/action-provider";
 import {ChoiceProvider} from "@/context/choice-provider";
+import {VoteProvider} from "@/context/vote-provider";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -33,9 +34,11 @@ export default function RootLayout({
         <PlayerProvider>
             <GameProvider>
                 <ChoiceProvider>
-                    <ActionProvider>
-                        {children}
-                    </ActionProvider>
+                    <VoteProvider>
+                        <ActionProvider>
+                            {children}
+                        </ActionProvider>
+                    </VoteProvider>
                 </ChoiceProvider>
             </GameProvider>
         </PlayerProvider>

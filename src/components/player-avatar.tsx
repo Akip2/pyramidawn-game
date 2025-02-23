@@ -7,17 +7,17 @@ import Avatar from "../../public/egyptian_0.svg";
 
 export default function PlayerAvatar(props: { player: PlayerData }) {
     const [selected, setSelected] = useState(false);
-    const {action, addPlayer, removePlayer, selectedPlayers} = useAction();
+    const {action, addPlayer, removePlayer, isPlayerSelected} = useAction();
 
     const player = props.player;
 
     useEffect(() => {
-        if (selected && !selectedPlayers.includes(player)) {
+        if (selected && !isPlayerSelected(player)) {
             setSelected(false);
-        } else if (!selected && selectedPlayers.includes(player)) {
+        } else if (!selected && isPlayerSelected(player)) {
             setSelected(true);
         }
-    }, [player, selected, selectedPlayers]);
+    }, [isPlayerSelected, player, selected]);
 
     let classNames = "";
     if (action) {

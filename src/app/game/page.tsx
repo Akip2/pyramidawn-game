@@ -9,11 +9,13 @@ import PlayerData from "@/data/player-data";
 import {usePlayer} from "@/context/player-provider";
 import {ActionType, useAction} from "@/context/action-provider";
 import {ChoiceType, useChoice} from "@/context/choice-provider";
+import {useVote} from "@/context/vote-provider";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime} = useGame();
     const {setSelectNb, setAction, setActionType} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
+    const {addVote, removeVote, clearVotes} = useVote();
     const {setRole, setColor} = usePlayer();
 
     const startingGame = useCallback(() => {
@@ -89,7 +91,22 @@ export default function GamePage() {
     const stopAction = useCallback(() => {
         setAction(false);
         setVisibility(false);
-    }, [setAction, setVisibility]);
+        clearVotes();
+    }, [clearVotes, setAction, setVisibility]);
+
+    const updateVotes = useCallback((voteData: {voter: PlayerData, unvoted: PlayerData, voted: PlayerData}) => {
+        const voter = voteData.voter;
+        const unvoted = voteData.unvoted;
+        const voted = voteData.voted;
+        
+        if(unvoted != null) {
+            removeVote(unvoted.color, voter);
+        }
+        
+        if(voted != null) {
+            addVote(voted.color, voter);
+        }
+    }, [addVote, removeVote])
 
     useEffect(() => {
         socket.emit("get-room-data");
@@ -101,6 +118,7 @@ export default function GamePage() {
         socket.on("role", receiveRole);
         socket.on("action", action);
         socket.on("stop-action", stopAction);
+        socket.on("vote-update", updateVotes);
 
         return () => {
             socket.off("room-data", receiveRoomData);
@@ -110,6 +128,7 @@ export default function GamePage() {
             socket.off("role", receiveRole);
             socket.off("action", action);
             socket.off("stop-action", stopAction);
+            socket.off("vote-update", updateVotes);
         }
     }, [action, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, stopAction]);
 

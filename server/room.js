@@ -142,7 +142,7 @@ export default class Room {
         let time = 0;
         let validPhase = true;
 
-        switch (this.phase) {
+        switch (this.phase) {/*
             case "Golem":
             case "Priest":
                 time = 20;
@@ -157,6 +157,7 @@ export default class Room {
                     validPhase = false;
                 }
                 break;
+                */
 
             case "Cursed":
                 time = 300;
@@ -180,6 +181,10 @@ export default class Room {
 
     getPlayerByRole(role) {
         return this.players.find(player => player.isRole(role));
+    }
+
+    getPlayerById(id) {
+        return this.players.find(player => player.id === id);
     }
 
     /**
@@ -237,17 +242,20 @@ export default class Room {
         console.log("NEW VOTE MAP :")
         console.log(this.game.votes);
 
+        const voter = this.getPlayerById(voterSocket.id);
+
         const updateData = {
+            voter: voter.serialize(),
             unvoted: unvoted,
             voted: voted
         };
 
         if(this.phase !== "Cursed") { //Village vote, we send the vote to everyone
-            this.send("voteUpdate", updateData, this.id, voterSocket);
+            this.send("vote-update", updateData, this.id, voterSocket);
         } else {
             const otherCursedIds = this.activePlayersIds.filter(playerId => playerId !== voterSocket.id);
             otherCursedIds.forEach((playerId) => {
-                this.send("voteUpdate", updateData, playerId);
+                this.send("vote-update", updateData, playerId);
             })
         }
     }

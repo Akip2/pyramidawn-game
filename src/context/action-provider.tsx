@@ -5,6 +5,8 @@ import PlayerData from "@/data/player-data";
 import {ChoiceType, useChoice} from "@/context/choice-provider";
 import {useGame} from "@/context/game-provider";
 import {socket} from "@/data/socket";
+import {useVote} from "@/context/vote-provider";
+import {usePlayer} from "@/context/player-provider";
 
 export enum ActionType {
     POWER = 0,
@@ -24,6 +26,7 @@ const ActionContext = createContext<{
     selectedPlayers: PlayerData[];
     setSelectedPlayers: React.Dispatch<React.SetStateAction<PlayerData[]>>;
 
+    isPlayerSelected: (player: PlayerData) => boolean;
     addPlayer: (player: PlayerData) => void;
     removePlayer: (player: PlayerData) => void;
 }>(null!);
@@ -33,8 +36,11 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
     const [actionType, setActionType] = React.useState<ActionType>(ActionType.POWER);
     const [selectedPlayers, setSelectedPlayers] = useState<PlayerData[]>([]);
     const [selectNb, setSelectNb] = useState(1);
+
     const {setChoiceType, setQuestion, setVisibility} = useChoice();
     const {phase} = useGame();
+    const {addVote, removeVote} = useVote();
+    const {playerName, color} = usePlayer();
 
     useEffect(() => {
         if(actionType === ActionType.POWER && selectedPlayers.length === selectNb) { //Enough players selected to do the power
@@ -57,31 +63,50 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
 
     const addPlayer = (player: PlayerData) => {
         if(actionType === ActionType.VOTE) {
+            const voter = new PlayerData(playerName, color);
+            const unvoted = selectedPlayers[0];
+
             socket.emit("vote", {
-                unvoted: selectedPlayers[0], //previous vote
+                unvoted: unvoted, //previous vote
                 voted: player //current vote
             });
+
+            if(unvoted != null) {
+                removeVote(unvoted.color, voter);
+            }
+
+            addVote(player.color, voter);
         }
+
 
         if(selectedPlayers.length === selectNb) {
             setSelectedPlayers([player]);
         } else {
             setSelectedPlayers((prevPlayers) => [...prevPlayers, player]);
+            //setSelectedPlayers([player]);
         }
     };
 
     const removePlayer = (player: PlayerData) => {
+        const voter = new PlayerData(playerName, color);
+
         if(actionType === ActionType.VOTE) {
             socket.emit("vote", {
                 unvoted: player,
             });
+
+            removeVote(player.color, voter);
         }
 
         setSelectedPlayers((prevPlayers) => prevPlayers.filter((p) => p.color !== player.color));
     }
 
+    const isPlayerSelected = (player: PlayerData) => {
+        return selectedPlayers.some((p) => p.color === player.color);
+    }
+
     return (
-        <ActionContext.Provider value={{action, setAction, actionType, setActionType, selectedPlayers, setSelectedPlayers, addPlayer, removePlayer, selectNb, setSelectNb}}>
+        <ActionContext.Provider value={{action, setAction, actionType, setActionType, selectedPlayers, setSelectedPlayers, addPlayer, removePlayer, selectNb, setSelectNb, isPlayerSelected}}>
             {children}
         </ActionContext.Provider>
     );
