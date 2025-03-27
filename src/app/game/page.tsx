@@ -16,7 +16,7 @@ export default function GamePage() {
     const {setSelectNb, setAction, setActionType} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
-    const {setRole, setColor} = usePlayer();
+    const {setRole, setColor, isPlayerSetup} = usePlayer();
 
     const startingGame = useCallback(() => {
         setPhase("Starting");
@@ -27,14 +27,16 @@ export default function GamePage() {
         setPlayers(data.players);
         setRoles(data.roles);
         setPhase(data.phase);
-
-        const playerInfo = data.players[data.players.length - 1];
-        setColor(playerInfo.color);
+        
+        if(!isPlayerSetup()) {
+            const playerInfo = data.players[data.players.length - 1];
+            setColor(playerInfo.color);
+        }
 
         if (data.phase === "Starting") {
             startingGame();
         }
-    }, [setColor, setPhase, setPlayers, setRoles, startingGame])
+    }, [isPlayerSetup, setColor, setPhase, setPlayers, setRoles, startingGame])
 
     const playerJoin = useCallback((player: PlayerData) => {
         setPlayers((prevPlayers) => [...prevPlayers, player]);
@@ -130,7 +132,7 @@ export default function GamePage() {
             socket.off("stop-action", stopAction);
             socket.off("vote-update", updateVotes);
         }
-    }, [action, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, stopAction]);
+    }, [action, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, stopAction, updateVotes]);
 
     useEffect(() => {
         if (phase === "Starting" && players.length < roles.length) {

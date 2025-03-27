@@ -1,6 +1,6 @@
 'use client'
 
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, {createContext, useContext, useState} from 'react';
 import PlayerData from "@/data/player-data";
 
 const VoteContext = createContext<{
@@ -12,19 +12,14 @@ const VoteContext = createContext<{
 }>(null!);
 
 export const VoteProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
-    const [votes, setVotes] = useState(new Map());
-
-    useEffect(() => {
-        console.log(votes);
-    }, [votes]);
+    const [votes, setVotes] = useState<Map<string, PlayerData[]>>(new Map());
 
     function addVote(voted:string, voter: PlayerData) {
         setVotes((prevVotes) => {
             const newVotes = new Map(prevVotes); // cloning previous map
 
             const existingVotes = newVotes.get(voted) || [];
-            existingVotes.push(voter);
-            newVotes.set(voted, existingVotes);
+            newVotes.set(voted, [...existingVotes, voter]);
 
             return newVotes;
         });
