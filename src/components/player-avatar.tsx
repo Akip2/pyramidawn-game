@@ -1,20 +1,31 @@
 'use client'
 
 import {useAction} from "@/context/action-provider";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import PlayerData from "@/data/player-data";
 import Avatar from "../../public/egyptian_0.svg";
+import VoteContainer from "@/components/vote-container";
+import {useVote} from "@/context/vote-provider";
 
-export default function PlayerAvatar(props: {player: PlayerData}) {
+export default function PlayerAvatar(props: { player: PlayerData }) {
     const [selected, setSelected] = useState(false);
-    const {action, addPlayer, removePlayer} = useAction();
+    const {action, addPlayer, removePlayer, isPlayerSelected} = useAction();
+    const {votes} = useVote();
 
     const player = props.player;
 
+    useEffect(() => {
+        if (selected && !isPlayerSelected(player)) {
+            setSelected(false);
+        } else if (!selected && isPlayerSelected(player)) {
+            setSelected(true);
+        }
+    }, [isPlayerSelected, player, selected]);
+
     let classNames = "";
-    if(action) {
+    if (action) {
         classNames += "cursor-pointer ";
-        if(selected) {
+        if (selected) {
             classNames += "brightness-125";
         } else {
             classNames += "hover:brightness-110";
@@ -22,21 +33,23 @@ export default function PlayerAvatar(props: {player: PlayerData}) {
     }
 
     function avatarClick() {
-        if(action) {
-            if(!selected) {
-                addPlayer(player);
-            } else {
+        if (action) {
+            if(selected) {
                 removePlayer(player);
+            } else {
+                addPlayer(player);
             }
-            setSelected(!selected);
         }
     }
 
     return (
         <div className="flex flex-col items-center -translate-y-1/2" onClick={avatarClick}>
-            <p className="px-2 py-1 ml-5 bg-black bg-opacity-75 rounded-xl mb-2">{player.name}</p>
+            <div className="ml-5 mb-1">
+                <VoteContainer voters={votes.get(player.color) ?? []}/>
+            </div>
+            <p className="px-2 py-1 bg-black bg-opacity-75 rounded-xl ml-5 w-fit mb-2">{player.isAlive ? player.name : "ded"}</p>
 
-            <Avatar className={"w-1/2 transition duration-200 filter "+classNames} style={{ fill: player.color }} />
+            <Avatar className={"w-1/2 transition duration-200 filter " + classNames} style={{fill: player.color}}/>
         </div>
     )
 }

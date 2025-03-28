@@ -1,9 +1,10 @@
 import Player from "./player.js";
 import {setTimeout} from "node:timers";
+import Game from "./game.js";
 
 const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
-const defaultRoles = ["priest", "golem", "cursed", "slave", "slave"];
-const phases = ["Golem", "Priest", "Temple", "Cursed", "Morning", "Vote", "Judge"]
+const defaultRoles = ["priest", "wraith", "wraith", "golem", "slave"];
+const phases = ["Golem", "Priest", "Temple", "Wraith", "Morning", "Vote", "Judge"]
 
 function createPhase(name, duration) {
     return {
@@ -17,9 +18,13 @@ export default class Room {
         this.io = io;
         this.id = id;
 
+        this.game = new Game();
+
         this.roles = roles;
         this.players = [];
         this.remainingColors = [...possibleColors];
+
+        this.activePlayersIds = []; //Array containing the id(s) of player(s) doing an action during this phase
 
         this.started = false;
         this.phase = "Waiting";
@@ -120,6 +125,13 @@ export default class Room {
      * If a phase requirements are not met it is skipped
      */
     nextPhase() {
+        clearTimeout(this.timer);
+
+        this.activePlayersIds.forEach((id) => {
+            this.send("stop-action", {}, id);
+        })
+        this.activePlayersIds = [];
+
         this.phaseIndex++;
         if (this.phaseIndex >= phases.length) {
             this.phaseIndex = 0;
@@ -135,40 +147,146 @@ export default class Room {
             case "Priest":
                 time = 20;
                 const roleName = this.phase.toLowerCase();
-                validPhase = this.roleAction(roleName, 1);
+                const concernedPlayer = this.getPlayerByRole(roleName);
+                const powerAvailable = (roleName === "priest" ? this.game.isPowerAvailable(roleName) : true);
+
+                if (concernedPlayer != null && concernedPlayer.isAlive && powerAvailable) {
+                    this.activePlayersIds.push(concernedPlayer.id);
+                    this.playerAction(concernedPlayer, 1);
+                } else {
+                    validPhase = false;
+                }
                 break;
 
-            case "Temple":
-                time = 20;
+            case "Wraith":
+                time = 30;
+                const wraiths = this.getWraiths();
+                if (wraiths.length > 0) {
+                    this.allowVote(wraiths);
+                } else {
+                    validPhase = false;
+                }
                 break;
+
+
+            case "Morning":
+                time = 300;
+                const victimsColors = this.game.getVoteResult();
+
+                if(victimsColors.length > 0) {
+                    let victimColor;
+
+                    if(victimsColors.length > 1) {
+                        victimColor = victimsColors[Math.floor(Math.random() * victimsColors.length)];
+                    } else {
+                        victimColor = victimsColors[0];
+                    }
+
+                    this.kill(victimColor, "killed during the night");
+                }
+
+                break;
+            //TODO
         }
 
         if (validPhase) {
             this.send("phase-change", createPhase(this.phase, time));
-            clearTimeout(this.timer);
-            this.timer = setTimeout(() => this.nextPhase(), time*1000);
+            this.timer = setTimeout(() => this.nextPhase(), time * 1000);
         } else {
             this.nextPhase();
         }
+    }
+
+    kill(victimColor, reason) {
+        const victim = this.getPlayerByColor(victimColor);
+        victim.die();
+
+
+        this.send("death", {
+            reason: reason,
+            victim: victim
+        })
     }
 
     getPlayerByRole(role) {
         return this.players.find(player => player.isRole(role));
     }
 
+    getPlayerByColor(color) {
+        return this.players.find(player => player.color === color);
+    }
+
+    getPlayerById(id) {
+        return this.players.find(player => player.id === id);
+    }
+
     /**
-     * Activates the power of a player if a given role
-     * @param role role we are activating the power of
-     * @param selectNb number of players that the player doing the action has to select
-     * @returns {boolean} true if at least one player with this role exists and is still alive, false if not
+     * Returns every wraith players that are still alive
+     * @returns {*} array containing all wraith players that are still alive
      */
-    roleAction(role, selectNb = 1) {
-        const concernedPlayer = this.getPlayerByRole(role);
-        if (concernedPlayer != null && concernedPlayer.isAlive) {
-            this.send("role-action", {actionName: role, selectNb: selectNb}, concernedPlayer.id);
-            return true;
+    getWraiths() {
+        return this.players.filter(player =>
+            player.isRole("wraith")
+            &&
+            player.isAlive
+        );
+    }
+
+    /**
+     * Activates the power of a player
+     * @param player player we are activating the power of
+     * @param selectNb number of players that the player doing the action has to select
+     */
+    playerAction(player, selectNb = 1) {
+        this.send("action", {actionName: player.role, selectNb: selectNb}, player.id);
+    }
+
+    /**
+     * Sends requests to allow players to vote
+     * @param players array of players allowed to vote
+     */
+    allowVote(players) {
+        players.forEach((player) => {
+            this.send("action", {actionName: "vote", selectNb: 1}, player.id);
+            this.activePlayersIds.push(player.id);
+        })
+    }
+
+    /**
+     * Executes the action of a player's role
+     * @param selectedPlayers players selected by the action
+     */
+    executeAction(selectedPlayers) {
+        this.game.usePower(this.phase.toLowerCase(), selectedPlayers);
+        this.nextPhase();
+    }
+
+    vote(voteData, voterSocket) {
+        const unvoted = voteData["unvoted"];
+        const voted = voteData["voted"];
+
+        if(unvoted != null) {
+            this.game.unvote(unvoted); //remove previous vote
+        }
+        if(voted != null) {
+            this.game.vote(voted);
+        }
+
+        const voter = this.getPlayerById(voterSocket.id);
+
+        const updateData = {
+            voter: voter.serialize(),
+            unvoted: unvoted,
+            voted: voted
+        };
+
+        if(this.phase !== "Wraith") { //Village vote, we send the vote to everyone
+            this.send("vote-update", updateData, this.id, voterSocket);
         } else {
-            return false;
+            const otherWraithsIds = this.activePlayersIds.filter(playerId => playerId !== voterSocket.id);
+            otherWraithsIds.forEach((playerId) => {
+                this.send("vote-update", updateData, playerId);
+            })
         }
     }
 
@@ -177,9 +295,10 @@ export default class Room {
      * @param requestName name of the request
      * @param data content of the request
      * @param receiver id of the receiving socket/room
+     * @param emitter socket of the author of the event (a player socket or the server)
      */
-    send(requestName, data = {}, receiver = this.id) {
-        this.io.to(receiver).emit(requestName, data);
+    send(requestName, data = {}, receiver = this.id, emitter = this.io) {
+        emitter.to(receiver).emit(requestName, data);
     }
 
     serialize() {
