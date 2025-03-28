@@ -47,7 +47,7 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
             <div className="ml-5 mb-1">
                 <VoteContainer voters={votes.get(player.color) ?? []}/>
             </div>
-            <p className="px-2 py-1 bg-black bg-opacity-75 rounded-xl ml-5 w-fit mb-2">{player.name}</p>
+            <p className="px-2 py-1 bg-black bg-opacity-75 rounded-xl ml-5 w-fit mb-2">{player.isAlive ? player.name : "ded"}</p>
 
             <Avatar className={"w-1/2 transition duration-200 filter " + classNames} style={{fill: player.color}}/>
         </div>

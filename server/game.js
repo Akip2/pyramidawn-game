@@ -21,7 +21,7 @@ export default class Game {
 
      /**
       * Calculates the player(s) with the most votes
-      * @returns {*[]} an array containing the player with the most votes, in the cas of an equality the array contains multiple players
+      * @returns {*[]} an array containing the color(s) of the player(s) with the most votes, in the cas of an equality the array contains multiple players
       */
     getVoteResult() {
         let result = [];

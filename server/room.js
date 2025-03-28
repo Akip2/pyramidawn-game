@@ -3,8 +3,8 @@ import {setTimeout} from "node:timers";
 import Game from "./game.js";
 
 const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
-const defaultRoles = ["priest", "cursed", "cursed"]//, "slave", "slave"];
-const phases = ["Golem", "Priest", "Temple", "Cursed", "Morning", "Vote", "Judge"]
+const defaultRoles = ["priest", "wraith", "wraith", "golem", "slave"];
+const phases = ["Golem", "Priest", "Temple", "Wraith", "Morning", "Vote", "Judge"]
 
 function createPhase(name, duration) {
     return {
@@ -142,7 +142,7 @@ export default class Room {
         let time = 0;
         let validPhase = true;
 
-        switch (this.phase) {/*
+        switch (this.phase) {
             case "Golem":
             case "Priest":
                 time = 20;
@@ -157,16 +157,34 @@ export default class Room {
                     validPhase = false;
                 }
                 break;
-                */
 
-            case "Cursed":
-                time = 300;
-                const cursed = this.getCursed();
-                if (cursed.length > 0) {
-                    this.allowVote(cursed);
+            case "Wraith":
+                time = 30;
+                const wraiths = this.getWraiths();
+                if (wraiths.length > 0) {
+                    this.allowVote(wraiths);
                 } else {
                     validPhase = false;
                 }
+                break;
+
+
+            case "Morning":
+                time = 300;
+                const victimsColors = this.game.getVoteResult();
+
+                if(victimsColors.length > 0) {
+                    let victimColor;
+
+                    if(victimsColors.length > 1) {
+                        victimColor = victimsColors[Math.floor(Math.random() * victimsColors.length)];
+                    } else {
+                        victimColor = victimsColors[0];
+                    }
+
+                    this.kill(victimColor, "killed during the night");
+                }
+
                 break;
             //TODO
         }
@@ -179,8 +197,23 @@ export default class Room {
         }
     }
 
+    kill(victimColor, reason) {
+        const victim = this.getPlayerByColor(victimColor);
+        victim.die();
+
+
+        this.send("death", {
+            reason: reason,
+            victim: victim
+        })
+    }
+
     getPlayerByRole(role) {
         return this.players.find(player => player.isRole(role));
+    }
+
+    getPlayerByColor(color) {
+        return this.players.find(player => player.color === color);
     }
 
     getPlayerById(id) {
@@ -188,12 +221,12 @@ export default class Room {
     }
 
     /**
-     * Returns every living cursed players
-     * @returns {*} array containing all cursed players that are still alive
+     * Returns every wraith players that are still alive
+     * @returns {*} array containing all wraith players that are still alive
      */
-    getCursed() {
+    getWraiths() {
         return this.players.filter(player =>
-            (player.isRole("cursed") || player.isRole("judge"))
+            player.isRole("wraith")
             &&
             player.isAlive
         );
@@ -239,9 +272,6 @@ export default class Room {
             this.game.vote(voted);
         }
 
-        console.log("NEW VOTE MAP :")
-        console.log(this.game.votes);
-
         const voter = this.getPlayerById(voterSocket.id);
 
         const updateData = {
@@ -250,11 +280,11 @@ export default class Room {
             voted: voted
         };
 
-        if(this.phase !== "Cursed") { //Village vote, we send the vote to everyone
+        if(this.phase !== "Wraith") { //Village vote, we send the vote to everyone
             this.send("vote-update", updateData, this.id, voterSocket);
         } else {
-            const otherCursedIds = this.activePlayersIds.filter(playerId => playerId !== voterSocket.id);
-            otherCursedIds.forEach((playerId) => {
+            const otherWraithsIds = this.activePlayersIds.filter(playerId => playerId !== voterSocket.id);
+            otherWraithsIds.forEach((playerId) => {
                 this.send("vote-update", updateData, playerId);
             })
         }

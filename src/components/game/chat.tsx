@@ -6,6 +6,7 @@ import InfoMessage from "@/data/message/info-message";
 import IMessage from "@/data/message/imessage";
 import PlayerMessage from "@/data/message/player-message";
 import PhaseMessage from "@/data/message/phase-message";
+import DeathMessage from "@/data/message/death-message";
 
 let canTalk = true;
 
@@ -21,12 +22,14 @@ export default function Chat() {
         socket.on("player-join", playerJoin);
         socket.on("player-leave", playerLeave);
         socket.on("role", roleMessage);
+        socket.on("death", deathMessage);
 
         return () => {
             socket.off("chat-message", receiveMessage);
             socket.off("player-join", playerJoin);
             socket.off("player-leave", playerLeave);
             socket.off("role", roleMessage);
+            socket.off("death", deathMessage);
         }
     }, []);
 
@@ -53,6 +56,11 @@ export default function Chat() {
         const message = new PhaseMessage(`Your role is : ${role} !`);
         setMessages((prevMessages) => prevMessages.concat(message));
         canTalk = false;
+    }
+
+    function deathMessage(data: {victim: PlayerData, reason: string}) {
+         const message = new DeathMessage(data.victim, data.reason);
+         setMessages((prevMessages) => prevMessages.concat(message));
     }
 
     function receiveMessage(data: IMessage) {

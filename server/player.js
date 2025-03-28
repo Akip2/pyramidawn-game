@@ -14,6 +14,10 @@ export default class Player {
         return this.role === r;
     }
 
+    die() {
+        this.isAlive = false;
+    }
+
     serialize() {
         return {
             name: this.name,

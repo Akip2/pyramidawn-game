@@ -11,7 +11,7 @@ export default class PhaseMessage implements IMessage {
 
     getHTML(key: string) {
         return (
-            <div key={key} className="bg-yellow-700 p-4 text-white text-center break-words rounded-xl text-lg">
+            <div key={key} className="bg-blue-900 p-4 text-white text-center break-words rounded-lg text-lg">
                 <p>{this.content}</p>
             </div>
         );

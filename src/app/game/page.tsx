@@ -12,7 +12,7 @@ import {ChoiceType, useChoice} from "@/context/choice-provider";
 import {useVote} from "@/context/vote-provider";
 
 export default function GamePage() {
-    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime} = useGame();
+    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer} = useGame();
     const {setSelectNb, setAction, setActionType} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
@@ -37,6 +37,10 @@ export default function GamePage() {
             startingGame();
         }
     }, [isPlayerSetup, setColor, setPhase, setPlayers, setRoles, startingGame])
+
+    const death = useCallback((deathData: {victim: PlayerData, reason:string}) => {
+        killPlayer(deathData.victim);
+    }, [killPlayer])
 
     const playerJoin = useCallback((player: PlayerData) => {
         setPlayers((prevPlayers) => [...prevPlayers, player]);
@@ -121,6 +125,7 @@ export default function GamePage() {
         socket.on("action", action);
         socket.on("stop-action", stopAction);
         socket.on("vote-update", updateVotes);
+        socket.on("death", death);
 
         return () => {
             socket.off("room-data", receiveRoomData);
@@ -131,8 +136,9 @@ export default function GamePage() {
             socket.off("action", action);
             socket.off("stop-action", stopAction);
             socket.off("vote-update", updateVotes);
+            socket.off("death", death);
         }
-    }, [action, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, stopAction, updateVotes]);
+    }, [action, death, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, stopAction, updateVotes]);
 
     useEffect(() => {
         if (phase === "Starting" && players.length < roles.length) {
