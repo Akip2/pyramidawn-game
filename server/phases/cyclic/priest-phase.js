@@ -1,21 +1,22 @@
 import Phase from "./phase.js";
 
 export default class PriestPhase extends Phase {
-    constructor(room, game) {
+    constructor(room, playerManager, game) {
         super(room, 30, "Priest");
         this.game = game;
+        this.playerManager = playerManager;
     }
 
     execute() {
         super.execute();
-        const concernedPlayer = this.room.getPlayerByRole("priest");
+        const concernedPlayer = this.playerManager.getPlayerByRole("priest");
 
-        this.room.addActivePlayerId(concernedPlayer.id);
+        this.playerManager.addActivePlayerId(concernedPlayer.id);
         this.room.playerAction(concernedPlayer, 1);
     }
 
     isValid() {
-        const concernedPlayer = this.room.getPlayerByRole("priest");
+        const concernedPlayer = this.playerManager.getPlayerByRole("priest");
         return concernedPlayer != null && concernedPlayer.isAlive && this.game.isPowerAvailable("priest");
     }
 }
