@@ -1,15 +1,15 @@
-import Phase from "./phase.js";
+import Phase from "../phase.js";
 
 export default class WraithPhase extends Phase {
-    constructor(room, playerManager) {
-        super(room, 30, "Wraith");
+    constructor(requestSender, playerManager) {
+        super(requestSender, 30, "Wraith");
         this.playerManager = playerManager;
     }
 
     execute() {
         super.execute();
         const wraiths = this.playerManager.getWraiths();
-        this.room.allowVote(wraiths);
+        this.playerManager.allowVote(wraiths);
     }
 
     isValid() {

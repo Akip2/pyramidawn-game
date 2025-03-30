@@ -1,8 +1,8 @@
-import Phase from "./phase.js";
+import Phase from "../phase.js";
 
 export default class PriestPhase extends Phase {
-    constructor(room, playerManager, game) {
-        super(room, 30, "Priest");
+    constructor(requestSender, playerManager, game) {
+        super(requestSender, 30, "Priest");
         this.game = game;
         this.playerManager = playerManager;
     }
@@ -12,7 +12,7 @@ export default class PriestPhase extends Phase {
         const concernedPlayer = this.playerManager.getPlayerByRole("priest");
 
         this.playerManager.addActivePlayerId(concernedPlayer.id);
-        this.room.playerAction(concernedPlayer, 1);
+        this.playerManager.playerAction(concernedPlayer, 1, this.requestSender);
     }
 
     isValid() {

@@ -1,4 +1,4 @@
-import Phase from "../cyclic/phase.js";
+import Phase from "../phase.js";
 
 export default class StartingPhase extends Phase {
     constructor() {

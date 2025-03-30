@@ -1,13 +1,12 @@
 export default class Phase {
-    constructor(room, duration, name) {
-        this.room = room;
+    constructor(requestSender, duration, name) {
         this.duration = duration;
         this.name = name;
+        this.requestSender = requestSender;
     }
 
     execute() {
-        this.room.send("phase-change", this.serialize());
-        this.room.startPhaseTimer(this.duration);
+        this.requestSender.send("phase-change", this.serialize());
     }
 
     isValid() {

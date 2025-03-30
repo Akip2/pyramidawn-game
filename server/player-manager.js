@@ -22,11 +22,28 @@ export default class PlayerManager {
         return player;
     }
 
-    kill(victimColor) {
+
+    kill(victimColor, reason, sender) {
         const victim = this.getPlayerByColor(victimColor);
         victim.die();
 
-        return victim;
+        sender.send("death", {
+            reason: reason,
+            victim: victim
+        })
+    }
+
+    /**
+     * Sends requests to allow players to vote
+     * @param players array of players allowed to vote
+     * @param sender request sender
+     */
+    allowVote(players, sender) {
+        players.forEach((player) => {
+            sender.send("action", {actionName: "vote", selectNb: 1}, player.id);
+            this.addActivePlayerId(player.id);
+            //this.activePlayersIds.push(player.id);
+        })
     }
 
     stopActions(sender) {
@@ -34,6 +51,17 @@ export default class PlayerManager {
             sender.send("stop-action", {}, id);
         })
         this.activePlayersIds = [];
+    }
+
+
+    /**
+     * Activates the power of a player
+     * @param player player we are activating the power of
+     * @param selectNb number of players that the player doing the action has to select
+     * @param sender request sender
+     */
+    playerAction(player, selectNb = 1, sender) {
+        sender.send("action", {actionName: player.role, selectNb: selectNb}, player.id);
     }
 
     addActivePlayerId(playerId) {

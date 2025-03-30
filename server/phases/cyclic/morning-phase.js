@@ -1,9 +1,10 @@
-import Phase from "./phase.js";
+import Phase from "../phase.js";
 
 export default class MorningPhase extends Phase {
-    constructor(room, game) {
-        super(room, 300, "Morning");
+    constructor(requestSender, game, playerManager) {
+        super(requestSender, 300, "Morning");
         this.game = game;
+        this.playerManager = playerManager;
     }
 
     execute() {
@@ -20,7 +21,7 @@ export default class MorningPhase extends Phase {
                 victimColor = victimsColors[0];
             }
 
-            this.room.kill(victimColor, "killed during the night");
+            this.playerManager.kill(victimColor, "killed during the night", this.requestSender);
         }
     }
 }

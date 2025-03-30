@@ -8,6 +8,7 @@ import StartingPhase from "./phases/non-cyclic/starting-phase.js";
 import WaitingPhase from "./phases/non-cyclic/waiting-phase.js";
 import RolePhase from "./phases/non-cyclic/role-phase.js";
 import PlayerManager from "./player-manager.js";
+import RequestSender from "./request-sender.js";
 
 //const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
 const defaultRoles = ["priest", "wraith", "wraith", "golem", "slave"];
@@ -17,6 +18,8 @@ export default class Room {
     constructor(io, id, roles = [...defaultRoles]) {
         this.io = io;
         this.id = id;
+
+        this.requestSender = new RequestSender(io, id);
 
         this.game = new Game();
 
@@ -33,10 +36,10 @@ export default class Room {
         this.currentPhase = new WaitingPhase();
         this.phaseIndex = -1;
         this.phases = [
-            new GolemPhase(this, this.playerManager),
+            new GolemPhase(this.requestSender, this.playerManager),
             new PriestPhase(this, this.playerManager, this.game),
             new WraithPhase(this, this.playerManager),
-            new MorningPhase(this, this.game)
+            new MorningPhase(this.requestSender, this.game, this.playerManager)
         ]
 
         this.timer = null;
@@ -69,7 +72,8 @@ export default class Room {
     addPlayer(socket, playerName) {
         const player = this.playerManager.createNewPlayer(socket, playerName);
 
-        this.io.to(this.id).emit("player-join", player.serialize());
+        this.requestSender.send("player-join", player.serialize());
+        //this.io.to(this.id).emit("player-join", player.serialize());
         socket.join(this.id);
 
         if (this.playerManager.addPlayer(player) === this.roles.length) { //Add player and check if enough player to start game
@@ -83,7 +87,7 @@ export default class Room {
     startGame() {
         if (this.playerManager.getPlayerNb() === this.roles.length) {
             this.started = true;
-            this.currentPhase = new RolePhase(this, this.playerManager);
+            this.currentPhase = new RolePhase(this.requestSender, this.playerManager, this.roles);
             this.currentPhase.execute();
 
             clearTimeout(this.timer);
@@ -106,7 +110,8 @@ export default class Room {
                 clearTimeout(this.timer);
             }
 
-            this.io.to(this.id).emit("player-leave", removedPlayer.serialize());
+            this.requestSender.send("player-leave", removedPlayer.serialize());
+            //this.io.to(this.id).emit("player-leave", removedPlayer.serialize());
         }
     }
 
@@ -128,42 +133,13 @@ export default class Room {
 
         if(this.currentPhase.isValid()) {
             this.currentPhase.execute();
+            this.startPhaseTimer(this.currentPhase.duration);
         }
     }
 
     startPhaseTimer(time) {
         clearTimeout(this.timer);
         this.timer = setTimeout(() => this.nextPhase(), time * 1000);
-    }
-
-    kill(victimColor, reason) {
-        const victim = this.playerManager.kill(victimColor);
-
-        this.send("death", {
-            reason: reason,
-            victim: victim
-        })
-    }
-
-    /**
-     * Activates the power of a player
-     * @param player player we are activating the power of
-     * @param selectNb number of players that the player doing the action has to select
-     */
-    playerAction(player, selectNb = 1) {
-        this.send("action", {actionName: player.role, selectNb: selectNb}, player.id);
-    }
-
-    /**
-     * Sends requests to allow players to vote
-     * @param players array of players allowed to vote
-     */
-    allowVote(players) {
-        players.forEach((player) => {
-            this.send("action", {actionName: "vote", selectNb: 1}, player.id);
-            this.playerManager.addActivePlayerId(player.id);
-            //this.activePlayersIds.push(player.id);
-        })
     }
 
     /**
@@ -195,24 +171,13 @@ export default class Room {
         };
 
         if(this.currentPhase.name !== "Wraith") { //Village vote, we send the vote to everyone
-            this.send("vote-update", updateData, this.id, voterSocket);
+            this.requestSender.send("vote-update", updateData, this.id, voterSocket);
         } else {
             const otherWraithsIds = this.playerManager.activePlayersIds.filter(playerId => playerId !== voterSocket.id);
             otherWraithsIds.forEach((playerId) => {
-                this.send("vote-update", updateData, playerId);
+                this.requestSender.send("vote-update", updateData, playerId);
             })
         }
-    }
-
-    /**
-     * Sends a request to one or multiple players
-     * @param requestName name of the request
-     * @param data content of the request
-     * @param receiver id of the receiving socket/room
-     * @param emitter socket of the author of the event (a player socket or the server)
-     */
-    send(requestName, data = {}, receiver = this.id, emitter = this.io) {
-        emitter.to(receiver).emit(requestName, data);
     }
 
     serialize() {

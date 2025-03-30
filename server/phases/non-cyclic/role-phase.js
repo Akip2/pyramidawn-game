@@ -1,14 +1,15 @@
-import Phase from "../cyclic/phase.js";
+import Phase from "../phase.js";
 
 export default class RolePhase extends Phase {
-    constructor(room, playerManager) {
-        super(room, 15, "Role");
+    constructor(requestSender, playerManager, roles) {
+        super(requestSender, 15, "Role");
         this.playerManager = playerManager;
+        this.roles = roles;
     }
 
     execute() {
         super.execute();
-        const remainingRoles = this.room.roles;
+        const remainingRoles = [...this.roles];
 
         let playerIndex = 0;
 
@@ -18,7 +19,7 @@ export default class RolePhase extends Phase {
             const player = this.playerManager.players[playerIndex];
 
             player.setRole(role);
-            this.room.send("role", role, player.id);
+            this.requestSender.send("role", role, player.id);
             playerIndex++;
         }
     }
