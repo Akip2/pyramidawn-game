@@ -10,9 +10,7 @@ import RolePhase from "./phases/non-cyclic/role-phase.js";
 import PlayerManager from "./player-manager.js";
 import RequestSender from "./request-sender.js";
 
-//const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
 const defaultRoles = ["priest", "wraith", "wraith", "golem", "slave"];
-//const phases = ["Golem", "Priest", "Temple", "Wraith", "Morning", "Vote", "Judge"]
 
 export default class Room {
     constructor(io, id, roles = [...defaultRoles]) {
@@ -24,11 +22,7 @@ export default class Room {
         this.game = new Game();
 
         this.roles = roles;
-        //this.players = [];
         this.playerManager = new PlayerManager();
-        //this.remainingColors = [...possibleColors];
-
-        //this.activePlayersIds = []; //Array containing the id(s) of player(s) doing an action during this phase
 
         this.started = false;
 
@@ -62,18 +56,10 @@ export default class Room {
         return this.io.sockets.adapter.rooms.get(this.id) === undefined;
     }
 
-    /*
-    getFreeColor() {
-        const randomIndex = Math.floor(Math.random() * this.remainingColors.length);
-        return this.remainingColors.splice(randomIndex, 1)[0];
-    }
-     */
-
     addPlayer(socket, playerName) {
         const player = this.playerManager.createNewPlayer(socket, playerName);
 
         this.requestSender.send("player-join", player.serialize());
-        //this.io.to(this.id).emit("player-join", player.serialize());
         socket.join(this.id);
 
         if (this.playerManager.addPlayer(player) === this.roles.length) { //Add player and check if enough player to start game
@@ -111,7 +97,6 @@ export default class Room {
             }
 
             this.requestSender.send("player-leave", removedPlayer.serialize());
-            //this.io.to(this.id).emit("player-leave", removedPlayer.serialize());
         }
     }
 
