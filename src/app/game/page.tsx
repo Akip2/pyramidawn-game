@@ -12,11 +12,11 @@ import {ChoiceType, useChoice} from "@/context/choice-provider";
 import {useVote} from "@/context/vote-provider";
 
 export default function GamePage() {
-    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer} = useGame();
+    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer} = useGame();
     const {setSelectNb, setAction, setActionType} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
-    const {setRole, setColor, isPlayerSetup} = usePlayer();
+    const {setRole, setColor} = usePlayer();
 
     const startingGame = useCallback(() => {
         setPhase("Starting");
@@ -28,27 +28,23 @@ export default function GamePage() {
         setRoles(data.roles);
         setPhase(data.phase);
         
-        if(!isPlayerSetup()) {
-            const playerInfo = data.players[data.players.length - 1];
-            setColor(playerInfo.color);
-        }
+        const playerInfo = data.players[data.players.length - 1];
+        setColor(playerInfo.color);
 
         if (data.phase === "Starting") {
             startingGame();
         }
-    }, [isPlayerSetup, setColor, setPhase, setPlayers, setRoles, startingGame])
+    }, [setColor, setPhase, setPlayers, setRoles, startingGame])
 
     const death = useCallback((deathData: {victim: PlayerData, reason:string}) => {
         killPlayer(deathData.victim);
     }, [killPlayer])
 
     const playerJoin = useCallback((player: PlayerData) => {
-        setPlayers((prevPlayers) => [...prevPlayers, player]);
-
-        if (players.length == roles.length) {
+        if (addPlayer(player) === roles.length) {
             startingGame();
         }
-    }, [players.length, roles.length, setPlayers, startingGame])
+    }, [addPlayer, roles.length, startingGame])
 
     const playerLeave = useCallback((player: PlayerData) => {
         setPlayers((prevPlayers) => prevPlayers.filter((p) => p.color !== player.color));
@@ -115,8 +111,6 @@ export default function GamePage() {
     }, [addVote, removeVote])
 
     useEffect(() => {
-        socket.emit("get-room-data");
-
         socket.on("room-data", receiveRoomData);
         socket.on("player-join", playerJoin);
         socket.on("player-leave", playerLeave);
@@ -145,6 +139,10 @@ export default function GamePage() {
             setPhase("Waiting");
         }
     }, [phase, players, roles, setPhase]);
+
+    useEffect(() => {
+        socket.emit("get-room-data");
+    }, []);
 
     return (
         <div className="flex flex-row w-screen h-screen text-white">

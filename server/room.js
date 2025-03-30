@@ -1,34 +1,40 @@
-import Player from "./player.js";
 import {setTimeout} from "node:timers";
 import Game from "./game.js";
+import PriestPhase from "./phases/cyclic/priest-phase.js";
+import GolemPhase from "./phases/cyclic/golem-phase.js";
+import WraithPhase from "./phases/cyclic/wraith-phase.js";
+import MorningPhase from "./phases/cyclic/morning-phase.js";
+import StartingPhase from "./phases/non-cyclic/starting-phase.js";
+import WaitingPhase from "./phases/non-cyclic/waiting-phase.js";
+import RolePhase from "./phases/non-cyclic/role-phase.js";
+import PlayerManager from "./player-manager.js";
+import RequestSender from "./request-sender.js";
 
-const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
 const defaultRoles = ["priest", "wraith", "wraith", "golem", "slave"];
-const phases = ["Golem", "Priest", "Temple", "Wraith", "Morning", "Vote", "Judge"]
-
-function createPhase(name, duration) {
-    return {
-        name: name,
-        duration: duration,
-    }
-}
 
 export default class Room {
     constructor(io, id, roles = [...defaultRoles]) {
         this.io = io;
         this.id = id;
 
+        this.requestSender = new RequestSender(io, id);
+
         this.game = new Game();
 
         this.roles = roles;
-        this.players = [];
-        this.remainingColors = [...possibleColors];
-
-        this.activePlayersIds = []; //Array containing the id(s) of player(s) doing an action during this phase
+        this.playerManager = new PlayerManager();
 
         this.started = false;
-        this.phase = "Waiting";
+
+        /** @type {Phase} */
+        this.currentPhase = new WaitingPhase();
         this.phaseIndex = -1;
+        this.phases = [
+            new GolemPhase(this.requestSender, this.playerManager),
+            new PriestPhase(this.requestSender, this.playerManager, this.game),
+            new WraithPhase(this.requestSender, this.playerManager),
+            new MorningPhase(this.requestSender, this.game, this.playerManager)
+        ]
 
         this.timer = null;
     }
@@ -38,7 +44,7 @@ export default class Room {
     }
 
     hasPlayer(playerId) {
-        return !!this.players.find(player => player.id === playerId);
+        return this.playerManager.hasPlayer(playerId);
     }
 
     getNbPlayers() {
@@ -50,52 +56,29 @@ export default class Room {
         return this.io.sockets.adapter.rooms.get(this.id) === undefined;
     }
 
-    getFreeColor() {
-        const randomIndex = Math.floor(Math.random() * this.remainingColors.length);
-        return this.remainingColors.splice(randomIndex, 1)[0];
-    }
-
     addPlayer(socket, playerName) {
-        let player = new Player(socket.id, playerName, this.getFreeColor());
-        this.players.push(player);
+        const player = this.playerManager.createNewPlayer(socket, playerName);
 
-        this.io.to(this.id).emit("player-join", player.serialize());
+        this.requestSender.send("player-join", player.serialize());
         socket.join(this.id);
 
-        if (this.players.length === this.roles.length) {
-            this.phase = "Starting";
+        if (this.playerManager.addPlayer(player) === this.roles.length) { //Add player and check if enough player to start game
+            this.currentPhase = new StartingPhase();
 
             clearTimeout(this.timer);
-            this.timer = setTimeout(() => this.startGame(), 10000);
+            this.timer = setTimeout(() => this.startGame(), this.currentPhase.duration * 1000);
         }
     }
 
     startGame() {
-        if (this.players.length === this.roles.length) {
+        if (this.playerManager.getPlayerNb() === this.roles.length) {
             this.started = true;
-            this.phase = "Role";
+            this.currentPhase = new RolePhase(this.requestSender, this.playerManager, this.roles);
+            this.currentPhase.execute();
 
-            this.send("phase-change", createPhase("Role", 15));
-            this.distributeRoles();
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => this.nextPhase(), this.currentPhase.duration * 1000);
         }
-    }
-
-    distributeRoles() {
-        const remainingRoles = this.roles;
-        let playerIndex = 0;
-
-        while (playerIndex < this.players.length) {
-            const roleIndex = Math.floor(Math.random() * remainingRoles.length);
-            const role = remainingRoles.splice(roleIndex, 1)[0];
-            const player = this.players[playerIndex];
-
-            player.setRole(role);
-            this.send("role", role, player.id);
-            playerIndex++;
-        }
-
-        clearTimeout(this.timer);
-        this.timer = setTimeout(() => this.nextPhase(), 15000);
     }
 
     /**
@@ -104,19 +87,16 @@ export default class Room {
      * @param playerId
      */
     disconnectPlayer(playerId) {
-        let player = this.players.find(player => player.id === playerId);
-
         if (this.started) {
 
         } else {
-            if (this.phase === "Starting") {
-                this.phase = "Waiting";
+            const removedPlayer = this.playerManager.removePlayerById(playerId);
+            if (this.currentPhase.name === "Starting") {
+                this.currentPhase = new WaitingPhase();
                 clearTimeout(this.timer);
             }
 
-            this.remainingColors.push(player.color);
-            this.players.splice(this.players.indexOf(player), 1);
-            this.io.to(this.id).emit("player-leave", player.serialize());
+            this.requestSender.send("player-leave", removedPlayer.serialize());
         }
     }
 
@@ -127,129 +107,26 @@ export default class Room {
     nextPhase() {
         clearTimeout(this.timer);
 
-        this.activePlayersIds.forEach((id) => {
-            this.send("stop-action", {}, id);
-        })
-        this.activePlayersIds = [];
+        this.playerManager.stopActions(this.requestSender);
 
         this.phaseIndex++;
-        if (this.phaseIndex >= phases.length) {
+        if (this.phaseIndex >= this.phases.length) {
             this.phaseIndex = 0;
         }
 
-        this.phase = phases[this.phaseIndex];
+        this.currentPhase = this.phases[this.phaseIndex];
 
-        let time = 0;
-        let validPhase = true;
-
-        switch (this.phase) {
-            case "Golem":
-            case "Priest":
-                time = 20;
-                const roleName = this.phase.toLowerCase();
-                const concernedPlayer = this.getPlayerByRole(roleName);
-                const powerAvailable = (roleName === "priest" ? this.game.isPowerAvailable(roleName) : true);
-
-                if (concernedPlayer != null && concernedPlayer.isAlive && powerAvailable) {
-                    this.activePlayersIds.push(concernedPlayer.id);
-                    this.playerAction(concernedPlayer, 1);
-                } else {
-                    validPhase = false;
-                }
-                break;
-
-            case "Wraith":
-                time = 30;
-                const wraiths = this.getWraiths();
-                if (wraiths.length > 0) {
-                    this.allowVote(wraiths);
-                } else {
-                    validPhase = false;
-                }
-                break;
-
-
-            case "Morning":
-                time = 300;
-                const victimsColors = this.game.getVoteResult();
-
-                if(victimsColors.length > 0) {
-                    let victimColor;
-
-                    if(victimsColors.length > 1) {
-                        victimColor = victimsColors[Math.floor(Math.random() * victimsColors.length)];
-                    } else {
-                        victimColor = victimsColors[0];
-                    }
-
-                    this.kill(victimColor, "killed during the night");
-                }
-
-                break;
-            //TODO
-        }
-
-        if (validPhase) {
-            this.send("phase-change", createPhase(this.phase, time));
-            this.timer = setTimeout(() => this.nextPhase(), time * 1000);
+        if(this.currentPhase.isValid()) {
+            this.currentPhase.execute();
+            this.startPhaseTimer(this.currentPhase.duration);
         } else {
             this.nextPhase();
         }
     }
 
-    kill(victimColor, reason) {
-        const victim = this.getPlayerByColor(victimColor);
-        victim.die();
-
-
-        this.send("death", {
-            reason: reason,
-            victim: victim
-        })
-    }
-
-    getPlayerByRole(role) {
-        return this.players.find(player => player.isRole(role));
-    }
-
-    getPlayerByColor(color) {
-        return this.players.find(player => player.color === color);
-    }
-
-    getPlayerById(id) {
-        return this.players.find(player => player.id === id);
-    }
-
-    /**
-     * Returns every wraith players that are still alive
-     * @returns {*} array containing all wraith players that are still alive
-     */
-    getWraiths() {
-        return this.players.filter(player =>
-            player.isRole("wraith")
-            &&
-            player.isAlive
-        );
-    }
-
-    /**
-     * Activates the power of a player
-     * @param player player we are activating the power of
-     * @param selectNb number of players that the player doing the action has to select
-     */
-    playerAction(player, selectNb = 1) {
-        this.send("action", {actionName: player.role, selectNb: selectNb}, player.id);
-    }
-
-    /**
-     * Sends requests to allow players to vote
-     * @param players array of players allowed to vote
-     */
-    allowVote(players) {
-        players.forEach((player) => {
-            this.send("action", {actionName: "vote", selectNb: 1}, player.id);
-            this.activePlayersIds.push(player.id);
-        })
+    startPhaseTimer(time) {
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => this.nextPhase(), time * 1000);
     }
 
     /**
@@ -257,7 +134,7 @@ export default class Room {
      * @param selectedPlayers players selected by the action
      */
     executeAction(selectedPlayers) {
-        this.game.usePower(this.phase.toLowerCase(), selectedPlayers);
+        this.game.usePower(this.currentPhase.name.toLowerCase(), selectedPlayers);
         this.nextPhase();
     }
 
@@ -272,7 +149,7 @@ export default class Room {
             this.game.vote(voted);
         }
 
-        const voter = this.getPlayerById(voterSocket.id);
+        const voter = this.playerManager.getPlayerById(voterSocket.id);
 
         const updateData = {
             voter: voter.serialize(),
@@ -280,32 +157,21 @@ export default class Room {
             voted: voted
         };
 
-        if(this.phase !== "Wraith") { //Village vote, we send the vote to everyone
-            this.send("vote-update", updateData, this.id, voterSocket);
+        if(this.currentPhase.name !== "Wraith") { //Village vote, we send the vote to everyone
+            this.requestSender.send("vote-update", updateData, this.id, voterSocket);
         } else {
-            const otherWraithsIds = this.activePlayersIds.filter(playerId => playerId !== voterSocket.id);
+            const otherWraithsIds = this.playerManager.activePlayersIds.filter(playerId => playerId !== voterSocket.id);
             otherWraithsIds.forEach((playerId) => {
-                this.send("vote-update", updateData, playerId);
+                this.requestSender.send("vote-update", updateData, playerId);
             })
         }
     }
 
-    /**
-     * Sends a request to one or multiple players
-     * @param requestName name of the request
-     * @param data content of the request
-     * @param receiver id of the receiving socket/room
-     * @param emitter socket of the author of the event (a player socket or the server)
-     */
-    send(requestName, data = {}, receiver = this.id, emitter = this.io) {
-        emitter.to(receiver).emit(requestName, data);
-    }
-
     serialize() {
         return {
-            players: this.players.map(player => player.serialize()),
+            players: this.playerManager.serialize(),
             roles: this.roles,
-            phase: this.phase
+            phase: this.currentPhase.name
         }
     }
 }
