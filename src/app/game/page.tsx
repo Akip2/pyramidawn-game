@@ -12,7 +12,7 @@ import {ChoiceType, useChoice} from "@/context/choice-provider";
 import {useVote} from "@/context/vote-provider";
 
 export default function GamePage() {
-    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer} = useGame();
+    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer} = useGame();
     const {setSelectNb, setAction, setActionType} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
@@ -41,12 +41,10 @@ export default function GamePage() {
     }, [killPlayer])
 
     const playerJoin = useCallback((player: PlayerData) => {
-        setPlayers((prevPlayers) => [...prevPlayers, player]);
-
-        if (players.length == roles.length) {
+        if (addPlayer(player) === roles.length) {
             startingGame();
         }
-    }, [players.length, roles.length, setPlayers, startingGame])
+    }, [addPlayer, roles.length, startingGame])
 
     const playerLeave = useCallback((player: PlayerData) => {
         setPlayers((prevPlayers) => prevPlayers.filter((p) => p.color !== player.color));

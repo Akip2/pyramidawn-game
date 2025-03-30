@@ -37,8 +37,8 @@ export default class Room {
         this.phaseIndex = -1;
         this.phases = [
             new GolemPhase(this.requestSender, this.playerManager),
-            new PriestPhase(this, this.playerManager, this.game),
-            new WraithPhase(this, this.playerManager),
+            new PriestPhase(this.requestSender, this.playerManager, this.game),
+            new WraithPhase(this.requestSender, this.playerManager),
             new MorningPhase(this.requestSender, this.game, this.playerManager)
         ]
 
@@ -122,7 +122,7 @@ export default class Room {
     nextPhase() {
         clearTimeout(this.timer);
 
-        this.playerManager.stopActions(this);
+        this.playerManager.stopActions(this.requestSender);
 
         this.phaseIndex++;
         if (this.phaseIndex >= this.phases.length) {
@@ -134,6 +134,8 @@ export default class Room {
         if(this.currentPhase.isValid()) {
             this.currentPhase.execute();
             this.startPhaseTimer(this.currentPhase.duration);
+        } else {
+            this.nextPhase();
         }
     }
 
