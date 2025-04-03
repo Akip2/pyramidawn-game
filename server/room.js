@@ -22,7 +22,7 @@ export default class Room {
         this.game = new Game();
 
         this.roles = roles;
-        this.playerManager = new PlayerManager();
+        this.playerManager = new PlayerManager(this.requestSender);
 
         this.started = false;
 

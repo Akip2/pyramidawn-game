@@ -21,7 +21,7 @@ export default class MorningPhase extends Phase {
                 victimColor = victimsColors[0];
             }
 
-            this.playerManager.kill(victimColor, "killed during the night", this.requestSender);
+            this.playerManager.kill(victimColor, "killed during the night");
         }
     }
 }

@@ -12,7 +12,7 @@ export default class PriestPhase extends Phase {
         const concernedPlayer = this.playerManager.getPlayerByRole("priest");
 
         this.playerManager.addActivePlayerId(concernedPlayer.id);
-        this.playerManager.playerAction(concernedPlayer, 1, this.requestSender);
+        this.playerManager.playerAction(concernedPlayer, 1);
     }
 
     isValid() {

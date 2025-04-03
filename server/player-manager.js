@@ -3,10 +3,11 @@ import Player from "./player.js";
 const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
 
 export default class PlayerManager {
-    constructor() {
+    constructor(requestSender) {
         this.players = [];
         this.activePlayersIds = [];
         this.remainingColors = [...possibleColors];
+        this.requestSender = requestSender;
     }
 
     addPlayer(player) {
@@ -23,11 +24,11 @@ export default class PlayerManager {
     }
 
 
-    kill(victimColor, reason, sender) {
+    kill(victimColor, reason) {
         const victim = this.getPlayerByColor(victimColor);
         victim.die();
 
-        sender.send("death", {
+        this.requestSender.send("death", {
             reason: reason,
             victim: victim
         })
@@ -36,19 +37,17 @@ export default class PlayerManager {
     /**
      * Sends requests to allow players to vote
      * @param players array of players allowed to vote
-     * @param sender request sender
      */
-    allowVote(players, sender) {
+    allowVote(players) {
         players.forEach((player) => {
-            sender.send("action", {actionName: "vote", selectNb: 1}, player.id);
+            this.requestSender.send("action", {actionName: "vote", selectNb: 1}, player.id);
             this.addActivePlayerId(player.id);
-            //this.activePlayersIds.push(player.id);
         })
     }
 
-    stopActions(sender) {
+    stopActions() {
         this.activePlayersIds.forEach((id) => {
-            sender.send("stop-action", {}, id);
+            this.requestSender.send("stop-action", {}, id);
         })
         this.activePlayersIds = [];
     }
@@ -58,10 +57,9 @@ export default class PlayerManager {
      * Activates the power of a player
      * @param player player we are activating the power of
      * @param selectNb number of players that the player doing the action has to select
-     * @param sender request sender
      */
-    playerAction(player, selectNb = 1, sender) {
-        sender.send("action", {actionName: player.role, selectNb: selectNb}, player.id);
+    playerAction(player, selectNb = 1) {
+        this.requestSender.send("action", {actionName: player.role, selectNb: selectNb}, player.id);
     }
 
     addActivePlayerId(playerId) {
