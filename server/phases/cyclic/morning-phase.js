@@ -21,7 +21,15 @@ export default class MorningPhase extends Phase {
                 victimColor = victimsColors[0];
             }
 
-            this.playerManager.kill(victimColor, "killed during the night");
+            if(this.game.protectedPlayer === null || this.game.protectedPlayer.color !== victimColor) { //Killing player only if he wasn't protected by golem
+                this.playerManager.kill(victimColor, "killed during the night");
+            }
         }
+
+        if(this.game.chosenAvatar) {
+            this.playerManager.summon(this.game.chosenAvatar, this.game.dayCount % 2);
+        }
+
+        this.game.newDay();
     }
 }

@@ -1,4 +1,5 @@
 import Player from "./player.js";
+import {GODS} from "./const.js";
 
 const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
 
@@ -34,6 +35,25 @@ export default class PlayerManager {
         })
     }
 
+    summon(chosenAvatar, god) {
+        const player = this.getPlayerByColor(chosenAvatar.color);
+        const godName = GODS[god];
+
+        if(player.isAlive) {
+            player.becomeAvatar(godName)
+
+            this.requestSender.send("god-summoning", {
+                godName: godName,
+                avatar: player
+            });
+        } else {
+            this.requestSender.send("failed-summoning", {
+                godName: godName,
+                avatar: player
+            });
+        }
+    }
+
     /**
      * Sends requests to allow players to vote
      * @param players array of players allowed to vote
@@ -51,7 +71,6 @@ export default class PlayerManager {
         })
         this.activePlayersIds = [];
     }
-
 
     /**
      * Activates the power of a player
