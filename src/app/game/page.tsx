@@ -12,7 +12,7 @@ import {ChoiceType, useChoice} from "@/context/choice-provider";
 import {useVote} from "@/context/vote-provider";
 
 export default function GamePage() {
-    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer} = useGame();
+    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar} = useGame();
     const {setSelectNb, setAction, setActionType} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
@@ -108,7 +108,11 @@ export default function GamePage() {
         if(voted != null) {
             addVote(voted.color, voter);
         }
-    }, [addVote, removeVote])
+    }, [addVote, removeVote]);
+    
+    const godSummon = useCallback((data: {avatar: PlayerData, godName: string}) => {
+        makeAvatar(data.avatar, data.godName);
+    }, [makeAvatar]);
 
     useEffect(() => {
         socket.on("room-data", receiveRoomData);
@@ -120,6 +124,7 @@ export default function GamePage() {
         socket.on("stop-action", stopAction);
         socket.on("vote-update", updateVotes);
         socket.on("death", death);
+        socket.on("god-summoning", godSummon);
 
         return () => {
             socket.off("room-data", receiveRoomData);
@@ -131,8 +136,9 @@ export default function GamePage() {
             socket.off("stop-action", stopAction);
             socket.off("vote-update", updateVotes);
             socket.off("death", death);
+            socket.off("god-summoning", godSummon);
         }
-    }, [action, death, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, stopAction, updateVotes]);
+    }, [action, death, godSummon, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, stopAction, updateVotes]);
 
     useEffect(() => {
         if (phase === "Starting" && players.length < roles.length) {

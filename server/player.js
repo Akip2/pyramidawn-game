@@ -10,6 +10,14 @@ export default class Player {
         this.role = r;
     }
 
+    becomeAvatar(godName) {
+        this.isAvatarOf = godName;
+    }
+
+    isGod(godName) {
+        return this.isAvatarOf === godName;
+    }
+
     isRole(r) {
         return this.role === r;
     }
@@ -23,6 +31,7 @@ export default class Player {
             name: this.name,
             color: this.color,
             isAlive: this.isAlive,
+            isAvatarOf: this.isAvatarOf,
         }
     }
 }

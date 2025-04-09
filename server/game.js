@@ -5,6 +5,11 @@ export default class Game {
         this.powerAvailable = new Map();
         this.powerAvailable.set("priest", true);
         this.powerAvailable.set("judge", true);
+
+        this.dayCount = 0;
+
+        this.protectedPlayer = null;
+        this.chosenAvatar = null;
     }
 
     vote(player) {
@@ -17,6 +22,18 @@ export default class Game {
 
     unvote(player) {
         this.votes.set(player.color, this.votes.get(player.color) - 1); //decrease vote count on player
+    }
+
+    newDay() {
+        this.dayCount++;
+
+        this.clearVotes();
+        this.protectedPlayer = null;
+        this.chosenAvatar = null;
+    }
+
+    clearVotes() {
+        this.votes.clear();
     }
 
      /**

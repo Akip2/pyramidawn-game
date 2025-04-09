@@ -9,7 +9,7 @@ export default class GolemPhase extends Phase {
     execute() {
         super.execute();
         const concernedPlayer = this.playerManager.getPlayerByRole("golem");
-        this.playerManager.playerAction(concernedPlayer, 1, this.requestSender);
+        this.playerManager.playerAction(concernedPlayer, 1);
     }
 
     isValid() {
