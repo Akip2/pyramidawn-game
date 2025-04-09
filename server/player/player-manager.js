@@ -1,5 +1,5 @@
 import Player from "./player.js";
-import {GODS} from "./const.js";
+import {GODS} from "../const.js";
 
 const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
 
@@ -31,7 +31,8 @@ export default class PlayerManager {
 
         this.requestSender.send("death", {
             reason: reason,
-            victim: victim
+            victim: victim,
+            role: victim.role
         })
     }
 
