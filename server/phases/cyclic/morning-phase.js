@@ -3,7 +3,7 @@ import {wait} from "../../utils.js";
 
 export default class MorningPhase extends Phase {
     constructor(requestSender, game, playerManager) {
-        super(requestSender, 20, "Morning");
+        super(requestSender, 10, "Morning");
         this.game = game;
         this.playerManager = playerManager;
     }

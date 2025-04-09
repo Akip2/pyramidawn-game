@@ -14,18 +14,20 @@ export default class ExecutionPhase extends Phase {
         const voted = this.game.getVoteResult();
 
         if(voted.length > 0) {
-            let victim;
+            let victimColor;
             if (voted.length > 1) {
-                this.requestSender.send("equality", voted);
-                await wait(2.5);
-                victim = voted[Math.floor(Math.random() * voted.length)];
+                this.requestSender.send("equality");
+                await wait(4);
+                victimColor = voted[Math.floor(Math.random() * voted.length)];
             } else {
-                victim = voted[0];
+                victimColor = voted[0];
             }
 
-            this.playerManager.kill(victim, "executed by the village");
+            this.playerManager.kill(victimColor, "executed by the village");
         } else {
             this.requestSender.send("no-death");
         }
+
+        this.game.clearVotes();
     }
 }
