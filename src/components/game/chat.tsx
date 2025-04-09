@@ -7,6 +7,7 @@ import IMessage from "@/data/message/imessage";
 import PlayerMessage from "@/data/message/player-message";
 import PhaseMessage from "@/data/message/phase-message";
 import DeathMessage from "@/data/message/death-message";
+import SummonMessage from "@/data/message/summon-message";
 
 let canTalk = true;
 
@@ -24,12 +25,17 @@ export default function Chat() {
         socket.on("role", roleMessage);
         socket.on("death", deathMessage);
 
+        socket.on("god-summoning", godSummoning);
+        socket.on("failed-summoning", failedSummoning);
+
         return () => {
             socket.off("chat-message", receiveMessage);
             socket.off("player-join", playerJoin);
             socket.off("player-leave", playerLeave);
             socket.off("role", roleMessage);
             socket.off("death", deathMessage);
+            socket.off("god-summoning", godSummoning);
+            socket.off("failed-summoning", failedSummoning);
         }
     }, []);
 
@@ -41,6 +47,16 @@ export default function Chat() {
             messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
         }
     }, [messages]);
+
+    function godSummoning(data: {avatar: PlayerData, godName: string}) {
+        const message = new SummonMessage(data.avatar, data.godName, true);
+        setMessages((prevMessages) => prevMessages.concat(message));
+    }
+
+    function failedSummoning(data: {avatar: PlayerData, godName: string}) {
+        const message = new SummonMessage(data.avatar, data.godName, false);
+        setMessages((prevMessages) => prevMessages.concat(message));
+    }
 
     function playerJoin(playerJoin: PlayerData) {
         const message = new InfoMessage(`${playerJoin.name} joined`);

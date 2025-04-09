@@ -31,6 +31,7 @@ export default class Player {
             name: this.name,
             color: this.color,
             isAlive: this.isAlive,
+            isAvatarOf: this.isAvatarOf,
         }
     }
 }

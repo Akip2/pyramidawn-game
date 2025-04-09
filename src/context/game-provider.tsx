@@ -7,8 +7,6 @@ const GameContext = createContext<{
     players: PlayerData[];
     setPlayers: React.Dispatch<React.SetStateAction<PlayerData[]>>;
 
-    killPlayer: (player: PlayerData) => void;
-
     roles: string[];
     setRoles: React.Dispatch<React.SetStateAction<string[]>>;
 
@@ -19,6 +17,8 @@ const GameContext = createContext<{
     setPhaseEndTime: React.Dispatch<React.SetStateAction<number>>;
 
     addPlayer: (player: PlayerData) => number;
+    killPlayer: (player: PlayerData) => void;
+    makeAvatar: (player: PlayerData, godName: string) => void;
 }>(null!);
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -35,12 +35,20 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
         );
     }
 
+    function makeAvatar(player: PlayerData, godName: string) {
+        setPlayers(prevPlayers =>
+            prevPlayers.map(p =>
+                    p.color === player.color ? { ...p, isAvatarOf: godName } : p
+            )
+        );
+    }
+
     function addPlayer(player: PlayerData) {
         setPlayers((prevPlayers) => [...prevPlayers, player]);
         return players.length + 1;
     }
 
-    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer};
+    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar};
 
     return (
         <GameContext.Provider value={value}>

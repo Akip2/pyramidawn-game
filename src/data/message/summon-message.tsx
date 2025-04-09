@@ -2,12 +2,16 @@ import React from "react";
 import IMessage from "./imessage";
 import PlayerData from "@/data/player-data";
 
-export default class DeathMessage implements IMessage {
+export default class SummonMessage implements IMessage {
     type: string = "death";
     content: string;
 
-    constructor(v: PlayerData, reason: string) {
-        this.content = v.name + " was "+reason;
+    constructor(v: PlayerData, god: string, successful: boolean) {
+        if(successful) {
+            this.content = `${v.name} has been chosen by ${god}. They now carry the divine will`;
+        } else {
+            this.content = `${v.name} was lost before becoming ${god}’s avatar`;
+        }
     }
 
     getHTML(key: string): React.JSX.Element {
