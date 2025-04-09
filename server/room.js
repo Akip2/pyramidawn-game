@@ -35,7 +35,7 @@ export default class Room {
             new GolemPhase(this.requestSender, this.playerManager),
             new PriestPhase(this.requestSender, this.playerManager, this.game),
             new WraithPhase(this.requestSender, this.playerManager),
-            new MorningPhase(this.requestSender, this.game, this.playerManager),
+            new MorningPhase(this.requestSender, this.playerManager, this.game),
             new VotePhase(this.requestSender, this.playerManager),
             new ExecutionPhase(this.requestSender, this.playerManager, this.game),
         ]
