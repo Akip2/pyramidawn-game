@@ -8,9 +8,9 @@ export default class SummonMessage implements IMessage {
 
     constructor(v: PlayerData, god: string, successful: boolean) {
         if(successful) {
-            this.content = `${v.name} has been chosen by ${god}. They now carry the divine will`;
+            this.content = `${v.name} has been chosen by ${god}. They now carry the divine will.`;
         } else {
-            this.content = `${v.name} died before becoming ${god}’s avatar`;
+            this.content = `${v.name} died before becoming ${god}’s avatar.`;
         }
     }
 
