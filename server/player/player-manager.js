@@ -1,5 +1,5 @@
 import Player from "./player.js";
-import {GODS} from "./const.js";
+import {GODS} from "../const.js";
 
 const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
 

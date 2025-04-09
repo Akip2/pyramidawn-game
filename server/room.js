@@ -7,7 +7,7 @@ import MorningPhase from "./phases/cyclic/morning-phase.js";
 import StartingPhase from "./phases/non-cyclic/starting-phase.js";
 import WaitingPhase from "./phases/non-cyclic/waiting-phase.js";
 import RolePhase from "./phases/non-cyclic/role-phase.js";
-import PlayerManager from "./player-manager.js";
+import PlayerManager from "./player/player-manager.js";
 import RequestSender from "./request-sender.js";
 import VotePhase from "./phases/cyclic/vote-phase.js";
 import ExecutionPhase from "./phases/cyclic/execution-phase.js";
