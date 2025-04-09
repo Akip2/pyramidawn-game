@@ -22,5 +22,8 @@ export default class RolePhase extends Phase {
             this.requestSender.send("role", role, player.id);
             playerIndex++;
         }
+
+        const livingPlayers = this.playerManager.getLivingPlayers();
+        this.playerManager.disableChat(livingPlayers);
     }
 }

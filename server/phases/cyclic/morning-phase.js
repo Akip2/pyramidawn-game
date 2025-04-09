@@ -11,6 +11,9 @@ export default class MorningPhase extends Phase {
     async execute() {
         super.execute();
 
+        const livingPlayers = this.playerManager.getLivingPlayers();
+        this.playerManager.allowChat(livingPlayers);
+
         await wait(3);
 
         const victimsColors = this.game.getVoteResult();

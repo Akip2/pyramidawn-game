@@ -10,6 +10,7 @@ export default class WraithPhase extends Phase {
         super.execute();
         const wraiths = this.playerManager.getWraiths();
         this.playerManager.allowVote(wraiths);
+        this.playerManager.allowChat(wraiths);
     }
 
     isValid() {

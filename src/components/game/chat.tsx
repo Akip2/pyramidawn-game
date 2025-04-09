@@ -11,10 +11,9 @@ import SummonMessage from "@/data/message/summon-message";
 import EqualityMessage from "@/data/message/equality-message";
 import NoDeathMessage from "@/data/message/no-death-message";
 
-let canTalk = true;
-
 export default function Chat() {
     const [inputValue, setInputValue] = useState('');
+    const [canTalk, setCanTalk] = useState(true);
     const [messages, setMessages] = useState<IMessage[]>([]);
     const {playerName, color} = usePlayer();
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -22,6 +21,8 @@ export default function Chat() {
 
     useEffect(() => {
         socket.on("chat-message", receiveMessage);
+        socket.on("chat-allowed", chatAllow);
+        socket.on("chat-disabled", chatDisable);
         socket.on("player-join", playerJoin);
         socket.on("player-leave", playerLeave);
         socket.on("role", roleMessage);
@@ -34,6 +35,8 @@ export default function Chat() {
 
         return () => {
             socket.off("chat-message", receiveMessage);
+            socket.off("chat-allowed", chatAllow);
+            socket.off("chat-disabled", chatDisable);
             socket.off("player-join", playerJoin);
             socket.off("player-leave", playerLeave);
             socket.off("role", roleMessage);
@@ -87,7 +90,6 @@ export default function Chat() {
     function roleMessage(role: string) {
         const message = new PhaseMessage(`Your role is : ${role} !`);
         setMessages((prevMessages) => prevMessages.concat(message));
-        canTalk = false;
     }
 
     function deathMessage(data: {victim: PlayerData, reason: string}) {
@@ -120,6 +122,14 @@ export default function Chat() {
             }
             setInputValue('');
         }
+    }
+
+    function chatAllow() {
+        setCanTalk(true);
+    }
+
+    function chatDisable() {
+        setCanTalk(false);
     }
 
     return (

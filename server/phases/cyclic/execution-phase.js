@@ -29,5 +29,8 @@ export default class ExecutionPhase extends Phase {
         }
 
         this.game.clearVotes();
+
+        const livingPlayers = this.playerManager.getLivingPlayers();
+        this.playerManager.disableChat(livingPlayers);
     }
 }

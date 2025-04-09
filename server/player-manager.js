@@ -65,6 +65,28 @@ export default class PlayerManager {
         })
     }
 
+    /**
+     * Sends requests to allow players to chat
+     * @param players array of players allowed to chat
+     */
+    allowChat(players) {
+        players.forEach((player) => {
+            player.canTalk = true;
+            this.requestSender.send("chat-allowed", {}, player.id);
+        })
+    }
+
+    /**
+     * Sends requests to disable players' chat
+     * @param players array of players forbidden to chat
+     */
+    disableChat(players) {
+        players.forEach((player) => {
+            player.canTalk = false;
+            this.requestSender.send("chat-disabled", {}, player.id);
+        })
+    }
+
     stopActions() {
         this.activePlayersIds.forEach((id) => {
             this.requestSender.send("stop-action", {}, id);

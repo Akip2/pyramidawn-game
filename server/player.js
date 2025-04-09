@@ -4,6 +4,7 @@ export default class Player {
         this.name = n;
         this.color = c;
         this.isAlive = true;
+        this.canTalk = true;
     }
 
     setRole(r) {
