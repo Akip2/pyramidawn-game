@@ -10,7 +10,7 @@ import RolePhase from "./phases/non-cyclic/role-phase.js";
 import PlayerManager from "./player-manager.js";
 import RequestSender from "./request-sender.js";
 
-const defaultRoles = ["priest", "wraith","slave"];
+const defaultRoles = ["priest", "wraith", "golem", "slave", "slave"];
 
 export default class Room {
     constructor(io, id, roles = [...defaultRoles]) {
