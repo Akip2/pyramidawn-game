@@ -2,7 +2,7 @@ import Phase from "../phase.js";
 import {wait} from "../../utils.js";
 
 export default class MorningPhase extends Phase {
-    constructor(requestSender, game, playerManager) {
+    constructor(requestSender, playerManager, game) {
         super(requestSender, 10, "Morning");
         this.game = game;
         this.playerManager = playerManager;
@@ -14,7 +14,7 @@ export default class MorningPhase extends Phase {
         const livingPlayers = this.playerManager.getLivingPlayers();
         this.playerManager.allowChat(livingPlayers);
 
-        await wait(3);
+        await wait(2);
 
         const victimsColors = this.game.getVoteResult();
 

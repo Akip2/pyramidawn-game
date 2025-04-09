@@ -6,8 +6,8 @@ export default class DeathMessage implements IMessage {
     type: string = "death";
     content: string;
 
-    constructor(v: PlayerData, reason: string) {
-        this.content = v.name + " was "+reason;
+    constructor(v: PlayerData, reason: string, role: string) {
+        this.content = `${v.name} was ${reason}.\nHe was ${role}.`;
     }
 
     getHTML(key: string): React.JSX.Element {

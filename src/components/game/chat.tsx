@@ -92,8 +92,8 @@ export default function Chat() {
         setMessages((prevMessages) => prevMessages.concat(message));
     }
 
-    function deathMessage(data: {victim: PlayerData, reason: string}) {
-         const message = new DeathMessage(data.victim, data.reason);
+    function deathMessage(data: {victim: PlayerData, reason: string, role: string}) {
+         const message = new DeathMessage(data.victim, data.reason, data.role);
          setMessages((prevMessages) => prevMessages.concat(message));
     }
 
