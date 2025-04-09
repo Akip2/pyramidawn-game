@@ -18,10 +18,12 @@ export default class Game {
         } else {
             this.votes.set(player.color, 1);
         }
+        console.log(this.votes);
     }
 
     unvote(player) {
         this.votes.set(player.color, this.votes.get(player.color) - 1); //decrease vote count on player
+        console.log(this.votes);
     }
 
     newDay() {

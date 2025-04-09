@@ -25,6 +25,7 @@ const ActionContext = createContext<{
 
     selectedPlayers: PlayerData[];
     setSelectedPlayers: React.Dispatch<React.SetStateAction<PlayerData[]>>;
+    clearSelectedPlayers: () => void;
 
     isPlayerSelected: (player: PlayerData) => boolean;
     addPlayer: (player: PlayerData) => void;
@@ -105,8 +106,12 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
         return selectedPlayers.some((p) => p.color === player.color);
     }
 
+    const clearSelectedPlayers = () => {
+        setSelectedPlayers([]);
+    }
+
     return (
-        <ActionContext.Provider value={{action, setAction, actionType, setActionType, selectedPlayers, setSelectedPlayers, addPlayer, removePlayer, selectNb, setSelectNb, isPlayerSelected}}>
+        <ActionContext.Provider value={{action, setAction, actionType, setActionType, selectedPlayers, setSelectedPlayers, addPlayer, removePlayer, selectNb, setSelectNb, isPlayerSelected, clearSelectedPlayers}}>
             {children}
         </ActionContext.Provider>
     );

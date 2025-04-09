@@ -88,10 +88,7 @@ export default class PlayerManager {
         })
     }
 
-    stopActions() {
-        this.activePlayersIds.forEach((id) => {
-            this.requestSender.send("stop-action", {}, id);
-        })
+    clearActivePlayers() {
         this.activePlayersIds = [];
     }
 

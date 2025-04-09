@@ -13,7 +13,7 @@ import {useVote} from "@/context/vote-provider";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar} = useGame();
-    const {setSelectNb, setAction, setActionType} = useAction();
+    const {setSelectNb, setAction, setActionType, clearSelectedPlayers} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
     const {setRole, setColor} = usePlayer();
@@ -53,7 +53,13 @@ export default function GamePage() {
     const phaseChange = useCallback((newPhase: { name: string, duration: number }) => {
         setPhaseEndTime(Date.now() + newPhase.duration * 1000);
         setPhase(newPhase.name);
-    }, [setPhase, setPhaseEndTime])
+
+        setAction(false);
+        setVisibility(false);
+        clearVotes();
+        clearSelectedPlayers();
+        clearVotes();
+    }, [clearSelectedPlayers, clearVotes, setAction, setPhase, setPhaseEndTime, setVisibility])
 
     const receiveRole = useCallback((role: string) => {
         setRole(role);
@@ -90,12 +96,6 @@ export default function GamePage() {
         setVisibility(true);
     }, [setActionType, setChoiceType, setQuestion, setSelectNb, setVisibility])
 
-    const stopAction = useCallback(() => {
-        setAction(false);
-        setVisibility(false);
-        clearVotes();
-    }, [clearVotes, setAction, setVisibility]);
-
     const updateVotes = useCallback((voteData: {voter: PlayerData, unvoted: PlayerData, voted: PlayerData}) => {
         const voter = voteData.voter;
         const unvoted = voteData.unvoted;
@@ -121,7 +121,6 @@ export default function GamePage() {
         socket.on("phase-change", phaseChange);
         socket.on("role", receiveRole);
         socket.on("action", action);
-        socket.on("stop-action", stopAction);
         socket.on("vote-update", updateVotes);
         socket.on("death", death);
         socket.on("god-summoning", godSummon);
@@ -133,12 +132,11 @@ export default function GamePage() {
             socket.off("phase-change", phaseChange);
             socket.off("role", receiveRole);
             socket.off("action", action);
-            socket.off("stop-action", stopAction);
             socket.off("vote-update", updateVotes);
             socket.off("death", death);
             socket.off("god-summoning", godSummon);
         }
-    }, [action, death, godSummon, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, stopAction, updateVotes]);
+    }, [action, death, godSummon, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, updateVotes]);
 
     useEffect(() => {
         if (phase === "Starting" && players.length < roles.length) {

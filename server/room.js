@@ -111,7 +111,7 @@ export default class Room {
     nextPhase() {
         clearTimeout(this.timer);
 
-        this.playerManager.stopActions(this.requestSender);
+        this.playerManager.clearActivePlayers();
 
         this.phaseIndex++;
         if (this.phaseIndex >= this.phases.length) {
