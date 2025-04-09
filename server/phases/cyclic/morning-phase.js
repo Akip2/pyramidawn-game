@@ -1,14 +1,17 @@
 import Phase from "../phase.js";
+import {wait} from "../../utils.js";
 
 export default class MorningPhase extends Phase {
     constructor(requestSender, game, playerManager) {
-        super(requestSender, 300, "Morning");
+        super(requestSender, 20, "Morning");
         this.game = game;
         this.playerManager = playerManager;
     }
 
-    execute() {
+    async execute() {
         super.execute();
+
+        await wait(3);
 
         const victimsColors = this.game.getVoteResult();
 
@@ -23,6 +26,7 @@ export default class MorningPhase extends Phase {
 
             if(this.game.protectedPlayer === null || this.game.protectedPlayer.color !== victimColor) { //Killing player only if he wasn't protected by golem
                 this.playerManager.kill(victimColor, "killed during the night");
+                await wait(4.5);
             }
         }
 
