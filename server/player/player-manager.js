@@ -31,7 +31,8 @@ export default class PlayerManager {
 
         this.requestSender.send("death", {
             reason: reason,
-            victim: victim
+            victim: victim,
+            role: victim.role
         })
     }
 

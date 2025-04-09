@@ -90,8 +90,8 @@ export default function Chat() {
         canTalk = false;
     }
 
-    function deathMessage(data: {victim: PlayerData, reason: string}) {
-         const message = new DeathMessage(data.victim, data.reason);
+    function deathMessage(data: {victim: PlayerData, reason: string, role: string}) {
+         const message = new DeathMessage(data.victim, data.reason, data.role);
          setMessages((prevMessages) => prevMessages.concat(message));
     }
 

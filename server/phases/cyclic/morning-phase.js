@@ -11,7 +11,7 @@ export default class MorningPhase extends Phase {
     async execute() {
         super.execute();
 
-        await wait(3);
+        await wait(2.5);
 
         const victimsColors = this.game.getVoteResult();
 
