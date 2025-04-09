@@ -9,6 +9,8 @@ import WaitingPhase from "./phases/non-cyclic/waiting-phase.js";
 import RolePhase from "./phases/non-cyclic/role-phase.js";
 import PlayerManager from "./player-manager.js";
 import RequestSender from "./request-sender.js";
+import VotePhase from "./phases/cyclic/vote-phase.js";
+import ExecutionPhase from "./phases/cyclic/execution-phase.js";
 
 const defaultRoles = ["priest", "wraith", "golem", "slave", "slave"];
 
@@ -33,7 +35,9 @@ export default class Room {
             new GolemPhase(this.requestSender, this.playerManager),
             new PriestPhase(this.requestSender, this.playerManager, this.game),
             new WraithPhase(this.requestSender, this.playerManager),
-            new MorningPhase(this.requestSender, this.game, this.playerManager)
+            new MorningPhase(this.requestSender, this.game, this.playerManager),
+            new VotePhase(this.requestSender, this.playerManager),
+            new ExecutionPhase(this.requestSender, this.playerManager, this.game),
         ]
 
         this.timer = null;

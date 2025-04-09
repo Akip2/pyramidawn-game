@@ -8,6 +8,8 @@ import PlayerMessage from "@/data/message/player-message";
 import PhaseMessage from "@/data/message/phase-message";
 import DeathMessage from "@/data/message/death-message";
 import SummonMessage from "@/data/message/summon-message";
+import EqualityMessage from "@/data/message/equality-message";
+import NoDeathMessage from "@/data/message/no-death-message";
 
 let canTalk = true;
 
@@ -27,6 +29,8 @@ export default function Chat() {
 
         socket.on("god-summoning", godSummoning);
         socket.on("failed-summoning", failedSummoning);
+        socket.on("equality", equality);
+        socket.on("no-death", noDeath);
 
         return () => {
             socket.off("chat-message", receiveMessage);
@@ -36,6 +40,8 @@ export default function Chat() {
             socket.off("death", deathMessage);
             socket.off("god-summoning", godSummoning);
             socket.off("failed-summoning", failedSummoning);
+            socket.off("equality", equality);
+            socket.off("no-death", noDeath);
         }
     }, []);
 
@@ -47,6 +53,16 @@ export default function Chat() {
             messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
         }
     }, [messages]);
+
+    function equality() {
+        const message = new EqualityMessage();
+        setMessages((prevMessages) => prevMessages.concat(message));
+    }
+
+    function noDeath() {
+        const message = new NoDeathMessage();
+        setMessages((prevMessages) => prevMessages.concat(message));
+    }
 
     function godSummoning(data: {avatar: PlayerData, godName: string}) {
         const message = new SummonMessage(data.avatar, data.godName, true);

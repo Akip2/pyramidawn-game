@@ -126,6 +126,10 @@ export default class PlayerManager {
         );
     }
 
+    getLivingPlayers() {
+        return this.players.filter(player => player.isAlive);
+    }
+
     serialize() {
         return this.players.map(player => player.serialize());
     }
