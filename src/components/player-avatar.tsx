@@ -4,6 +4,7 @@ import {useAction} from "@/context/action-provider";
 import {useEffect, useState} from "react";
 import PlayerData from "@/data/player-data";
 import Avatar from "../../public/egyptian_0.svg";
+import Pot from "../../public/pot.svg";
 import VoteContainer from "@/components/vote-container";
 import {useVote} from "@/context/vote-provider";
 
@@ -23,7 +24,7 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
     }, [isPlayerSelected, player, selected]);
 
     let classNames = "";
-    if (action) {
+    if (action && player.isAlive) {
         classNames += "cursor-pointer ";
         if (selected) {
             classNames += "brightness-125";
@@ -33,8 +34,8 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
     }
 
     function avatarClick() {
-        if (action) {
-            if(selected) {
+        if (action && player.isAlive) {
+            if (selected) {
                 removePlayer(player);
             } else {
                 addPlayer(player);
@@ -44,20 +45,28 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
 
     return (
         <div className="flex flex-col items-center -translate-y-1/2" onClick={avatarClick}>
-            <div className="ml-5 mb-1">
-                <VoteContainer voters={votes.get(player.color) ?? []}/>
-            </div>
-            <p className="px-2 py-1 bg-black bg-opacity-75 rounded-xl ml-5 w-fit mb-2">{
-                player.isAlive
-                    ? player.name +
-                        (player.isAvatarOf
-                            ? ` (${player.isAvatarOf})`
-                            : ""
-                        )
-                    : "ded"
-            }</p>
+            {player.isAlive ? (
+                <>
+                    <div className="ml-5 mb-1">
+                        <VoteContainer voters={votes.get(player.color) ?? []}/>
+                    </div>
+                    <p className="px-2 py-1 bg-black bg-opacity-75 rounded-xl ml-5 w-fit mb-2">
+                        {player.name}
+                        {player.isAvatarOf ? ` (${player.isAvatarOf})` : ""}
+                    </p>
 
-            <Avatar className={"w-1/2 transition duration-200 filter " + classNames} style={{fill: player.color}}/>
+
+                    <Avatar
+                        className={"w-1/2 transition duration-200 filter " + classNames}
+                        style={{fill: player.color}}
+                    />
+                </>
+            ) : (
+                <Pot
+                    className="w-1/2"
+                    style={{fill: player.color}}
+                />
+            )}
         </div>
-    )
+    );
 }
