@@ -1,7 +1,25 @@
 import Player from "./player.js";
 import {GODS} from "../const.js";
 
-const possibleColors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "black", "white"];
+const possibleColors = [
+    '#e6194b', // Red (bright)
+    '#3cb440', // Green (medium)
+    '#ffdd57', // Yellow
+    '#4363d8', // Blue
+    '#f58231', // Orange
+    '#911eb4', // Purple
+    '#46f0f0', // Cyan (light)
+    '#f032e6', // Pink
+    '#fabebe', // Pink (light)
+    '#008080', // Teal
+    '#e6beff', // Lavender
+    '#9a6324', // Brown
+    '#fffac8', // Yellow (pale)
+    '#800000', // Bordeaux
+    '#808000', // Olive
+    '#000075', // Blue (marine)
+    '#000000', // Black
+];
 
 export default class PlayerManager {
     constructor(requestSender) {
@@ -23,7 +41,6 @@ export default class PlayerManager {
 
         return player;
     }
-
 
     kill(victimColor, reason) {
         const victim = this.getPlayerByColor(victimColor);
