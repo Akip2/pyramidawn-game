@@ -24,7 +24,7 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
     }, [isPlayerSelected, player, selected]);
 
     let classNames = "";
-    if (action && player.isAlive) {
+    if (action) {
         classNames += "cursor-pointer ";
         if (selected) {
             classNames += "brightness-125";
@@ -44,7 +44,7 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
     }
 
     return (
-        <div className="flex flex-col items-center -translate-y-1/2" onClick={avatarClick}>
+        <div className="flex flex-col items-center h-full mb-4" onClick={avatarClick}>
             {player.isAlive ? (
                 <>
                     <div className="ml-5 mb-1">
@@ -57,7 +57,7 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
 
 
                     <Avatar
-                        className={"w-1/2 transition duration-200 filter " + classNames}
+                        className={"transition duration-200 filter h-full " + classNames}
                         style={{fill: player.color}}
                     />
                 </>

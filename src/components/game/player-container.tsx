@@ -8,7 +8,7 @@ export default function PlayerContainer() {
 
     return (
         <div
-            className="flex flex-col w-full relative items-center justify-center"
+            className="flex flex-col w-full h-full relative items-center justify-center"
             style={{
                 backgroundImage: `url('/background.jpg')`,
                 backgroundSize: "cover",
@@ -17,7 +17,7 @@ export default function PlayerContainer() {
         >
             <PhaseDisplayer/>
             <ChoiceBox/>
-            <div className="flex row justify-around items-center w-full h-1/6 absolute bottom-0">
+            <div className="flex row justify-around items-end w-full h-1/2 min-h-[300px] pointer-events-none absolute bottom-0">
                 {players.map((player, index) => (
                     <PlayerAvatar key={index} player={player}/>
                 ))}
