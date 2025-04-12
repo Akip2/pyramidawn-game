@@ -17,7 +17,7 @@ export default function PlayerContainer() {
         >
             <PhaseDisplayer/>
             <ChoiceBox/>
-            <div className="flex row justify-around items-end w-full h-1/2 min-h-[300px] pointer-events-none absolute bottom-0">
+            <div className="flex row justify-around items-end w-full h-1/2 min-h-[340px] absolute bottom-0 mb-[5vh]">
                 {players.map((player, index) => (
                     <PlayerAvatar key={index} player={player}/>
                 ))}
