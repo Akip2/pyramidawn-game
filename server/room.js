@@ -11,13 +11,15 @@ import PlayerManager from "./player/player-manager.js";
 import RequestSender from "./request-sender.js";
 import VotePhase from "./phases/cyclic/vote-phase.js";
 import ExecutionPhase from "./phases/cyclic/execution-phase.js";
+import {STATUS} from "./const.js";
 
 const defaultRoles = ["priest", "wraith", "golem", "slave", "slave"];
 
 export default class Room {
-    constructor(io, id, roles = [...defaultRoles]) {
+    constructor(io, id, gameEndCallback, roles = [...defaultRoles]) {
         this.io = io;
         this.id = id;
+        this.gameEndCallback = gameEndCallback;
 
         this.requestSender = new RequestSender(io, id);
 
@@ -130,7 +132,13 @@ export default class Room {
 
     startPhaseTimer(time) {
         clearTimeout(this.timer);
-        this.timer = setTimeout(() => this.nextPhase(), time * 1000);
+        this.timer = setTimeout(() => {
+            if(this.game.status === STATUS.STILL_GOING) {
+                this.nextPhase();
+            } else {
+                this.gameEndCallback(this.id);
+            }
+        }, time * 1000);
     }
 
     /**

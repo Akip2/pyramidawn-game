@@ -1,5 +1,6 @@
 import Phase from "../phase.js";
 import {wait} from "../../utils.js";
+import {STATUS} from "../../const.js";
 
 export default class ExecutionPhase extends Phase {
     constructor(requestSender, playerManager, game) {
@@ -28,9 +29,15 @@ export default class ExecutionPhase extends Phase {
             this.requestSender.send("no-death");
         }
 
-        this.game.clearVotes();
+        const currentStatus = this.game.updateGameStatus(this.playerManager);
 
-        const livingPlayers = this.playerManager.getLivingPlayers();
-        this.playerManager.disableChat(livingPlayers);
+        if (currentStatus === STATUS.STILL_GOING) { //Check win condition
+            this.game.clearVotes();
+
+            const livingPlayers = this.playerManager.getLivingPlayers();
+            this.playerManager.disableChat(livingPlayers);
+        } else {
+            this.requestSender.endRequest(currentStatus);
+        }
     }
 }

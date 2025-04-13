@@ -14,4 +14,11 @@ export default class RequestSender {
     send(requestName, data = {}, receiver = this.roomId, emitter = this.io) {
         emitter.to(receiver).emit(requestName, data);
     }
+
+    endRequest(status) {
+        this.send("game-end", {
+            status: status,
+            roomId: this.roomId,
+        });
+    }
 }

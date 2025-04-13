@@ -9,6 +9,7 @@ export default class Game {
         this.powerAvailable.set("judge", true);
 
         this.dayCount = 0;
+        this.status = STATUS.STILL_GOING;
 
         this.protectedPlayer = null;
         this.chosenAvatar = null;
@@ -64,22 +65,24 @@ export default class Game {
         return this.powerAvailable.get(role);
     }
 
-    checkWinCodition(playerManager) {
+    updateGameStatus(playerManager) {
         const aliveNb = playerManager.getLivingPlayers().length;
 
         if(aliveNb > 0) {
             const aliveWraithsNb = playerManager.getWraiths().length;
 
             if (aliveNb === aliveWraithsNb) {
-                return STATUS.WRAITHS_WIN;
+                this.status = STATUS.WRAITHS_WIN;
             } else if (aliveWraithsNb === 0) {
-                return STATUS.VILLAGE_WIN;
+                this.status = STATUS.VILLAGE_WIN;
             } else {
-                return STATUS.STILL_GOING;
+                this.status = STATUS.STILL_GOING;
             }
         } else {
-            return STATUS.EQUALITY; //Everyone is dead
+            this.status = STATUS.EQUALITY; //Everyone is dead
         }
+
+        return this.status;
     }
 
     usePower(power, selectedPlayers) {

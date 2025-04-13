@@ -17,6 +17,27 @@ function getPlayerRoom(playerId) {
     return rooms.find(room => room.hasPlayer(playerId));
 }
 
+function removeRoomById(roomId) {
+    let i = 0;
+    let room = rooms[i];
+
+    while (i < rooms.length && room.id !== roomId) {
+        i++;
+        room = rooms[i];
+    }
+
+    if(room.id === roomId) {
+        rooms.splice(i, 1);
+    }
+}
+
+function createRoom(io) {
+    const newRoom = new Room(io, ++nextRoomId, (roomId) => removeRoomById(roomId));
+    rooms.push(newRoom);
+
+    return newRoom;
+}
+
 app.prepare().then(() => {
     const httpServer = createServer(handler);
 
@@ -40,9 +61,7 @@ app.prepare().then(() => {
         socket.on("quick-play", function (playerName) {
             let freeRoom = rooms.find(room => room.isFree());
             if (!freeRoom) {
-                freeRoom = new Room(io, nextRoomId);
-                rooms.push(freeRoom);
-                nextRoomId++;
+                freeRoom = createRoom(io);
             }
 
             freeRoom.addPlayer(socket, playerName);
@@ -73,7 +92,7 @@ app.prepare().then(() => {
         socket.on("vote", function (voteData) {
             const room = getPlayerRoom(socket.id);
             room.vote(voteData, socket);
-        })
+        });
     });
 
     httpServer
