@@ -10,6 +10,8 @@ import {usePlayer} from "@/context/player-provider";
 import {ActionType, useAction} from "@/context/action-provider";
 import {ChoiceType, useChoice} from "@/context/choice-provider";
 import {useVote} from "@/context/vote-provider";
+import IQuestion from "@/data/question/iquestion";
+import DefaultQuestion from "@/data/question/default-question";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar} = useGame();
@@ -65,31 +67,36 @@ export default function GamePage() {
         setRole(role);
     }, [setRole])
 
+    const gameEnd = useCallback((data: {status: number}) => {
+        const status = data.status;
+        console.log(status);
+    }, []);
+
     const action = useCallback((data: { actionName: string, selectNb: number }) => {
         setSelectNb(data.selectNb);
         const actionName = data.actionName;
 
-        let question: string;
+        let question: IQuestion;
         if (actionName !== "vote") {
             setActionType(ActionType.POWER);
             switch (actionName) {
                 case "golem":
                     setChoiceType(ChoiceType.OK);
-                    question = "Choose a player to protect for this night.";
+                    question = new DefaultQuestion("Choose a player to protect for this night.");
                     break;
 
                 case "priest":
                     setChoiceType(ChoiceType.ACTIVATE_POWER);
-                    question = "Summon Anubis?";
+                    question = new DefaultQuestion("Summon Anubis?");
                     break;
 
                 default:
-                    question = "Unknown";
+                    question = new DefaultQuestion("Unknown");
             }
         } else {
             setActionType(ActionType.VOTE);
             setChoiceType(ChoiceType.OK);
-            question = "Vote a player to eliminate.";
+            question = new DefaultQuestion("Vote a player to eliminate.");
         }
 
         setQuestion(question);
@@ -124,6 +131,7 @@ export default function GamePage() {
         socket.on("vote-update", updateVotes);
         socket.on("death", death);
         socket.on("god-summoning", godSummon);
+        socket.on("game-end", gameEnd);
 
         return () => {
             socket.off("room-data", receiveRoomData);
@@ -135,6 +143,7 @@ export default function GamePage() {
             socket.off("vote-update", updateVotes);
             socket.off("death", death);
             socket.off("god-summoning", godSummon);
+            socket.off("game-end", gameEnd);
         }
     }, [action, death, godSummon, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, updateVotes]);
 

@@ -75,7 +75,7 @@ export default function ChoiceBox() {
             animate={visible ? {y: 0} : {y: "-100vh"}}
             transition={{duration: 0.8, ease: "easeInOut"}}
         >
-            <p>{question}</p>
+            {question.getHTML()}
             {options}
         </motion.div>
     );

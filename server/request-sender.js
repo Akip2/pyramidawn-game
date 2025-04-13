@@ -18,7 +18,6 @@ export default class RequestSender {
     endRequest(status) {
         this.send("game-end", {
             status: status,
-            roomId: this.roomId,
         });
     }
 }
