@@ -1,3 +1,5 @@
+import {STATUS} from "./const.js";
+
 export default class Game {
     constructor() {
         this.votes = new Map();
@@ -60,6 +62,24 @@ export default class Game {
 
     isPowerAvailable(role) {
         return this.powerAvailable.get(role);
+    }
+
+    checkWinCodition(playerManager) {
+        const aliveNb = playerManager.getLivingPlayers().length;
+
+        if(aliveNb > 0) {
+            const aliveWraithsNb = playerManager.getWraiths().length;
+
+            if (aliveNb === aliveWraithsNb) {
+                return STATUS.WRAITHS_WIN;
+            } else if (aliveWraithsNb === 0) {
+                return STATUS.VILLAGE_WIN;
+            } else {
+                return STATUS.STILL_GOING;
+            }
+        } else {
+            return STATUS.EQUALITY; //Everyone is dead
+        }
     }
 
     usePower(power, selectedPlayers) {
