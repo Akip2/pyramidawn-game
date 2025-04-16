@@ -7,6 +7,7 @@ import {useGame} from "@/context/game-provider";
 import {socket} from "@/data/socket";
 import {useVote} from "@/context/vote-provider";
 import {usePlayer} from "@/context/player-provider";
+import DefaultQuestion from "@/data/question/default-question";
 
 export enum ActionType {
     POWER = 0,
@@ -49,11 +50,11 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
             
             let question;
             if (phase === "Golem") {
-                question = `Shall ${selectedPlayers[0].name} be protected tonight?`;
+                question = new DefaultQuestion(`Shall ${selectedPlayers[0].name} be protected tonight?`);
             } else if (phase === "Priest") {
-                question = `Shall ${selectedPlayers[0].name} become the chosen Avatar of Anubis?`
+                question = new DefaultQuestion(`Shall ${selectedPlayers[0].name} become the chosen Avatar of Anubis?`);
             } else {
-                question = "Unknown";
+                question = new DefaultQuestion("Unknown");
             }
 
             setChoiceType(ChoiceType.VALIDATE_CHOICE);
@@ -84,7 +85,6 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
             setSelectedPlayers([player]);
         } else {
             setSelectedPlayers((prevPlayers) => [...prevPlayers, player]);
-            //setSelectedPlayers([player]);
         }
     };
 

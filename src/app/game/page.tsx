@@ -12,13 +12,15 @@ import {ChoiceType, useChoice} from "@/context/choice-provider";
 import {useVote} from "@/context/vote-provider";
 import IQuestion from "@/data/question/iquestion";
 import DefaultQuestion from "@/data/question/default-question";
+import EndQuestion from "@/data/question/end-question";
+import {GameStatus} from "@/data/game-status";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar} = useGame();
     const {setSelectNb, setAction, setActionType, clearSelectedPlayers} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
-    const {setRole, setColor} = usePlayer();
+    const {isWraith, setRole, setColor} = usePlayer();
 
     const startingGame = useCallback(() => {
         setPhase("Starting");
@@ -67,10 +69,20 @@ export default function GamePage() {
         setRole(role);
     }, [setRole])
 
-    const gameEnd = useCallback((data: {status: number}) => {
+    const gameEnd = useCallback((data: {status: GameStatus}) => {
         const status = data.status;
-        console.log(status);
-    }, []);
+        let win:boolean | undefined;
+
+        if(status === GameStatus.VILLAGE_WIN) {
+            win = !isWraith();
+        } else if(status === GameStatus.WRAITHS_WIN) {
+            win = isWraith();
+        }
+        
+        setQuestion(new EndQuestion(status, win));
+        setChoiceType(ChoiceType.END);
+        setVisibility(true);
+    }, [isWraith, setChoiceType, setQuestion, setVisibility]);
 
     const action = useCallback((data: { actionName: string, selectNb: number }) => {
         setSelectNb(data.selectNb);
@@ -145,7 +157,7 @@ export default function GamePage() {
             socket.off("god-summoning", godSummon);
             socket.off("game-end", gameEnd);
         }
-    }, [action, death, godSummon, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, updateVotes]);
+    }, [action, death, gameEnd, godSummon, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, updateVotes]);
 
     useEffect(() => {
         if (phase === "Starting" && players.length < roles.length) {

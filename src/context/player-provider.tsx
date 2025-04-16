@@ -11,6 +11,8 @@ const PlayerContext = createContext<{
 
     role: string;
     setRole: React.Dispatch<React.SetStateAction<string>>;
+
+    isWraith: () => boolean;
 }>(null!);
 
 export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -18,8 +20,10 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({childre
     const [color, setColor] = useState('');
     const [role, setRole] = useState('');
 
+    const isWraith = () => role === "wraith";
+
     return (
-        <PlayerContext.Provider value={{playerName, setPlayerName, color, setColor, role, setRole}}>
+        <PlayerContext.Provider value={{playerName, setPlayerName, color, setColor, role, setRole, isWraith}}>
             {children}
         </PlayerContext.Provider>
     );
