@@ -113,9 +113,14 @@ export default class PlayerManager {
      * Activates the power of a player
      * @param player player we are activating the power of
      * @param selectNb number of players that the player doing the action has to select
+     * @param data additional data of the request
      */
-    playerAction(player, selectNb = 1) {
-        this.requestSender.send("action", {actionName: player.role, selectNb: selectNb}, player.id);
+    playerAction(player, selectNb = 1, data=null) {
+        this.requestSender.send("action", {actionName: player.role, selectNb: selectNb, data:data}, player.id);
+    }
+
+    godAction(player) {
+        this.requestSender.send("action", {actionName: player.isAvatarOf, selectNb: 1}, player.id);
     }
 
     addActivePlayerId(playerId) {
@@ -161,6 +166,10 @@ export default class PlayerManager {
             &&
             player.isAlive
         );
+    }
+
+    getAvatarOf(godName) {
+        return this.players.find(player => player.isGod(godName));
     }
 
     getLivingPlayers() {

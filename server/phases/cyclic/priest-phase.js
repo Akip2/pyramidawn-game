@@ -1,4 +1,5 @@
 import Phase from "../phase.js";
+import {GODS} from "../../const.js";
 
 export default class PriestPhase extends Phase {
     constructor(requestSender, playerManager, game) {
@@ -12,7 +13,7 @@ export default class PriestPhase extends Phase {
         const concernedPlayer = this.playerManager.getPlayerByRole("priest");
 
         this.playerManager.addActivePlayerId(concernedPlayer.id);
-        this.playerManager.playerAction(concernedPlayer, 1);
+        this.playerManager.playerAction(concernedPlayer, 1, this.game.dayCount % GODS.length);
     }
 
     isValid() {

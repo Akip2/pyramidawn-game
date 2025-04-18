@@ -12,6 +12,8 @@ import RequestSender from "./request-sender.js";
 import VotePhase from "./phases/cyclic/vote-phase.js";
 import ExecutionPhase from "./phases/cyclic/execution-phase.js";
 import {STATUS} from "./const.js";
+import AnubisPhase from "./phases/cyclic/anubis-phase.js";
+import RaPhase from "./phases/cyclic/ra-phase.js";
 
 const defaultRoles = ["priest", "wraith", "golem", "slave", "slave"];
 
@@ -38,6 +40,8 @@ export default class Room {
             new PriestPhase(this.requestSender, this.playerManager, this.game),
             new WraithPhase(this.requestSender, this.playerManager),
             new MorningPhase(this.requestSender, this.playerManager, this.game),
+            new AnubisPhase(this.requestSender, this.playerManager),
+            new RaPhase(this.requestSender, this.playerManager),
             new VotePhase(this.requestSender, this.playerManager),
             new ExecutionPhase(this.requestSender, this.playerManager, this.game),
         ]
@@ -112,32 +116,31 @@ export default class Room {
      */
     nextPhase() {
         clearTimeout(this.timer);
-
-        this.playerManager.clearActivePlayers();
-
-        this.phaseIndex++;
-        if (this.phaseIndex >= this.phases.length) {
-            this.phaseIndex = 0;
-        }
-
-        this.currentPhase = this.phases[this.phaseIndex];
-
-        if(this.currentPhase.isValid()) {
-            this.currentPhase.execute();
-            this.startPhaseTimer(this.currentPhase.duration);
+        if(this.game.status !== STATUS.STILL_GOING) {
+            this.gameEndCallback(this.id);
         } else {
-            this.nextPhase();
+            this.playerManager.clearActivePlayers();
+
+            this.phaseIndex++;
+            if (this.phaseIndex >= this.phases.length) {
+                this.phaseIndex = 0;
+            }
+
+            this.currentPhase = this.phases[this.phaseIndex];
+
+            if (this.currentPhase.isValid()) {
+                this.currentPhase.execute();
+                this.startPhaseTimer(this.currentPhase.duration);
+            } else {
+                this.nextPhase();
+            }
         }
     }
 
     startPhaseTimer(time) {
         clearTimeout(this.timer);
         this.timer = setTimeout(() => {
-            if(this.game.status === STATUS.STILL_GOING) {
-                this.nextPhase();
-            } else {
-                this.gameEndCallback(this.id);
-            }
+            this.nextPhase();
         }, time * 1000);
     }
 
