@@ -15,7 +15,7 @@ import {STATUS} from "./const.js";
 import AnubisPhase from "./phases/cyclic/anubis-phase.js";
 import RaPhase from "./phases/cyclic/ra-phase.js";
 
-const defaultRoles = ["priest", "wraith", "golem", "slave", "slave"];
+const defaultRoles = ["priest", "wraith", "slave"];
 
 export default class Room {
     constructor(io, id, gameEndCallback, roles = [...defaultRoles]) {
@@ -24,11 +24,10 @@ export default class Room {
         this.gameEndCallback = gameEndCallback;
 
         this.requestSender = new RequestSender(io, id);
-
-        this.game = new Game();
+        this.playerManager = new PlayerManager(this.requestSender);
+        this.game = new Game(this.playerManager);
 
         this.roles = roles;
-        this.playerManager = new PlayerManager(this.requestSender);
 
         this.started = false;
 
@@ -116,7 +115,7 @@ export default class Room {
      */
     nextPhase() {
         clearTimeout(this.timer);
-        if(this.game.status !== STATUS.STILL_GOING) {
+        if(false && this.game.updateGameStatus(this.playerManager) !== STATUS.STILL_GOING) {
             this.gameEndCallback(this.id);
         } else {
             this.playerManager.clearActivePlayers();

@@ -1,7 +1,7 @@
 import {STATUS} from "./const.js";
 
 export default class Game {
-    constructor() {
+    constructor(playerManager) {
         this.votes = new Map();
 
         this.powerAvailable = new Map();
@@ -13,6 +13,7 @@ export default class Game {
 
         this.protectedPlayer = null;
         this.chosenAvatar = null;
+        this.playerManager = playerManager;
     }
 
     vote(player) {
@@ -88,7 +89,12 @@ export default class Game {
     usePower(power, selectedPlayers) {
         if(power === "golem") {
             this.protectedPlayer = selectedPlayers[0];
-        } else if(power === "priest" || power === "judge") {
+        } else if (power === "anubis") {
+            this.playerManager.kill(selectedPlayers[0].color, "killed by Anubis");
+        } else if(power === "ra") {
+            this.playerManager.revealPlayer(selectedPlayers[0].color);
+        }
+        else if(power === "priest" || power === "judge") {
             if (power === "priest") {
                 this.chosenAvatar = selectedPlayers[0];
             } else {

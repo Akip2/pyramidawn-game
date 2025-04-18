@@ -84,7 +84,7 @@ export default function GamePage() {
         setVisibility(true);
     }, [isWraith, setChoiceType, setQuestion, setVisibility]);
 
-    const action = useCallback((data: { actionName: string, selectNb: number }) => {
+    const action = useCallback((data: { actionName: string, selectNb: number, data:never }) => {
         setSelectNb(data.selectNb);
         const actionName = data.actionName;
 
@@ -99,7 +99,17 @@ export default function GamePage() {
 
                 case "priest":
                     setChoiceType(ChoiceType.ACTIVATE_POWER);
-                    question = new DefaultQuestion("Summon Anubis?");
+                    question = new DefaultQuestion(`Summon ${data.data}?`);
+                    break;
+
+                case "ra":
+                    setChoiceType(ChoiceType.ACTIVATE_POWER);
+                    question = new DefaultQuestion(`Reveal the role of a player?`);
+                    break;
+
+                case "anubis":
+                    setChoiceType(ChoiceType.ACTIVATE_POWER);
+                    question = new DefaultQuestion(`Kill a player?`);
                     break;
 
                 default:

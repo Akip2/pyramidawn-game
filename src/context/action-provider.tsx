@@ -49,12 +49,25 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
             setAction(false);
             
             let question;
-            if (phase === "Golem") {
-                question = new DefaultQuestion(`Shall ${selectedPlayers[0].name} be protected tonight?`);
-            } else if (phase === "Priest") {
-                question = new DefaultQuestion(`Shall ${selectedPlayers[0].name} become the chosen Avatar of Anubis?`);
-            } else {
-                question = new DefaultQuestion("Unknown");
+            switch(phase) {
+                case "Golem":
+                    question = new DefaultQuestion(`Shall ${selectedPlayers[0].name} be protected tonight?`);
+                    break;
+
+                case "Priest":
+                    question = new DefaultQuestion(`Shall ${selectedPlayers[0].name} become the Avatar of a God?`);
+                    break;
+
+                case "Ra":
+                    question = new DefaultQuestion(`Shall the role of ${selectedPlayers[0].name} be revealed?`);
+                    break;
+
+                case "Anubis":
+                    question = new DefaultQuestion(`Shall ${selectedPlayers[0].name} be the victim of Anubis?`);
+                    break;
+
+                default:
+                    question = new DefaultQuestion("Unknown");
             }
 
             setChoiceType(ChoiceType.VALIDATE_CHOICE);

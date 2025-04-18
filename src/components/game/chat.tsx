@@ -10,6 +10,7 @@ import DeathMessage from "@/data/message/death-message";
 import SummonMessage from "@/data/message/summon-message";
 import EqualityMessage from "@/data/message/equality-message";
 import NoDeathMessage from "@/data/message/no-death-message";
+import RevealMessage from "@/data/message/reveal-message";
 
 export default function Chat() {
     const [inputValue, setInputValue] = useState('');
@@ -33,6 +34,8 @@ export default function Chat() {
         socket.on("equality", equality);
         socket.on("no-death", noDeath);
 
+        socket.on("reveal", reveal);
+
         return () => {
             socket.off("chat-message", receiveMessage);
             socket.off("chat-allowed", chatAllow);
@@ -45,6 +48,7 @@ export default function Chat() {
             socket.off("failed-summoning", failedSummoning);
             socket.off("equality", equality);
             socket.off("no-death", noDeath);
+            socket.off("reveal", reveal);
         }
     }, []);
 
@@ -74,6 +78,11 @@ export default function Chat() {
 
     function failedSummoning(data: {avatar: PlayerData, godName: string}) {
         const message = new SummonMessage(data.avatar, data.godName, false);
+        setMessages((prevMessages) => prevMessages.concat(message));
+    }
+
+    function reveal(data: {name: string, color: string, role: string}) {
+        const message = new RevealMessage(new PlayerData(data.name, data.color), data.role);
         setMessages((prevMessages) => prevMessages.concat(message));
     }
 

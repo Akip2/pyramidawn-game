@@ -120,7 +120,7 @@ export default class PlayerManager {
     }
 
     godAction(player) {
-        this.requestSender.send("action", {actionName: player.isAvatarOf, selectNb: 1}, player.id);
+        this.requestSender.send("action", {actionName: player.isAvatarOf.toLowerCase(), selectNb: 1}, player.id);
     }
 
     addActivePlayerId(playerId) {
@@ -154,6 +154,11 @@ export default class PlayerManager {
 
     getPlayerById(id) {
         return this.players.find(player => player.id === id);
+    }
+
+    revealPlayer(playerColor) {
+        const playerToReveal = this.getPlayerByColor(playerColor);
+        this.requestSender.reveal(playerToReveal);
     }
 
     /**

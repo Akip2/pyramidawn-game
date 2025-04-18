@@ -2,7 +2,7 @@ import Phase from "../phase.js";
 
 export default class WraithPhase extends Phase {
     constructor(requestSender, playerManager) {
-        super(requestSender, 30, "Wraith");
+        super(requestSender, 1, "Wraith");
         this.playerManager = playerManager;
     }
 

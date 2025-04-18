@@ -15,6 +15,14 @@ export default class RequestSender {
         emitter.to(receiver).emit(requestName, data);
     }
 
+    reveal(playerToReveal) {
+        this.send("reveal", {
+            name: playerToReveal.name,
+            color: playerToReveal.color,
+            role: playerToReveal.role,
+        });
+    }
+
     endRequest(status) {
         this.send("game-end", {
             status: status,
