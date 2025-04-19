@@ -49,7 +49,7 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
                 <VoteContainer voters={votes.get(player.color) ?? []} />
             </div>
 
-            <p className="px-2 py-1 bg-black bg-opacity-75 rounded-xl ml-5 w-fit mb-2">
+            <p className={`px-2 py-1 bg-black bg-opacity-75 rounded-xl ml-5 w-fit mb-2 ${player.isWraith ? "text-red-300" : "text-white"}`}>
                 {player.name}
                 {player.isAvatarOf ? ` (${player.isAvatarOf})` : ""}
             </p>

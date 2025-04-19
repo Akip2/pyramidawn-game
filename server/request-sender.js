@@ -1,3 +1,5 @@
+import {isRoleWraith} from "./utils.js";
+
 export default class RequestSender {
     constructor(io, roomId) {
         this.io = io;
@@ -27,5 +29,16 @@ export default class RequestSender {
         this.send("game-end", {
             status: status,
         });
+    }
+
+    assignRoleToPlayer(role, playerId) {
+        this.send("role", role, playerId);
+    }
+
+    informWraiths(wraiths) {
+        const wraithColors = wraiths.map((w) => w.color);
+        wraiths.forEach((wraith) => {
+            this.send("wraith-players", wraithColors, wraith.id);
+        })
     }
 }

@@ -19,6 +19,7 @@ const GameContext = createContext<{
     addPlayer: (player: PlayerData) => number;
     killPlayer: (player: PlayerData) => void;
     makeAvatar: (player: PlayerData, godName: string) => void;
+    makePlayersWraith: (wraithsColors: string[]) => void;
 }>(null!);
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -43,12 +44,20 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
         );
     }
 
+    function makePlayersWraith(wraithsColors: string[]) {
+        setPlayers(prevPlayers =>
+            prevPlayers.map(p =>
+                wraithsColors.includes(p.color) ? { ...p, isWraith: true } : p
+            )
+        );
+    }
+
     function addPlayer(player: PlayerData) {
         setPlayers((prevPlayers) => [...prevPlayers, player]);
         return players.length + 1;
     }
 
-    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar};
+    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith};
 
     return (
         <GameContext.Provider value={value}>

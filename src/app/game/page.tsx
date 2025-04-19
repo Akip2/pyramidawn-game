@@ -16,7 +16,7 @@ import EndQuestion from "@/data/question/end-question";
 import {GameStatus} from "@/data/game-status";
 
 export default function GamePage() {
-    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar} = useGame();
+    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith} = useGame();
     const {setSelectNb, setAction, setActionType, clearSelectedPlayers} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
@@ -154,6 +154,7 @@ export default function GamePage() {
         socket.on("death", death);
         socket.on("god-summoning", godSummon);
         socket.on("game-end", gameEnd);
+        socket.on("wraith-players", makePlayersWraith)
 
         return () => {
             socket.off("room-data", receiveRoomData);
@@ -166,8 +167,9 @@ export default function GamePage() {
             socket.off("death", death);
             socket.off("god-summoning", godSummon);
             socket.off("game-end", gameEnd);
+            socket.off("wraith-players", makePlayersWraith)
         }
-    }, [action, death, gameEnd, godSummon, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, updateVotes]);
+    }, [action, death, gameEnd, godSummon, makePlayersWraith, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, updateVotes]);
 
     useEffect(() => {
         if (phase === "Starting" && players.length < roles.length) {
