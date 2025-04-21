@@ -67,6 +67,11 @@ app.prepare().then(() => {
             freeRoom.addPlayer(socket, playerName);
         });
 
+        socket.on("create-game", function (playerName) {
+            const newRoom = createRoom(io);
+            newRoom.addPlayer(socket, playerName);
+        })
+
         socket.on("send-message", function (message) {
             let roomsIds = socket.rooms;
             let roomId = Array.from(roomsIds).pop();

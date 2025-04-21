@@ -44,6 +44,12 @@ export default function Home() {
         router.push('/game');
     }
 
+    function createGame() {
+        const newUsername = setUpUsername();
+        socket.emit("create-game", newUsername);
+        router.push('/game');
+    }
+
     return (
         <div className="h-screen w-screen flex flex-col justify-center bg-gray-950 text-white">
             <div
@@ -58,7 +64,7 @@ export default function Home() {
 
                 <Button size="lg" onClick={quickPlay}>Quick Play</Button>
                 <Button size="lg">Join Game</Button>
-                <Button size="lg">Create Game</Button>
+                <Button size="lg" onClick={createGame}>Create Game</Button>
             </div>
         </div>
     );
