@@ -112,7 +112,7 @@ export default class Room {
 
             this.requestSender.send("player-leave", removedPlayer.serialize());
 
-            if(removedPlayer.color === this.gameMaster.color) {
+            if(removedPlayer.color === this.gameMaster.color && this.playerManager.getPlayerNb() > 0) {
                 this.updateGameMaster();
             }
         }
@@ -192,7 +192,7 @@ export default class Room {
     }
 
     updateGameMaster() {
-        this.gameMaster = this.playerManager.getPlayerNb() > 0 ? this.playerManager.players[0] : null;
+        this.gameMaster = this.playerManager.players[0];
         this.requestSender.gameMasterChange(this.gameMaster.color);
     }
 

@@ -7,6 +7,9 @@ const GameContext = createContext<{
     players: PlayerData[];
     setPlayers: React.Dispatch<React.SetStateAction<PlayerData[]>>;
 
+    gameMaster: string;
+    setGameMaster: React.Dispatch<React.SetStateAction<string>>;
+
     roles: string[];
     setRoles: React.Dispatch<React.SetStateAction<string[]>>;
 
@@ -20,6 +23,7 @@ const GameContext = createContext<{
     killPlayer: (player: PlayerData) => void;
     makeAvatar: (player: PlayerData, godName: string) => void;
     makePlayersWraith: (wraithsColors: string[]) => void;
+    started: () => boolean;
 }>(null!);
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -27,6 +31,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const [roles, setRoles] = useState<string[]>([]);
     const [phase, setPhase] = useState<string>('day');
     const [phaseEndTime, setPhaseEndTime] = useState<number>(0);
+    const [gameMaster, setGameMaster] = useState<string>("");
 
     function killPlayer(player: PlayerData) {
         setPlayers(prevPlayers =>
@@ -57,7 +62,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
         return players.length + 1;
     }
 
-    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith};
+    function started() {
+        return !(phase === "Waiting" || phase === "Starting");
+    }
+
+    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started};
 
     return (
         <GameContext.Provider value={value}>

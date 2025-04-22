@@ -16,7 +16,7 @@ import EndQuestion from "@/data/question/end-question";
 import {GameStatus} from "@/data/game-status";
 
 export default function GamePage() {
-    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith} = useGame();
+    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, setGameMaster} = useGame();
     const {setSelectNb, setAction, setActionType, clearSelectedPlayers} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
@@ -27,10 +27,11 @@ export default function GamePage() {
         setPhaseEndTime(Date.now() + 10000);
     }, [setPhase, setPhaseEndTime])
 
-    const receiveRoomData = useCallback((data: { players: PlayerData[], roles: string[], phase: string }) => {
+    const receiveRoomData = useCallback((data: { players: PlayerData[], roles: string[], phase: string, gameMaster:string }) => {
         setPlayers(data.players);
         setRoles(data.roles);
         setPhase(data.phase);
+        setGameMaster(data.gameMaster);
         
         const playerInfo = data.players[data.players.length - 1];
         setColor(playerInfo.color);
@@ -38,7 +39,7 @@ export default function GamePage() {
         if (data.phase === "Starting") {
             startingGame();
         }
-    }, [setColor, setPhase, setPlayers, setRoles, startingGame])
+    }, [setColor, setGameMaster, setPhase, setPlayers, setRoles, startingGame])
 
     const death = useCallback((deathData: {victim: PlayerData, reason:string}) => {
         killPlayer(deathData.victim);
@@ -155,6 +156,7 @@ export default function GamePage() {
         socket.on("god-summoning", godSummon);
         socket.on("game-end", gameEnd);
         socket.on("wraith-players", makePlayersWraith)
+        socket.on("game-master", setGameMaster);
 
         return () => {
             socket.off("room-data", receiveRoomData);
@@ -167,9 +169,10 @@ export default function GamePage() {
             socket.off("death", death);
             socket.off("god-summoning", godSummon);
             socket.off("game-end", gameEnd);
-            socket.off("wraith-players", makePlayersWraith)
+            socket.off("wraith-players", makePlayersWraith);
+            socket.off("game-master", setGameMaster);
         }
-    }, [action, death, gameEnd, godSummon, makePlayersWraith, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, updateVotes]);
+    }, [action, death, gameEnd, godSummon, makePlayersWraith, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, setGameMaster, updateVotes]);
 
     useEffect(() => {
         if (phase === "Starting" && players.length < roles.length) {
