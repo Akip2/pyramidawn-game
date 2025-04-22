@@ -41,4 +41,8 @@ export default class RequestSender {
             this.send("wraith-players", wraithColors, wraith.id);
         })
     }
+
+    gameMasterChange(gameMasterColor) {
+        this.send("game-master", gameMasterColor);
+    }
 }

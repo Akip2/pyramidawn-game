@@ -46,6 +46,7 @@ export default class Room {
         ]
 
         this.timer = null;
+        this.gameMaster = null;
     }
 
     isFree() {
@@ -70,6 +71,10 @@ export default class Room {
 
         this.requestSender.send("player-join", player.serialize());
         socket.join(this.id);
+
+        if(this.playerManager.getPlayerNb() === 0) { //First player
+            this.gameMaster = player;
+        }
 
         if (this.playerManager.addPlayer(player) === this.roles.length) { //Add player and check if enough player to start game
             this.currentPhase = new StartingPhase();
@@ -97,7 +102,7 @@ export default class Room {
      */
     disconnectPlayer(playerId) {
         if (this.started) {
-
+            //TODO
         } else {
             const removedPlayer = this.playerManager.removePlayerById(playerId);
             if (this.currentPhase.name === "Starting") {
@@ -106,6 +111,10 @@ export default class Room {
             }
 
             this.requestSender.send("player-leave", removedPlayer.serialize());
+
+            if(removedPlayer.color === this.gameMaster.color) {
+                this.updateGameMaster();
+            }
         }
     }
 
@@ -182,11 +191,17 @@ export default class Room {
         }
     }
 
+    updateGameMaster() {
+        this.gameMaster = this.playerManager.getPlayerNb() > 0 ? this.playerManager.players[0] : null;
+        this.requestSender.gameMasterChange(this.gameMaster.color);
+    }
+
     serialize() {
         return {
             players: this.playerManager.serialize(),
             roles: this.roles,
-            phase: this.currentPhase.name
+            phase: this.currentPhase.name,
+            gameMaster: this.gameMaster.color,
         }
     }
 }
