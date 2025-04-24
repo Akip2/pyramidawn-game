@@ -14,6 +14,7 @@ import IQuestion from "@/data/question/iquestion";
 import DefaultQuestion from "@/data/question/default-question";
 import EndQuestion from "@/data/question/end-question";
 import {GameStatus} from "@/data/game-status";
+import createRoleQuestion from "@/data/question/role/role-question-factory";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, setGameMaster} = useGame();
@@ -68,7 +69,10 @@ export default function GamePage() {
 
     const receiveRole = useCallback((role: string) => {
         setRole(role);
-    }, [setRole])
+        setChoiceType(ChoiceType.OK);
+        setQuestion(createRoleQuestion(role));
+        setVisibility(true);
+    }, [setChoiceType, setQuestion, setRole, setVisibility])
 
     const gameEnd = useCallback((data: {status: GameStatus}) => {
         const status = data.status;
