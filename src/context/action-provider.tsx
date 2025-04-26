@@ -2,12 +2,13 @@
 
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import PlayerData from "@/data/player-data";
-import {ChoiceType, useChoice} from "@/context/choice-provider";
+import {useChoice} from "@/context/choice-provider";
 import {useGame} from "@/context/game-provider";
 import {socket} from "@/data/socket";
 import {useVote} from "@/context/vote-provider";
 import {usePlayer} from "@/context/player-provider";
 import DefaultQuestion from "@/data/question/default-question";
+import {ChoiceType} from "@/enums/choice-type.enum";
 
 export enum ActionType {
     POWER = 0,

@@ -6,3 +6,10 @@ export const STATUS = Object.freeze({
     VILLAGE_WIN: 2,
     WRAITHS_WIN: 3
 });
+
+export const ROLES = Object.freeze({
+    SLAVE: "slave",
+    SPHINX: "sphinx",
+    PRIEST: "priest",
+    MUMMY: "mummy"
+});

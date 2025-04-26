@@ -3,14 +3,7 @@
 import React, {createContext, useContext, useState} from 'react';
 import IQuestion from "@/data/question/iquestion";
 import DefaultQuestion from "@/data/question/default-question";
-
-export enum ChoiceType {
-    OK = 0,
-    VALIDATE_CHOICE = 1,
-    ACTIVATE_POWER = 2,
-    END = 3,
-    EVENTS = 4,
-}
+import {ChoiceType} from "@/enums/choice-type.enum";
 
 const ChoiceContext = createContext<{
     visible: boolean;

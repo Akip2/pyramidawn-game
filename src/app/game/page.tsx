@@ -8,13 +8,14 @@ import {useGame} from "@/context/game-provider";
 import PlayerData from "@/data/player-data";
 import {usePlayer} from "@/context/player-provider";
 import {ActionType, useAction} from "@/context/action-provider";
-import {ChoiceType, useChoice} from "@/context/choice-provider";
+import {useChoice} from "@/context/choice-provider";
 import {useVote} from "@/context/vote-provider";
 import IQuestion from "@/data/question/iquestion";
 import DefaultQuestion from "@/data/question/default-question";
 import EndQuestion from "@/data/question/end-question";
-import {GameStatus} from "@/data/game-status";
+import {GameStatusEnum} from "@/enums/game-status.enum";
 import createRoleQuestion from "@/data/question/role/role-question-factory";
+import {ChoiceType} from "@/enums/choice-type.enum";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, setGameMaster} = useGame();
@@ -74,13 +75,13 @@ export default function GamePage() {
         setVisibility(true);
     }, [setChoiceType, setQuestion, setRole, setVisibility])
 
-    const gameEnd = useCallback((data: {status: GameStatus}) => {
+    const gameEnd = useCallback((data: {status: GameStatusEnum}) => {
         const status = data.status;
         let win:boolean | undefined;
 
-        if(status === GameStatus.VILLAGE_WIN) {
+        if(status === GameStatusEnum.VILLAGE_WIN) {
             win = !isWraith();
-        } else if(status === GameStatus.WRAITHS_WIN) {
+        } else if(status === GameStatusEnum.WRAITHS_WIN) {
             win = isWraith();
         }
         

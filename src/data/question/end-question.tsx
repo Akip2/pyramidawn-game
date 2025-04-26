@@ -1,13 +1,13 @@
 import React from "react";
 import IQuestion from "@/data/question/iquestion";
-import {GameStatus} from "@/data/game-status";
+import {GameStatusEnum} from "@/enums/game-status.enum";
 
 export default class EndQuestion implements IQuestion {
     subText: string;
     statusText: string;
     statusColor: string;
-    constructor(s: GameStatus, v: boolean | undefined) {
-        if(s === GameStatus.EQUALITY) {
+    constructor(s: GameStatusEnum, v: boolean | undefined) {
+        if(s === GameStatusEnum.EQUALITY) {
             this.statusText = "EQUALITY";
             this.statusColor = "text-white";
             this.subText = "Everyone died."
@@ -15,7 +15,7 @@ export default class EndQuestion implements IQuestion {
             this.statusText = v! ? "VICTORY" : "DEFEAT";
             this.statusColor = v! ? "text-green-400" : "text-red-400";
 
-            this.subText = s === GameStatus.WRAITHS_WIN ? "The wraiths won." : "The village won.";
+            this.subText = s === GameStatusEnum.WRAITHS_WIN ? "The wraiths won." : "The village won.";
         }
     }
 

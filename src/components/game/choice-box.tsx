@@ -1,10 +1,10 @@
 import {useChoice} from "@/context/choice-provider";
 import {motion} from "framer-motion";
 import {Button} from "@/components/ui/button";
-import {ChoiceType} from "@/context/choice-provider";
 import {JSX, useCallback} from "react";
 import {useAction} from "@/context/action-provider";
 import {socket} from "@/data/socket";
+import {ChoiceType} from "@/enums/choice-type.enum";
 
 export default function ChoiceBox() {
     const {visible, question, choiceType, setVisibility} = useChoice();

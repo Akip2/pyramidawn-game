@@ -1,4 +1,4 @@
-export enum GameStatus {
+export enum GameStatusEnum {
     STILL_GOING,
     EQUALITY,
     VILLAGE_WIN,
