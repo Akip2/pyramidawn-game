@@ -43,4 +43,8 @@ export default class RequestSender {
     gameMasterChange(gameMasterColor) {
         this.send("game-master", gameMasterColor);
     }
+
+    action(playerId, actionName, selectNb = 1, unselectableColors =  [], data = {}) {
+        this.send("action", {actionName, selectNb, unselectableColors, data}, playerId);
+    }
 }

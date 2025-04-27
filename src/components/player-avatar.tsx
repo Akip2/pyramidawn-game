@@ -12,7 +12,7 @@ import MasterCross from "@/components/master-cross";
 
 export default function PlayerAvatar(props: { player: PlayerData }) {
     const [selected, setSelected] = useState(false);
-    const {action, addPlayer, removePlayer, isPlayerSelected} = useAction();
+    const {action, addPlayer, removePlayer, isPlayerSelected, isPlayerSelectable} = useAction();
     const {gameMaster, started} = useGame();
     const {votes} = useVote();
 
@@ -28,16 +28,20 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
 
     let classNames = "";
     if (action) {
-        classNames += "cursor-pointer ";
-        if (selected) {
-            classNames += "brightness-125";
+        if(isPlayerSelectable(player)) {
+            classNames += "cursor-pointer ";
+            if (selected) {
+                classNames += "brightness-125";
+            } else {
+                classNames += "hover:brightness-110";
+            }
         } else {
-            classNames += "hover:brightness-110";
+            classNames += "cursor-not-allowed";
         }
     }
 
     function avatarClick() {
-        if (action && player.isAlive) {
+        if (action && player.isAlive && isPlayerSelectable(player)) {
             if (selected) {
                 removePlayer(player);
             } else {

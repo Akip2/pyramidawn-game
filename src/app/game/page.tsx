@@ -20,7 +20,7 @@ import {RoleEnum} from "@/enums/role.enum";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, setGameMaster} = useGame();
-    const {setSelectNb, setAction, setActionType, clearSelectedPlayers} = useAction();
+    const {setSelectNb, setAction, setActionType, clearSelectedPlayers, setUnselectableColors} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
     const {isMummy, setRole, setColor} = usePlayer();
@@ -91,8 +91,9 @@ export default function GamePage() {
         setVisibility(true);
     }, [isMummy, setChoiceType, setQuestion, setVisibility]);
 
-    const action = useCallback((data: { actionName: string, selectNb: number, data:never }) => {
+    const action = useCallback((data: { actionName: string, selectNb: number, unselectableColors: string[], data:never }) => {
         setSelectNb(data.selectNb);
+        setUnselectableColors(data.unselectableColors);
         const actionName = data.actionName;
 
         let question: IQuestion;
@@ -130,7 +131,7 @@ export default function GamePage() {
 
         setQuestion(question);
         setVisibility(true);
-    }, [setActionType, setChoiceType, setQuestion, setSelectNb, setVisibility])
+    }, [setActionType, setChoiceType, setQuestion, setSelectNb, setUnselectableColors, setVisibility])
 
     const updateVotes = useCallback((voteData: {voter: PlayerData, unvoted: PlayerData, voted: PlayerData}) => {
         const voter = voteData.voter;

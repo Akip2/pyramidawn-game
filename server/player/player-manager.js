@@ -78,7 +78,7 @@ export default class PlayerManager {
      */
     allowVote(players) {
         players.forEach((player) => {
-            this.requestSender.send("action", {actionName: "vote", selectNb: 1}, player.id);
+            this.requestSender.action(player.id, "vote");
             this.addActivePlayerId(player.id);
         })
     }
@@ -113,14 +113,15 @@ export default class PlayerManager {
      * Activates the power of a player
      * @param player player we are activating the power of
      * @param selectNb number of players that the player doing the action has to select
+     * @param unselectableColors players that can't be selected by the action
      * @param data additional data of the request
      */
-    playerAction(player, selectNb = 1, data=null) {
-        this.requestSender.send("action", {actionName: player.role, selectNb: selectNb, data:data}, player.id);
+    playerAction(player, selectNb = 1, unselectableColors=[], data=null) {
+        this.requestSender.action(player.id, player.role, selectNb, unselectableColors, data);
     }
 
     godAction(player) {
-        this.requestSender.send("action", {actionName: player.isAvatarOf.toLowerCase(), selectNb: 1}, player.id);
+        this.requestSender.action(player.id, player.isAvatarOf.toLowerCase());
     }
 
     addActivePlayerId(playerId) {

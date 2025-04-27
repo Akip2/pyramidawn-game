@@ -29,9 +29,12 @@ const ActionContext = createContext<{
 
     selectedPlayers: PlayerData[];
     setSelectedPlayers: React.Dispatch<React.SetStateAction<PlayerData[]>>;
-    clearSelectedPlayers: () => void;
 
+    setUnselectableColors: React.Dispatch<React.SetStateAction<string[]>>;
+
+    clearSelectedPlayers: () => void;
     isPlayerSelected: (player: PlayerData) => boolean;
+    isPlayerSelectable: (player: PlayerData) => boolean;
     addPlayer: (player: PlayerData) => void;
     removePlayer: (player: PlayerData) => void;
 }>(null!);
@@ -41,6 +44,7 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
     const [actionType, setActionType] = React.useState<ActionType>(ActionType.POWER);
     const [selectedPlayers, setSelectedPlayers] = useState<PlayerData[]>([]);
     const [selectNb, setSelectNb] = useState(1);
+    const [unselectableColors, setUnselectableColors] = useState<string[]>([]);
 
     const {setChoiceType, setQuestion, setVisibility} = useChoice();
     const {phase} = useGame();
@@ -126,8 +130,12 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
         setSelectedPlayers([]);
     }
 
+    const isPlayerSelectable = (p: PlayerData) => {
+        return !unselectableColors.includes(p.color);
+    }
+
     return (
-        <ActionContext.Provider value={{action, setAction, actionType, setActionType, selectedPlayers, setSelectedPlayers, addPlayer, removePlayer, selectNb, setSelectNb, isPlayerSelected, clearSelectedPlayers}}>
+        <ActionContext.Provider value={{action, setAction, actionType, setActionType, selectedPlayers, setSelectedPlayers, addPlayer, removePlayer, selectNb, setSelectNb, isPlayerSelected, clearSelectedPlayers, isPlayerSelectable, setUnselectableColors}}>
             {children}
         </ActionContext.Provider>
     );

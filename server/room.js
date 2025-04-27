@@ -36,7 +36,7 @@ export default class Room {
         this.currentPhase = new WaitingPhase();
         this.phaseIndex = -1;
         this.phases = [
-            new SphinxPhase(this.requestSender, this.playerManager),
+            new SphinxPhase(this.requestSender, this.playerManager, this.game),
             new PriestPhase(this.requestSender, this.playerManager, this.game),
             new MummyPhase(this.requestSender, this.playerManager),
             new MorningPhase(this.requestSender, this.playerManager, this.game),
