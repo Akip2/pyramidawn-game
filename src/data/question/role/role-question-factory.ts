@@ -1,18 +1,9 @@
-import SphinxQuestion from "@/data/question/role/sphinx-question";
 import RoleQuestion from "@/data/question/role/role-question";
-import {ROLES} from "../../../../server/const";
+import {roleDescriptions} from "@/data/role-descriptions";
+import {RoleEnum} from "@/enums/role.enum";
 
-export default function createRoleQuestion(role:string) {
-    let question:RoleQuestion;
-
-    switch (role) {
-        //TODO
-        case ROLES.SPHINX:
-            question = new SphinxQuestion();
-            break;
-        default:
-            question = new SphinxQuestion();
-    }
-
-    return question;
+export default function createRoleQuestion(role:RoleEnum) {
+    const description = roleDescriptions[role];
+    const imageLink = `/role_icons/${role}.png`;
+    return new RoleQuestion(role, description, imageLink);
 }

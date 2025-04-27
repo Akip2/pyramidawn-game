@@ -69,7 +69,7 @@ export default function GamePage() {
         clearVotes();
     }, [clearSelectedPlayers, clearVotes, setAction, setPhase, setPhaseEndTime, setVisibility])
 
-    const receiveRole = useCallback((role: string) => {
+    const receiveRole = useCallback((role: RoleEnum) => {
         setRole(role);
         setChoiceType(ChoiceType.OK);
         setQuestion(createRoleQuestion(role));

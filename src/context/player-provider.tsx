@@ -2,6 +2,7 @@
 
 import React, {createContext, useContext, useState} from 'react';
 import {RoleEnum} from "@/enums/role.enum";
+import {isRoleMummy} from "@/lib/utils";
 
 const PlayerContext = createContext<{
     playerName: string;
@@ -10,8 +11,8 @@ const PlayerContext = createContext<{
     color: string;
     setColor: React.Dispatch<React.SetStateAction<string>>;
 
-    role: string;
-    setRole: React.Dispatch<React.SetStateAction<string>>;
+    role: RoleEnum;
+    setRole: React.Dispatch<React.SetStateAction<RoleEnum>>;
 
     isMummy: () => boolean;
 }>(null!);
@@ -19,9 +20,9 @@ const PlayerContext = createContext<{
 export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [playerName, setPlayerName] = useState('');
     const [color, setColor] = useState('');
-    const [role, setRole] = useState('');
+    const [role, setRole] = useState(RoleEnum.NONE);
 
-    const isMummy = () => role === RoleEnum.MUMMY;
+    const isMummy = () => isRoleMummy(role);
 
     return (
         <PlayerContext.Provider value={{playerName, setPlayerName, color, setColor, role, setRole, isMummy}}>
