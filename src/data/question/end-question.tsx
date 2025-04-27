@@ -15,7 +15,7 @@ export default class EndQuestion implements IQuestion {
             this.statusText = v! ? "VICTORY" : "DEFEAT";
             this.statusColor = v! ? "text-green-400" : "text-red-400";
 
-            this.subText = s === GameStatusEnum.WRAITHS_WIN ? "The wraiths won." : "The village won.";
+            this.subText = s === GameStatusEnum.WRAITHS_WIN ? "The mummies won." : "The village won.";
         }
     }
 

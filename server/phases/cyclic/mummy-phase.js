@@ -4,7 +4,7 @@ import {ROLES} from "../../const.js";
 
 export default class MummyPhase extends Phase {
     constructor(requestSender, playerManager) {
-        super(requestSender, 1, capitalizeFirstLetter(ROLES.MUMMY));
+        super(requestSender, 20, capitalizeFirstLetter(ROLES.MUMMY));
         this.playerManager = playerManager;
     }
 

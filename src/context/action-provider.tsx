@@ -9,6 +9,8 @@ import {useVote} from "@/context/vote-provider";
 import {usePlayer} from "@/context/player-provider";
 import DefaultQuestion from "@/data/question/default-question";
 import {ChoiceType} from "@/enums/choice-type.enum";
+import {capitalizeFirstLetter} from "@/lib/utils";
+import {ROLES} from "../../server/const";
 
 export enum ActionType {
     POWER = 0,
@@ -51,11 +53,11 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
             
             let question;
             switch(phase) {
-                case "Golem":
+                case capitalizeFirstLetter(ROLES.SPHINX):
                     question = new DefaultQuestion(`Shall ${selectedPlayers[0].name} be protected tonight?`);
                     break;
 
-                case "Priest":
+                case capitalizeFirstLetter(ROLES.PRIEST):
                     question = new DefaultQuestion(`Shall ${selectedPlayers[0].name} become the Avatar of a God?`);
                     break;
 

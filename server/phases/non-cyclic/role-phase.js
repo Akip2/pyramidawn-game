@@ -1,5 +1,5 @@
 import Phase from "../phase.js";
-import {isRoleWraith} from "../../utils.js";
+import {isRoleMummy} from "../../utils.js";
 
 export default class RolePhase extends Phase {
     constructor(requestSender, playerManager, roles) {
@@ -14,7 +14,7 @@ export default class RolePhase extends Phase {
 
         let playerIndex = 0;
 
-        const wraiths = [];
+        const mummies = [];
         while (playerIndex < this.playerManager.getPlayerNb()) {
             const roleIndex = Math.floor(Math.random() * remainingRoles.length);
             const role = remainingRoles.splice(roleIndex, 1)[0];
@@ -24,12 +24,12 @@ export default class RolePhase extends Phase {
             this.requestSender.assignRoleToPlayer(role, player.id);
             playerIndex++;
 
-            if(isRoleWraith(role)) {
-                wraiths.push(player);
+            if(isRoleMummy(role)) {
+                mummies.push(player);
             }
         }
 
-        this.requestSender.informWraiths(wraiths);
+        this.requestSender.informMummies(mummies);
 
         const livingPlayers = this.playerManager.getLivingPlayers();
         this.playerManager.disableChat(livingPlayers);

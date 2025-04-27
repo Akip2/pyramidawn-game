@@ -1,6 +1,7 @@
 'use client'
 
 import React, {createContext, useContext, useState} from 'react';
+import {RoleEnum} from "@/enums/role.enum";
 
 const PlayerContext = createContext<{
     playerName: string;
@@ -12,7 +13,7 @@ const PlayerContext = createContext<{
     role: string;
     setRole: React.Dispatch<React.SetStateAction<string>>;
 
-    isWraith: () => boolean;
+    isMummy: () => boolean;
 }>(null!);
 
 export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -20,10 +21,10 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({childre
     const [color, setColor] = useState('');
     const [role, setRole] = useState('');
 
-    const isWraith = () => role === "wraith";
+    const isMummy = () => role === RoleEnum.MUMMY;
 
     return (
-        <PlayerContext.Provider value={{playerName, setPlayerName, color, setColor, role, setRole, isWraith}}>
+        <PlayerContext.Provider value={{playerName, setPlayerName, color, setColor, role, setRole, isMummy}}>
             {children}
         </PlayerContext.Provider>
     );

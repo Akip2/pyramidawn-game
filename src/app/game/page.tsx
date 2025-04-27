@@ -16,13 +16,14 @@ import EndQuestion from "@/data/question/end-question";
 import {GameStatusEnum} from "@/enums/game-status.enum";
 import createRoleQuestion from "@/data/question/role/role-question-factory";
 import {ChoiceType} from "@/enums/choice-type.enum";
+import {RoleEnum} from "@/enums/role.enum";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, setGameMaster} = useGame();
     const {setSelectNb, setAction, setActionType, clearSelectedPlayers} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
-    const {isWraith, setRole, setColor} = usePlayer();
+    const {isMummy, setRole, setColor} = usePlayer();
 
     const startingGame = useCallback(() => {
         setPhase("Starting");
@@ -80,15 +81,15 @@ export default function GamePage() {
         let win:boolean | undefined;
 
         if(status === GameStatusEnum.VILLAGE_WIN) {
-            win = !isWraith();
+            win = !isMummy();
         } else if(status === GameStatusEnum.WRAITHS_WIN) {
-            win = isWraith();
+            win = isMummy();
         }
         
         setQuestion(new EndQuestion(status, win));
         setChoiceType(ChoiceType.END);
         setVisibility(true);
-    }, [isWraith, setChoiceType, setQuestion, setVisibility]);
+    }, [isMummy, setChoiceType, setQuestion, setVisibility]);
 
     const action = useCallback((data: { actionName: string, selectNb: number, data:never }) => {
         setSelectNb(data.selectNb);
@@ -98,12 +99,12 @@ export default function GamePage() {
         if (actionName !== "vote") {
             setActionType(ActionType.POWER);
             switch (actionName) {
-                case "golem":
+                case RoleEnum.SPHINX:
                     setChoiceType(ChoiceType.OK);
                     question = new DefaultQuestion("Choose a player to protect for this night.");
                     break;
 
-                case "priest":
+                case RoleEnum.PRIEST:
                     setChoiceType(ChoiceType.ACTIVATE_POWER);
                     question = new DefaultQuestion(`Summon ${data.data}?`);
                     break;
