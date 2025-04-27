@@ -1,8 +1,8 @@
 import {setTimeout} from "node:timers";
 import Game from "./game.js";
 import PriestPhase from "./phases/cyclic/priest-phase.js";
-import GolemPhase from "./phases/cyclic/golem-phase.js";
-import WraithPhase from "./phases/cyclic/wraith-phase.js";
+import SphinxPhase from "./phases/cyclic/sphinx-phase.js";
+import MummyPhase from "./phases/cyclic/mummy-phase.js";
 import MorningPhase from "./phases/cyclic/morning-phase.js";
 import StartingPhase from "./phases/non-cyclic/starting-phase.js";
 import WaitingPhase from "./phases/non-cyclic/waiting-phase.js";
@@ -11,11 +11,12 @@ import PlayerManager from "./player/player-manager.js";
 import RequestSender from "./request-sender.js";
 import VotePhase from "./phases/cyclic/vote-phase.js";
 import ExecutionPhase from "./phases/cyclic/execution-phase.js";
-import {STATUS} from "./const.js";
+import {ROLES, STATUS} from "./const.js";
 import AnubisPhase from "./phases/cyclic/anubis-phase.js";
 import RaPhase from "./phases/cyclic/ra-phase.js";
+import {capitalizeFirstLetter} from "./utils.js";
 
-const defaultRoles = ["priest", "wraith", "wraith"];
+const defaultRoles = [ROLES.PRIEST, ROLES.MUMMY, ROLES.SLAVE, ROLES.SPHINX];
 
 export default class Room {
     constructor(io, id, gameEndCallback, roles = [...defaultRoles]) {
@@ -35,9 +36,9 @@ export default class Room {
         this.currentPhase = new WaitingPhase();
         this.phaseIndex = -1;
         this.phases = [
-            new GolemPhase(this.requestSender, this.playerManager),
+            new SphinxPhase(this.requestSender, this.playerManager),
             new PriestPhase(this.requestSender, this.playerManager, this.game),
-            new WraithPhase(this.requestSender, this.playerManager),
+            new MummyPhase(this.requestSender, this.playerManager),
             new MorningPhase(this.requestSender, this.playerManager, this.game),
             new AnubisPhase(this.requestSender, this.playerManager),
             new RaPhase(this.requestSender, this.playerManager),
@@ -181,11 +182,11 @@ export default class Room {
             voted: voted
         };
 
-        if(this.currentPhase.name !== "Wraith") { //Village vote, we send the vote to everyone
+        if(this.currentPhase.name !== capitalizeFirstLetter(ROLES.MUMMY)) { //Village vote, we send the vote to everyone
             this.requestSender.send("vote-update", updateData, this.id, voterSocket);
         } else {
-            const otherWraithsIds = this.playerManager.activePlayersIds.filter(playerId => playerId !== voterSocket.id);
-            otherWraithsIds.forEach((playerId) => {
+            const otherMummiesId = this.playerManager.activePlayersIds.filter(playerId => playerId !== voterSocket.id);
+            otherMummiesId.forEach((playerId) => {
                 this.requestSender.send("vote-update", updateData, playerId);
             })
         }

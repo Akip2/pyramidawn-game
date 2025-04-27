@@ -1,5 +1,5 @@
 import Player from "./player.js";
-import {GODS} from "../const.js";
+import {GODS, ROLES} from "../const.js";
 
 const possibleColors = [
     '#e6194b', // Red (bright)
@@ -165,9 +165,9 @@ export default class PlayerManager {
      * Returns every wraith players that are still alive
      * @returns {*} array containing all wraith players that are still alive
      */
-    getWraiths() {
+    getEvilPlayers() {
         return this.players.filter(player =>
-            player.isRole("wraith")
+            player.isRole(ROLES.MUMMY)
             &&
             player.isAlive
         );

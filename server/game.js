@@ -1,12 +1,11 @@
-import {STATUS} from "./const.js";
+import {ROLES, STATUS} from "./const.js";
 
 export default class Game {
     constructor(playerManager) {
         this.votes = new Map();
 
         this.powerAvailable = new Map();
-        this.powerAvailable.set("priest", true);
-        this.powerAvailable.set("judge", true);
+        this.powerAvailable.set(ROLES.PRIEST, true);
 
         this.dayCount = 0;
         this.status = STATUS.STILL_GOING;
@@ -70,11 +69,11 @@ export default class Game {
         const aliveNb = playerManager.getLivingPlayers().length;
 
         if(aliveNb > 0) {
-            const aliveWraithsNb = playerManager.getWraiths().length;
+            const aliveEvilNb = playerManager.getEvilPlayers().length;
 
-            if (aliveNb === aliveWraithsNb) {
+            if (aliveNb === aliveEvilNb) {
                 this.status = STATUS.WRAITHS_WIN;
-            } else if (aliveWraithsNb === 0) {
+            } else if (aliveEvilNb === 0) {
                 this.status = STATUS.VILLAGE_WIN;
             } else {
                 this.status = STATUS.STILL_GOING;
@@ -87,15 +86,15 @@ export default class Game {
     }
 
     usePower(power, selectedPlayers) {
-        if(power === "golem") {
+        if(power === ROLES.SPHINX) {
             this.protectedPlayer = selectedPlayers[0];
         } else if (power === "anubis") {
             this.playerManager.kill(selectedPlayers[0].color, "killed by Anubis");
         } else if(power === "ra") {
             this.playerManager.revealPlayer(selectedPlayers[0].color);
         }
-        else if(power === "priest" || power === "judge") {
-            if (power === "priest") {
+        else if(power === ROLES.PRIEST) {
+            if (power === ROLES.PRIEST) {
                 this.chosenAvatar = selectedPlayers[0];
             } else {
                 //TODO

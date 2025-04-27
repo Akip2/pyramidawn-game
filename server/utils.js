@@ -5,3 +5,7 @@ export async function wait(seconds) {
 export function isRoleWraith(role) {
     return role === "wraith" || role === "judge";
 }
+
+export function capitalizeFirstLetter(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+}
