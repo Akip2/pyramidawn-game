@@ -30,7 +30,7 @@ export default function GamePage() {
         setPhaseEndTime(Date.now() + 10000);
     }, [setPhase, setPhaseEndTime])
 
-    const receiveRoomData = useCallback((data: { players: PlayerData[], roles: string[], phase: string, gameMaster:string }) => {
+    const receiveRoomData = useCallback((data: { players: PlayerData[], roles: RoleEnum[], phase: string, gameMaster:string }) => {
         setPlayers(data.players);
         setRoles(data.roles);
         setPhase(data.phase);
@@ -164,6 +164,7 @@ export default function GamePage() {
         socket.on("game-end", gameEnd);
         socket.on("wraith-players", makePlayersWraith)
         socket.on("game-master", setGameMaster);
+        socket.on("roles-change", setRoles);
 
         return () => {
             socket.off("room-data", receiveRoomData);
@@ -178,8 +179,9 @@ export default function GamePage() {
             socket.off("game-end", gameEnd);
             socket.off("wraith-players", makePlayersWraith);
             socket.off("game-master", setGameMaster);
+            socket.off("roles-change", setRoles);
         }
-    }, [action, death, gameEnd, godSummon, makePlayersWraith, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, setGameMaster, updateVotes]);
+    }, [action, death, gameEnd, godSummon, makePlayersWraith, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, setGameMaster, setRoles, updateVotes]);
 
     useEffect(() => {
         if (phase === "Starting" && players.length < roles.length) {

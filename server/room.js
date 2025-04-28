@@ -197,6 +197,27 @@ export default class Room {
         this.requestSender.gameMasterChange(this.gameMaster.color);
     }
 
+    changeRoles(newRoles) {
+        const rolePlayerRatio = newRoles.length - this.playerManager.getPlayerNb();
+
+        if(rolePlayerRatio >= 0) {
+            this.roles = newRoles;
+
+            if(rolePlayerRatio === 0) { //As much roles as players
+                this.currentPhase = new StartingPhase();
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => this.startGame(), this.currentPhase.duration * 1000);
+            } else { //More roles than players
+                if(this.currentPhase.name === "Starting") {
+                    this.currentPhase = new WaitingPhase();
+                    this.currentPhase.execute();
+                }
+            }
+
+            this.requestSender.rolesChange(newRoles);
+        }
+    }
+
     serialize() {
         return {
             players: this.playerManager.serialize(),

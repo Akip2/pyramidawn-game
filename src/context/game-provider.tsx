@@ -2,6 +2,7 @@
 
 import React, {createContext, useState, useContext} from 'react';
 import PlayerData from "@/data/player-data";
+import {RoleEnum} from "@/enums/role.enum";
 
 const GameContext = createContext<{
     players: PlayerData[];
@@ -10,8 +11,8 @@ const GameContext = createContext<{
     gameMaster: string;
     setGameMaster: React.Dispatch<React.SetStateAction<string>>;
 
-    roles: string[];
-    setRoles: React.Dispatch<React.SetStateAction<string[]>>;
+    roles: RoleEnum[];
+    setRoles: React.Dispatch<React.SetStateAction<RoleEnum[]>>;
 
     phase: string;
     setPhase: React.Dispatch<React.SetStateAction<string>>;
@@ -28,7 +29,7 @@ const GameContext = createContext<{
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [players, setPlayers] = useState<PlayerData[]>([]);
-    const [roles, setRoles] = useState<string[]>([]);
+    const [roles, setRoles] = useState<RoleEnum[]>([]);
     const [phase, setPhase] = useState<string>('day');
     const [phaseEndTime, setPhaseEndTime] = useState<number>(0);
     const [gameMaster, setGameMaster] = useState<string>("");

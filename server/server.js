@@ -98,6 +98,11 @@ app.prepare().then(() => {
             const room = getPlayerRoom(socket.id);
             room.vote(voteData, socket);
         });
+
+        socket.on("role-modification", function (newRoles) {
+            const room = getPlayerRoom(socket.id);
+            room.changeRoles(newRoles);
+        });
     });
 
     httpServer

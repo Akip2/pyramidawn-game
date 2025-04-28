@@ -47,4 +47,8 @@ export default class RequestSender {
     action(playerId, actionName, selectNb = 1, unselectableColors =  [], data = {}) {
         this.send("action", {actionName, selectNb, unselectableColors, data}, playerId);
     }
+
+    rolesChange(newRoles) {
+        this.send("roles-change", newRoles);
+    }
 }
