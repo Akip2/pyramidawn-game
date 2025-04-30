@@ -71,17 +71,17 @@ export default function Chat() {
         setMessages((prevMessages) => prevMessages.concat(message));
     }
 
-    function godSummoning(data: {avatar: PlayerData, godName: string}) {
+    function godSummoning(data: { avatar: PlayerData, godName: string }) {
         const message = new SummonMessage(data.avatar, data.godName, true);
         setMessages((prevMessages) => prevMessages.concat(message));
     }
 
-    function failedSummoning(data: {avatar: PlayerData, godName: string}) {
+    function failedSummoning(data: { avatar: PlayerData, godName: string }) {
         const message = new SummonMessage(data.avatar, data.godName, false);
         setMessages((prevMessages) => prevMessages.concat(message));
     }
 
-    function reveal(data: {name: string, color: string, role: string}) {
+    function reveal(data: { name: string, color: string, role: string }) {
         const message = new RevealMessage(new PlayerData(data.name, data.color), data.role);
         setMessages((prevMessages) => prevMessages.concat(message));
     }
@@ -101,9 +101,9 @@ export default function Chat() {
         setMessages((prevMessages) => prevMessages.concat(message));
     }
 
-    function deathMessage(data: {victim: PlayerData, reason: string, role: string}) {
-         const message = new DeathMessage(data.victim, data.reason, data.role);
-         setMessages((prevMessages) => prevMessages.concat(message));
+    function deathMessage(data: { victim: PlayerData, reason: string, role: string }) {
+        const message = new DeathMessage(data.victim, data.reason, data.role);
+        setMessages((prevMessages) => prevMessages.concat(message));
     }
 
     function receiveMessage(data: IMessage) {
@@ -142,15 +142,15 @@ export default function Chat() {
     }
 
     return (
-        <div className="flex flex-col min-w-[200px] w-1/4 h-full">
+        <div className="flex flex-col w-full h-full">
             <div
-                className="flex flex-col px-2 gap-2 w-full h-[95vh] bg-gray-900 border-solid overflow-y-scroll scroll-left"
+                className="flex-1 flex flex-col px-2 gap-2 w-full bg-gray-900 border-solid overflow-y-scroll scroll-left"
                 ref={messagesContainerRef}>
                 {messages.map((message, index) => message.getHTML(index.toString()))}
                 <div ref={messagesEndRef}/>
             </div>
 
-            <div className={"w-full h-[5vh] border-solid px-5 " + (canTalk ? "bg-gray-700" : "bg-gray-800")}>
+            <div className={"h-10 w-full border-solid px-5 " + (canTalk ? "bg-gray-700" : "bg-gray-800")}>
                 <input
                     disabled={!canTalk}
                     type="text"

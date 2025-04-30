@@ -17,6 +17,7 @@ import {GameStatusEnum} from "@/enums/game-status.enum";
 import createRoleQuestion from "@/data/question/role/role-question-factory";
 import {ChoiceType} from "@/enums/choice-type.enum";
 import {RoleEnum} from "@/enums/role.enum";
+import SideTabs from "@/components/game/side-tabs";
 
 export default function GamePage() {
     const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, setGameMaster} = useGame();
@@ -195,7 +196,7 @@ export default function GamePage() {
 
     return (
         <div className="flex flex-row w-screen h-screen text-white">
-            <Chat/>
+            <SideTabs/>
             <PlayerContainer/>
         </div>
     );
