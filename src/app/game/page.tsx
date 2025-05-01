@@ -1,6 +1,5 @@
 'use client'
 
-import Chat from "../../components/game/chat";
 import PlayerContainer from "../../components/game/player-container";
 import {socket} from "@/data/socket";
 import React, {useCallback, useEffect} from "react";
@@ -18,9 +17,23 @@ import createRoleQuestion from "@/data/question/role/role-question-factory";
 import {ChoiceType} from "@/enums/choice-type.enum";
 import {RoleEnum} from "@/enums/role.enum";
 import SideTabs from "@/components/game/side-tabs";
+import {ChatProvider} from "@/context/chat-provider";
 
 export default function GamePage() {
-    const {roles, setRoles, players, setPlayers, phase, setPhase, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, setGameMaster} = useGame();
+    const {
+        roles,
+        setRoles,
+        players,
+        setPlayers,
+        phase,
+        setPhase,
+        setPhaseEndTime,
+        killPlayer,
+        addPlayer,
+        makeAvatar,
+        makePlayersWraith,
+        setGameMaster
+    } = useGame();
     const {setSelectNb, setAction, setActionType, clearSelectedPlayers, setUnselectableColors} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
@@ -31,12 +44,17 @@ export default function GamePage() {
         setPhaseEndTime(Date.now() + 10000);
     }, [setPhase, setPhaseEndTime])
 
-    const receiveRoomData = useCallback((data: { players: PlayerData[], roles: RoleEnum[], phase: string, gameMaster:string }) => {
+    const receiveRoomData = useCallback((data: {
+        players: PlayerData[],
+        roles: RoleEnum[],
+        phase: string,
+        gameMaster: string
+    }) => {
         setPlayers(data.players);
         setRoles(data.roles);
         setPhase(data.phase);
         setGameMaster(data.gameMaster);
-        
+
         const playerInfo = data.players[data.players.length - 1];
         setColor(playerInfo.color);
 
@@ -45,7 +63,7 @@ export default function GamePage() {
         }
     }, [setColor, setGameMaster, setPhase, setPlayers, setRoles, startingGame])
 
-    const death = useCallback((deathData: {victim: PlayerData, reason:string}) => {
+    const death = useCallback((deathData: { victim: PlayerData, reason: string }) => {
         killPlayer(deathData.victim);
     }, [killPlayer])
 
@@ -77,22 +95,27 @@ export default function GamePage() {
         setVisibility(true);
     }, [setChoiceType, setQuestion, setRole, setVisibility])
 
-    const gameEnd = useCallback((data: {status: GameStatusEnum}) => {
+    const gameEnd = useCallback((data: { status: GameStatusEnum }) => {
         const status = data.status;
-        let win:boolean | undefined;
+        let win: boolean | undefined;
 
-        if(status === GameStatusEnum.VILLAGE_WIN) {
+        if (status === GameStatusEnum.VILLAGE_WIN) {
             win = !isMummy();
-        } else if(status === GameStatusEnum.WRAITHS_WIN) {
+        } else if (status === GameStatusEnum.WRAITHS_WIN) {
             win = isMummy();
         }
-        
+
         setQuestion(new EndQuestion(status, win));
         setChoiceType(ChoiceType.END);
         setVisibility(true);
     }, [isMummy, setChoiceType, setQuestion, setVisibility]);
 
-    const action = useCallback((data: { actionName: string, selectNb: number, unselectableColors: string[], data:never }) => {
+    const action = useCallback((data: {
+        actionName: string,
+        selectNb: number,
+        unselectableColors: string[],
+        data: never
+    }) => {
         setSelectNb(data.selectNb);
         setUnselectableColors(data.unselectableColors);
         const actionName = data.actionName;
@@ -134,21 +157,21 @@ export default function GamePage() {
         setVisibility(true);
     }, [setActionType, setChoiceType, setQuestion, setSelectNb, setUnselectableColors, setVisibility])
 
-    const updateVotes = useCallback((voteData: {voter: PlayerData, unvoted: PlayerData, voted: PlayerData}) => {
+    const updateVotes = useCallback((voteData: { voter: PlayerData, unvoted: PlayerData, voted: PlayerData }) => {
         const voter = voteData.voter;
         const unvoted = voteData.unvoted;
         const voted = voteData.voted;
-        
-        if(unvoted != null) {
+
+        if (unvoted != null) {
             removeVote(unvoted.color, voter);
         }
-        
-        if(voted != null) {
+
+        if (voted != null) {
             addVote(voted.color, voter);
         }
     }, [addVote, removeVote]);
-    
-    const godSummon = useCallback((data: {avatar: PlayerData, godName: string}) => {
+
+    const godSummon = useCallback((data: { avatar: PlayerData, godName: string }) => {
         makeAvatar(data.avatar, data.godName);
     }, [makeAvatar]);
 
@@ -195,9 +218,11 @@ export default function GamePage() {
     }, []);
 
     return (
-        <div className="flex flex-row w-screen h-screen text-white">
-            <SideTabs/>
-            <PlayerContainer/>
-        </div>
+        <ChatProvider>
+            <div className="flex flex-row w-screen h-screen text-white">
+                <SideTabs/>
+                <PlayerContainer/>
+            </div>
+        </ChatProvider>
     );
 }
