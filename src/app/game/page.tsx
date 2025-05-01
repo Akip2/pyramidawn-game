@@ -1,6 +1,6 @@
 'use client'
 
-import PlayerContainer from "../../components/game/player-container";
+import PlayerContainer from "../../components/player-container";
 import {socket} from "@/data/socket";
 import React, {useCallback, useEffect} from "react";
 import {useGame} from "@/context/game-provider";
@@ -16,7 +16,7 @@ import {GameStatusEnum} from "@/enums/game-status.enum";
 import createRoleQuestion from "@/data/question/role/role-question-factory";
 import {ChoiceType} from "@/enums/choice-type.enum";
 import {RoleEnum} from "@/enums/role.enum";
-import SideTabs from "@/components/game/side-tabs";
+import SideTabs from "@/components/side-tabs";
 import {ChatProvider} from "@/context/chat-provider";
 
 export default function GamePage() {

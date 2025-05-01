@@ -1,5 +1,5 @@
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import Chat from "@/components/game/chat";
+import Chat from "@/components/chat";
 
 export default function SideTabs() {
     return (

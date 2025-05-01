@@ -1,7 +1,7 @@
 import {useGame} from "@/context/game-provider";
 import PlayerAvatar from "@/components/player-avatar";
-import PhaseDisplayer from "@/components/game/phase-displayer";
-import ChoiceBox from "@/components/game/choice-box";
+import PhaseDisplayer from "@/components/phase-displayer";
+import ChoiceBox from "@/components/choice-box";
 
 export default function PlayerContainer() {
     const {players} = useGame();
