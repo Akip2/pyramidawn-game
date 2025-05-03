@@ -7,7 +7,7 @@ import {useGame} from "@/context/game-provider";
 import {Button} from "@/components/ui/button";
 
 export default function Role(props: { editable: boolean, roleName: RoleEnum, unique: boolean }) {
-    const {getRoleCount} = useGame();
+    const {getRoleCount, addRole, removeRole} = useGame();
     const imageLink = getRoleImageLink(props.roleName);
     const roleNb = getRoleCount(props.roleName);
 
@@ -16,13 +16,21 @@ export default function Role(props: { editable: boolean, roleName: RoleEnum, uni
         if(props.unique) {
 
         } else {
+            const addRoleEvent = () => {
+                addRole(props.roleName);
+            }
+
+            const removeRoleEvent = () => {
+                removeRole(props.roleName);
+            }
+
             editionButtons = (
                 <div>
-                    <Button className="role-button bottom-1 right-0.5">
+                    <Button className="role-button bottom-1 right-0.5" onClick={addRoleEvent}>
                         +
                     </Button>
 
-                    <Button className="role-button bottom-1 left-0.5">
+                    <Button className="role-button bottom-1 left-0.5" onClick={removeRoleEvent}>
                         -
                     </Button>
                 </div>
@@ -38,7 +46,7 @@ export default function Role(props: { editable: boolean, roleName: RoleEnum, uni
                     ?
                 </div>
 
-                {props.editable && !props.unique
+                {!props.unique
                     ? (
                         <div className="role-indicator -bottom-1.5">
                             {roleNb}

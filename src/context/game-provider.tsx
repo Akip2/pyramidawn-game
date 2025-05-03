@@ -3,6 +3,7 @@
 import React, {createContext, useState, useContext} from 'react';
 import PlayerData from "@/data/player-data";
 import {RoleEnum} from "@/enums/role.enum";
+import {socket} from "@/data/socket";
 
 const GameContext = createContext<{
     players: PlayerData[];
@@ -26,6 +27,8 @@ const GameContext = createContext<{
     makePlayersWraith: (wraithsColors: string[]) => void;
     started: () => boolean;
     getRoleCount: (r: RoleEnum) => number;
+    addRole: (r: RoleEnum) => void;
+    removeRole: (r: RoleEnum) => void;
 }>(null!);
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -82,7 +85,29 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
         return count;
     }
 
-    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started, getRoleCount};
+    function addRole(r:RoleEnum) {
+        setRoles(prevRoles => {
+            const newRoles = [...prevRoles, r];
+            socket.emit("role-modification", newRoles);
+            return newRoles;
+        });
+    }
+
+    function removeRole(r: RoleEnum) {
+        setRoles(prevRoles => {
+            const newRoles = [...prevRoles];
+            const indexToRemove = newRoles.indexOf(r);
+
+            if (indexToRemove !== -1) {
+                newRoles.splice(indexToRemove, 1);  // Retire seulement la première occurrence
+                socket.emit("role-modification", newRoles);
+            }
+
+            return newRoles;
+        });
+    }
+
+    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started, getRoleCount, addRole, removeRole};
 
     return (
         <GameContext.Provider value={value}>

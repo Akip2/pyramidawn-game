@@ -48,7 +48,7 @@ export default class RequestSender {
         this.send("action", {actionName, selectNb, unselectableColors, data}, playerId);
     }
 
-    rolesChange(newRoles) {
-        this.send("roles-change", newRoles);
+    rolesChange(newRoles, gameMasterSocket) {
+        this.send("roles-change", newRoles, this.roomId, gameMasterSocket);
     }
 }

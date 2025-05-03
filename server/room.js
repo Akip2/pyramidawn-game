@@ -197,7 +197,7 @@ export default class Room {
         this.requestSender.gameMasterChange(this.gameMaster.color);
     }
 
-    changeRoles(newRoles) {
+    changeRoles(newRoles, playerSocket) {
         const rolePlayerRatio = newRoles.length - this.playerManager.getPlayerNb();
 
         if(rolePlayerRatio >= 0) {
@@ -214,7 +214,7 @@ export default class Room {
                 }
             }
 
-            this.requestSender.rolesChange(newRoles);
+            this.requestSender.rolesChange(newRoles, playerSocket);
         }
     }
 

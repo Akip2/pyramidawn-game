@@ -101,7 +101,7 @@ app.prepare().then(() => {
 
         socket.on("role-modification", function (newRoles) {
             const room = getPlayerRoom(socket.id);
-            room.changeRoles(newRoles);
+            room.changeRoles(newRoles, socket);
         });
     });
 
