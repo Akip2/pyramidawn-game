@@ -1,5 +1,5 @@
 import type {Metadata} from "next";
-import {Geist, Geist_Mono} from "next/font/google";
+import {Montserrat} from "next/font/google";
 import "./globals.css";
 import {PlayerProvider} from "@/context/player-provider";
 import {GameProvider} from "@/context/game-provider";
@@ -8,15 +8,11 @@ import {ActionProvider} from "@/context/action-provider";
 import {ChoiceProvider} from "@/context/choice-provider";
 import {VoteProvider} from "@/context/vote-provider";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-});
+const montserrat = Montserrat({
+    subsets: ['latin'],
+    weight: ['400', '700'], // Choisis les graisses dont tu as besoin
+    variable: '--font-montserrat', // Optionnel pour utiliser en CSS
+})
 
 export const metadata: Metadata = {
     title: "Cursed Village",
@@ -30,7 +26,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}>
+        <body className={`${montserrat.className} antialiased dark`}>
         <PlayerProvider>
             <GameProvider>
                 <ChoiceProvider>

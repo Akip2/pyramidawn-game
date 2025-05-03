@@ -79,7 +79,7 @@ export default function ChoiceBox() {
 
     return (
         <motion.div
-            className="flex flex-col gap-2 text-center p-4 rounded-2xl min-h-[200px] min-w-[300px] w-1/4 max-w-[500px] bg-gray-800 shadow-[0_0_20px_rgba(31,41,55,1)] self-center z-10 text-xl justify-around"
+            className="flex flex-col gap-2 text-center p-4 rounded-2xl min-h-[200px] min-w-[300px] w-1/4 max-w-[500px]  font-semibold bg-gray-800 shadow-[0_0_20px_rgba(31,41,55,1)] self-center z-10 text-xl justify-around"
             initial={{y: "-100vh"}}
             animate={visible ? {y: 0} : {y: "-100vh"}}
             transition={{duration: 0.8, ease: "easeInOut"}}

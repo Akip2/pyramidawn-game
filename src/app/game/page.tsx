@@ -13,7 +13,7 @@ import IQuestion from "@/data/question/iquestion";
 import DefaultQuestion from "@/data/question/default-question";
 import EndQuestion from "@/data/question/end-question";
 import {GameStatusEnum} from "@/enums/game-status.enum";
-import createRoleQuestion from "@/data/question/role/role-question-factory";
+import {createRoleQuestion} from "@/data/question/role/role-factory";
 import {ChoiceType} from "@/enums/choice-type.enum";
 import {RoleEnum} from "@/enums/role.enum";
 import SideTabs from "@/components/side-tabs";

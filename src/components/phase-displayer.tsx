@@ -37,7 +37,7 @@ export default function PhaseDisplayer() {
         <div
             className="flex flex-row py-4 px-6 absolute self-center justify-center top-1 bg-gray-800 rounded-2xl text-2xl">
             <p className="mr-10">{phase}</p>
-            <p>
+            <p className="font-mono">
                 {
                     phase === "Waiting"
                         ? players.length + " / " + roles.length
