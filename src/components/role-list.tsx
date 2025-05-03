@@ -7,7 +7,7 @@ export default function RoleList() {
     const {color} = usePlayer();
     const {gameMaster, started} = useGame();
 
-    const editable = color === gameMaster && !started;
+    const editable = color === gameMaster && !started();
     return (
         <div className="flex flex-col gap-2">
             <div className="grid grid-cols-1 gap-5 px-2 py-4">

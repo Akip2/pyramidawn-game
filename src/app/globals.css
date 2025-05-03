@@ -93,9 +93,9 @@ body {
 }
 
 .role-button {
-    @apply absolute w-8 h-8 bg-white text-black text-xl rounded-full flex items-center justify-center;
+    @apply absolute w-8 h-8 font-semibold text-white text-xl rounded-full flex items-center justify-center;
 }
 
 .role-indicator {
-    @apply absolute w-6 h-6 bg-white text-black text-lg rounded-full flex items-center justify-center;
+    @apply absolute w-7 h-7 bg-gray-600 text-white text-lg rounded-full flex items-center justify-center;
 }

@@ -29,6 +29,8 @@ const GameContext = createContext<{
     getRoleCount: (r: RoleEnum) => number;
     addRole: (r: RoleEnum) => void;
     removeRole: (r: RoleEnum) => void;
+    getPlayersNb: () => number;
+    getRolesNb: () => number;
 }>(null!);
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -107,7 +109,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
         });
     }
 
-    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started, getRoleCount, addRole, removeRole};
+    function getPlayersNb() {
+        return players.length;
+    }
+
+    function getRolesNb() {
+        return roles.length;
+    }
+
+    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started, getRoleCount, addRole, removeRole, getPlayersNb, getRolesNb};
 
     return (
         <GameContext.Provider value={value}>
