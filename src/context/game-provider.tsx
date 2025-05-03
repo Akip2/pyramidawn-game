@@ -25,6 +25,7 @@ const GameContext = createContext<{
     makeAvatar: (player: PlayerData, godName: string) => void;
     makePlayersWraith: (wraithsColors: string[]) => void;
     started: () => boolean;
+    getRoleCount: (r: RoleEnum) => number;
 }>(null!);
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -67,7 +68,21 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
         return !(phase === "Waiting" || phase === "Starting");
     }
 
-    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started};
+    function getRoleCount(r: RoleEnum) {
+        let count = 0;
+
+        if(started()) {
+            //TODO
+        } else {
+            roles.forEach((role) => {
+                count += role === r ? 1 : 0;
+            });
+        }
+
+        return count;
+    }
+
+    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started, getRoleCount};
 
     return (
         <GameContext.Provider value={value}>
