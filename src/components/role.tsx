@@ -4,7 +4,6 @@ import Image from "next/image";
 import React, {JSX} from "react";
 import {getRoleImageLink} from "@/data/question/role/role-factory";
 import {useGame} from "@/context/game-provider";
-import {Button} from "@/components/ui/button";
 import PlusButton from "@/components/plus-button";
 import MinusButton from "@/components/minus-button";
 

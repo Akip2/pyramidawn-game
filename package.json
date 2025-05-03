@@ -8,7 +8,7 @@
     "dev:frontend": "next dev",
     "dev:backend": "node ./server/server.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server/server.js",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
