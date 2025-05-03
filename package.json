@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node server/server.js",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "next dev",
+    "dev:backend": "node ./server/server.js",
     "build": "next build",
     "start": "NODE_ENV=production node server/server.js",
     "lint": "next lint"
@@ -18,7 +20,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.4.5",
     "lucide-react": "^0.474.0",
-    "next": "15.1.4",
+    "next": "15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "socket.io": "^4.8.1",
@@ -31,6 +33,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.1.2",
     "eslint": "^9",
     "eslint-config-next": "15.1.4",
     "nodemon": "^3.1.9",
