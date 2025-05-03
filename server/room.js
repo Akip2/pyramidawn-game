@@ -204,12 +204,13 @@ export default class Room {
             this.roles = newRoles;
 
             if(rolePlayerRatio === 0) { //As much roles as players
-                this.currentPhase = new StartingPhase();
+                this.currentPhase = new StartingPhase(this.requestSender);
+                this.currentPhase.execute();
                 clearTimeout(this.timer);
-                this.timer = setTimeout(() => this.startGame(), this.currentPhase.duration * 1000);
+                this.timer = setTimeout(() => this.startGame(), (this.currentPhase.duration+2) * 1000);
             } else { //More roles than players
                 if(this.currentPhase.name === "Starting") {
-                    this.currentPhase = new WaitingPhase();
+                    this.currentPhase = new WaitingPhase(this.requestSender);
                     this.currentPhase.execute();
                 }
             }

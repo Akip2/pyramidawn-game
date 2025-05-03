@@ -86,7 +86,11 @@ export default function GamePage() {
         clearVotes();
         clearSelectedPlayers();
         clearVotes();
-    }, [clearSelectedPlayers, clearVotes, setAction, setPhase, setPhaseEndTime, setVisibility])
+
+        if (newPhase.name === "Starting") {
+            startingGame();
+        }
+    }, [clearSelectedPlayers, clearVotes, setAction, setPhase, setPhaseEndTime, setVisibility, startingGame])
 
     const receiveRole = useCallback((role: RoleEnum) => {
         setRole(role);
