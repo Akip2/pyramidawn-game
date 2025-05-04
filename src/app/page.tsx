@@ -51,8 +51,9 @@ export default function Home() {
     }
 
     return (
-        <div className="h-screen w-screen flex flex-col justify-center items-center bg-gradient-to-b from-yellow-900 via-gray-900 to-black text-white font-sans relative overflow-hidden">
-            <h1 className="text-6xl md:text-7xl font-extrabold text-yellow-300 drop-shadow-2xl tracking-[0.3em] mb-4">
+        <div
+            className="h-screen w-screen flex flex-col justify-center items-center bg-gradient-to-b from-yellow-900 via-gray-900 to-black text-white font-sans relative overflow-hidden">
+            <h1 className="text-6xl md:text-7xl font-extrabold text-yellow-300 drop-shadow-2xl tracking-[0.3em] mb-5">
                 PYRAMIDAWN
             </h1>
 
@@ -60,7 +61,8 @@ export default function Home() {
                 A game of lies, rituals, and shadows in ancient Egypt.
             </p>
 
-            <div className="bg-gray-900/80 border border-yellow-600 rounded-3xl p-8 flex flex-col gap-5 w-80 shadow-2xl backdrop-blur-sm">
+            <div
+                className="bg-gray-900/80 border border-yellow-600 rounded-3xl p-8 flex flex-col gap-5 w-80 shadow-2xl backdrop-blur-sm mb-16">
                 <Input
                     type="text"
                     maxLength={12}
@@ -92,9 +94,20 @@ export default function Home() {
                 </Button>
             </div>
 
-            <div className="absolute bottom-6 text-yellow-100 text-sm italic opacity-50">
-                The gods are watching...
-            </div>
+            <svg
+                className="absolute bottom-0 w-full h-40 md:h-60 lg:h-72 pointer-events-none"
+                viewBox="0 0 1440 320"
+                preserveAspectRatio="none"
+            >
+                <polygon points="0,320 120,220 240,320" fill="#f6ad55" opacity="0.5"/>
+                <polygon points="400,320 520,210 640,320" fill="#f6e05e" opacity="0.5"/>
+                <polygon points="800,320 920,200 1040,320" fill="#b7791f" opacity="0.5"/>
+                <polygon points="1200,320 1320,230 1440,320" fill="#f6ad55" opacity="0.5"/>
+
+                <polygon points="200,320 320,180 440,320" fill="#ecc94b" opacity="1"/>
+                <polygon points="600,320 720,170 840,320" fill="#d69e2e" opacity="1"/>
+                <polygon points="1000,320 1120,185 1240,320" fill="#ecc94b" opacity="1"/>
+            </svg>
         </div>
     );
 }
