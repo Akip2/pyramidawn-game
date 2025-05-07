@@ -103,6 +103,11 @@ io.on("connection", (socket) => {
         const room = getPlayerRoom(socket.id);
         room.changeRoles(newRoles, socket);
     });
+
+    socket.on("get-rooms", function (callback) {
+        const serializedRooms = rooms.map((room) => room.serialize());
+        callback(serializedRooms);
+    })
 });
 
 httpServer

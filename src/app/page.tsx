@@ -6,10 +6,17 @@ import {useEffect, useState} from "react";
 import {usePlayer} from "@/context/player-provider";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import RoomData from "@/data/room-data";
+import RoomList from "@/components/ui/room-list";
 
 const defaultUsername = "Seth";
 
 export default function Home() {
+    const [displayingRooms, setDisplayingRooms] = useState(false);
+    const [roomsLoaded, setRoomsLoaded] = useState(false);
+    const [rooms, setRooms] = useState<RoomData[]>([]);
+
+
     const [username, setUsername] = useState("");
     const router = useRouter();
 
@@ -50,6 +57,21 @@ export default function Home() {
         router.push('/game');
     }
 
+    function updateRooms() {
+        setRoomsLoaded(false);
+        setRooms([]);
+
+        socket.emit("get-rooms", (updatedRooms: RoomData[]) => {
+            setRooms(updatedRooms);
+            setRoomsLoaded(true);
+        })
+    }
+
+    function displayRooms() {
+        updateRooms();
+        setDisplayingRooms(true);
+    }
+
     return (
         <div
             className="h-screen w-screen flex flex-col justify-center items-center bg-gradient-to-b from-yellow-900 via-gray-900 to-black text-white font-sans relative overflow-hidden">
@@ -61,38 +83,53 @@ export default function Home() {
                 A game of lies, rituals, and shadows in ancient Egypt.
             </p>
 
-            <div
-                className="bg-gray-900/80 border border-yellow-600 rounded-3xl p-8 flex flex-col gap-5 w-80 shadow-2xl backdrop-blur-sm mb-16">
-                <Input
-                    type="text"
-                    maxLength={12}
-                    placeholder={defaultUsername}
-                    value={username}
-                    onChange={(event) => setUsername(event.target.value)}
-                    className="text-lg bg-gray-800 text-white"
-                />
+            {!displayingRooms
+                ? (
+                    <div
+                        className="bg-gray-900/80 border border-yellow-600 rounded-3xl p-8 flex flex-col gap-5 w-80 shadow-2xl backdrop-blur-sm mb-16">
+                        <Input
+                            type="text"
+                            maxLength={12}
+                            placeholder={defaultUsername}
+                            value={username}
+                            onChange={(event) => setUsername(event.target.value)}
+                            className="text-lg bg-gray-800 text-white"
+                        />
 
-                <Button
-                    size="lg"
-                    onClick={quickPlay}
-                    className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
-                >
-                    Quick Play
-                </Button>
-                <Button
-                    size="lg"
-                    className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
-                >
-                    Join Game
-                </Button>
-                <Button
-                    size="lg"
-                    onClick={createGame}
-                    className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
-                >
-                    Create Game
-                </Button>
-            </div>
+                        <Button
+                            size="lg"
+                            onClick={quickPlay}
+                            className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
+                        >
+                            Quick Play
+                        </Button>
+                        <Button
+                            size="lg"
+                            onClick={displayRooms}
+                            className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
+                        >
+                            Join Game
+                        </Button>
+                        <Button
+                            size="lg"
+                            onClick={createGame}
+                            className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
+                        >
+                            Create Game
+                        </Button>
+                    </div>
+                )
+
+                : (
+                    <div
+                        className="bg-gray-900/80 border border-yellow-600 rounded-3xl p-8 w-3/5 min-w-[500px] shadow-2xl backdrop-blur-sm mb-16">
+                        {roomsLoaded
+                            ? <RoomList rooms={rooms}/>
+                            : null
+                        }
+                    </div>
+                )
+            }
 
             <svg
                 className="absolute bottom-0 w-full h-40 md:h-60 lg:h-72 pointer-events-none"

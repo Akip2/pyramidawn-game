@@ -221,10 +221,11 @@ export default class Room {
 
     serialize() {
         return {
+            id: this.id,
             players: this.playerManager.serialize(),
             roles: this.roles,
             phase: this.currentPhase.name,
-            gameMaster: this.gameMaster.color,
+            gameMaster: this.gameMaster,
         }
     }
 }

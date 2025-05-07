@@ -48,12 +48,12 @@ export default function GamePage() {
         players: PlayerData[],
         roles: RoleEnum[],
         phase: string,
-        gameMaster: string
+        gameMaster: PlayerData
     }) => {
         setPlayers(data.players);
         setRoles(data.roles);
         setPhase(data.phase);
-        setGameMaster(data.gameMaster);
+        setGameMaster(data.gameMaster.color);
 
         const playerInfo = data.players[data.players.length - 1];
         setColor(playerInfo.color);
