@@ -15,14 +15,14 @@ export default function RoomComponent({ room }: { room: RoomData }) {
                     </p>
                 </div>
 
-                <div className="flex gap-2 w-1/3 overflow-hidden">
+                <div className="flex gap-2 w-1/3 overflow-hidden justify-center">
                     {room.roles.slice(0, 4).map((role, index) => (
                         <Image
                             key={index}
                             src={getRoleImageLink(role)}
                             alt={`Role ${index + 1}`}
-                            width={32}
-                            height={32}
+                            width={40}
+                            height={40}
                         />
                     ))}
                 </div>

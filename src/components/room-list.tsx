@@ -25,30 +25,31 @@ export default function RoomList(props: { quitButtonCallback: () => void }) {
     }
 
     return (
-        <div className="flex flex-col gap-5 items-center bg-gray-900/80 border border-yellow-600 rounded-3xl p-8 w-2/5 min-w-[500px] shadow-2xl backdrop-blur-sm mb-16 relative">
+        <div
+            className="flex flex-col gap-5 items-center bg-gray-900/80 border border-yellow-600 p-8 w-2/5 min-w-[500px] shadow-2xl backdrop-blur-sm relative overflow-y-scroll h-1/3 min-h-[300px]">
             <div className="absolute top-4 left-4 flex gap-3">
                 <Button
                     onClick={props.quitButtonCallback}
                     className="bg-yellow-600 hover:bg-yellow-500 text-black p-2 rounded-lg shadow-md transition-all"
                     title="Back to Menu"
                 >
-                    <ArrowLeft className="w-5 h-5" />
+                    <ArrowLeft className="w-5 h-5"/>
                 </Button>
                 <Button
                     onClick={updateRooms}
                     className="bg-yellow-600 hover:bg-yellow-500 text-black p-2 rounded-lg shadow-md transition-all"
                     title="Refresh Rooms"
                 >
-                    <RefreshCw className="w-5 h-5" />
+                    <RefreshCw className="w-5 h-5"/>
                 </Button>
             </div>
 
-            <h2 className="text-2xl font-bold text-yellow-300 mb-4">Available Rooms</h2>
+            <h2 className="text-2xl font-bold text-yellow-300 mb-2">Available Rooms</h2>
 
             {roomsLoaded ? (
                 rooms.length > 0 ? (
                     rooms.map((room: RoomData, idx) => (
-                        <RoomComponent room={room} key={idx} />
+                        <RoomComponent room={room} key={idx}/>
                     ))
                 ) : (
                     <p className="text-lg text-yellow-100 italic opacity-70">
@@ -56,7 +57,7 @@ export default function RoomList(props: { quitButtonCallback: () => void }) {
                     </p>
                 )
             ) : (
-                <LoadingSpinner />
+                <LoadingSpinner/>
             )}
         </div>
     );

@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 import {usePlayer} from "@/context/player-provider";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import RoomList from "@/components/ui/room-list";
+import RoomList from "@/components/room-list";
 
 const defaultUsername = "Seth";
 
@@ -55,19 +55,21 @@ export default function Home() {
 
     return (
         <div
-            className="h-screen w-screen flex flex-col justify-center items-center bg-gradient-to-b from-yellow-900 via-gray-900 to-black text-white font-sans relative overflow-hidden">
-            <h1 className="text-6xl md:text-7xl font-extrabold text-yellow-300 drop-shadow-2xl tracking-[0.3em] mb-5">
-                PYRAMIDAWN
-            </h1>
+            className="h-screen w-screen flex flex-col gap-10 items-center bg-gradient-to-b from-yellow-900 via-gray-900 to-black text-white font-sans relative overflow-hidden">
 
-            <p className="text-yellow-100 italic text-md mb-12 opacity-70 tracking-wide">
-                A game of lies, rituals, and shadows in ancient Egypt.
-            </p>
+            <div className="mt-12 sm:mt-20 md:mt-28 text-center">
+                <h1 className="text-6xl md:text-7xl font-extrabold text-yellow-300 drop-shadow-2xl tracking-[0.3em] mb-5">
+                    PYRAMIDAWN
+                </h1>
+                <p className="text-yellow-100 italic text-md mb-12 opacity-70 tracking-wide">
+                    A game of lies, rituals, and shadows in ancient Egypt.
+                </p>
+            </div>
 
             {!displayingRooms
                 ? (
                     <div
-                        className="bg-gray-900/80 border border-yellow-600 rounded-3xl p-8 flex flex-col gap-5 w-80 shadow-2xl backdrop-blur-sm mb-16">
+                        className="bg-gray-900/80 border border-yellow-600 rounded-3xl p-8 flex flex-col justify-around w-80 shadow-2xl backdrop-blur-sm mb-16 h-1/3 min-h-[300px]">
                         <Input
                             type="text"
                             maxLength={12}
