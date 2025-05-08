@@ -6,16 +6,12 @@ import {useEffect, useState} from "react";
 import {usePlayer} from "@/context/player-provider";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import RoomData from "@/data/room-data";
 import RoomList from "@/components/ui/room-list";
 
 const defaultUsername = "Seth";
 
 export default function Home() {
     const [displayingRooms, setDisplayingRooms] = useState(false);
-    const [roomsLoaded, setRoomsLoaded] = useState(false);
-    const [rooms, setRooms] = useState<RoomData[]>([]);
-
 
     const [username, setUsername] = useState("");
     const router = useRouter();
@@ -57,21 +53,6 @@ export default function Home() {
         router.push('/game');
     }
 
-    function updateRooms() {
-        setRoomsLoaded(false);
-        setRooms([]);
-
-        socket.emit("get-rooms", (updatedRooms: RoomData[]) => {
-            setRooms(updatedRooms);
-            setRoomsLoaded(true);
-        })
-    }
-
-    function displayRooms() {
-        updateRooms();
-        setDisplayingRooms(true);
-    }
-
     return (
         <div
             className="h-screen w-screen flex flex-col justify-center items-center bg-gradient-to-b from-yellow-900 via-gray-900 to-black text-white font-sans relative overflow-hidden">
@@ -105,7 +86,7 @@ export default function Home() {
                         </Button>
                         <Button
                             size="lg"
-                            onClick={displayRooms}
+                            onClick={() => setDisplayingRooms(true)}
                             className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
                         >
                             Join Game
@@ -120,15 +101,7 @@ export default function Home() {
                     </div>
                 )
 
-                : (
-                    <div
-                        className="bg-gray-900/80 border border-yellow-600 rounded-3xl p-8 w-3/5 min-w-[500px] shadow-2xl backdrop-blur-sm mb-16">
-                        {roomsLoaded
-                            ? <RoomList rooms={rooms}/>
-                            : null
-                        }
-                    </div>
-                )
+                : <RoomList quitButtonCallback={() => setDisplayingRooms(false)}/>
             }
 
             <svg
