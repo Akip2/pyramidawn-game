@@ -3,20 +3,37 @@ import {Card, CardTitle} from "@/components/ui/card";
 import Image from "next/image";
 import {getRoleImageLink} from "@/data/question/role/role-factory";
 import {Button} from "@/components/ui/button";
+import {socket} from "@/data/socket";
+import {useRouter} from "next/navigation";
+import {usePlayer} from "@/context/player-provider";
 
-export default function RoomComponent({ room }: { room: RoomData }) {
+export default function RoomComponent(props: { room: RoomData }) {
+    const {playerName} = usePlayer();
+    const router = useRouter();
+    const {room} = props;
+    const {players, gameMaster, roles, id} = room;
+
+    const joinHandler = () => {
+        socket.emit("join", id, playerName, (status:boolean, joinedRoom?: RoomData) => {
+            if(status) {
+                console.log(joinedRoom);
+                router.push("/game");
+            }
+        });
+    }
+
     return (
         <Card className="w-full bg-gray-800 border-yellow-600 text-white shadow-md hover:shadow-yellow-500/30 transition-shadow duration-200 px-4 py-3">
             <div className="flex items-center justify-between gap-4">
                 <div className="flex flex-col justify-center w-1/3">
-                    <CardTitle className="text-yellow-300 text-md truncate">{`${room.gameMaster.name}'s game`}</CardTitle>
+                    <CardTitle className="text-yellow-300 text-md truncate">{`${gameMaster.name}'s game`}</CardTitle>
                     <p className="text-sm text-yellow-100 opacity-80">
-                        {room.players.length}/{room.roles.length} players
+                        {players.length}/{roles.length} players
                     </p>
                 </div>
 
                 <div className="flex gap-2 w-1/3 overflow-hidden justify-center">
-                    {room.roles.slice(0, 4).map((role, index) => (
+                    {roles.slice(0, 4).map((role, index) => (
                         <Image
                             key={index}
                             src={getRoleImageLink(role)}
@@ -28,7 +45,7 @@ export default function RoomComponent({ room }: { room: RoomData }) {
                 </div>
 
                 <div className="w-1/3 flex justify-end">
-                    <Button className="bg-yellow-600 hover:bg-yellow-500 text-black text-sm px-4 py-1 h-auto">
+                    <Button onClick={joinHandler} className="bg-yellow-600 hover:bg-yellow-500 text-black text-sm px-4 py-1 h-auto">
                         Join
                     </Button>
                 </div>

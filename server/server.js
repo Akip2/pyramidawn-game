@@ -12,6 +12,20 @@ function getPlayerRoom(playerId) {
     return rooms.find(room => room.hasPlayer(playerId));
 }
 
+function getRoomById(roomId) {
+    let i = 0;
+    let room = rooms[i];
+
+    while (i < rooms.length && room.id !== roomId) {
+        i++;
+        room = rooms[i];
+    }
+
+    if(room.id === roomId) {
+        return room;
+    }
+}
+
 function removeRoomById(roomId) {
     let i = 0;
     let room = rooms[i];
@@ -108,6 +122,17 @@ io.on("connection", (socket) => {
         const serializedRooms = rooms.map((room) => room.serialize());
         callback(serializedRooms);
     })
+
+    socket.on("join", function(roomId, playerName, callback) {
+        const room = getRoomById(roomId);
+
+        if(room.canJoin()) {
+            room.addPlayer(socket, playerName);
+            callback(true, room.serialize());
+        } else {
+            callback(false);
+        }
+    });
 });
 
 httpServer

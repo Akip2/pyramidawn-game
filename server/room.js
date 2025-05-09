@@ -85,6 +85,10 @@ export default class Room {
         }
     }
 
+    canJoin() {
+        return this.playerManager.getPlayerNb() < this.roles.length;
+    }
+
     startGame() {
         if (this.playerManager.getPlayerNb() === this.roles.length) {
             this.started = true;
