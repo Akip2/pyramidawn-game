@@ -1,56 +1,29 @@
 "use client";
 
-import {socket} from "@/data/socket";
 import {useRouter} from "next/navigation";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {usePlayer} from "@/context/player-provider";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
 import RoomList from "@/components/room-list";
-
-const defaultUsername = "Seth";
+import RoomData from "@/data/room-data";
+import {useGame} from "@/context/game-provider";
+import MenuButtons from "@/components/menu-buttons";
 
 export default function Home() {
-    const [displayingRooms, setDisplayingRooms] = useState(false);
+    const {setColor} = usePlayer();
+    const {updateGameValues} = useGame();
 
-    const [username, setUsername] = useState("");
+    const [displayingRooms, setDisplayingRooms] = useState(false);
     const router = useRouter();
 
-    const {setPlayerName} = usePlayer();
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const lastName = localStorage.getItem("username");
-            if (lastName != null && lastName != defaultUsername) {
-                setUsername(lastName);
-            }
-        }
-    }, [])
-
-    function setUpUsername() {
-        let newUsername: string;
-        if (username == null || username.trim() == "") {
-            newUsername = defaultUsername;
+    function roomCallback(status: boolean, room?: RoomData) {
+        if(status) {
+            const {players} = room!;
+            updateGameValues(room!);
+            setColor(players[players.length - 1].color);
+            router.push('/game');
         } else {
-            newUsername = username.trim();
+            //TODO
         }
-
-        setPlayerName(newUsername);
-        localStorage.setItem("username", newUsername);
-
-        return newUsername;
-    }
-
-    function quickPlay() {
-        const newUsername = setUpUsername();
-        socket.emit("quick-play", newUsername);
-        router.push('/game');
-    }
-
-    function createGame() {
-        const newUsername = setUpUsername();
-        socket.emit("create-game", newUsername);
-        router.push('/game');
     }
 
     return (
@@ -67,43 +40,8 @@ export default function Home() {
             </div>
 
             {!displayingRooms
-                ? (
-                    <div
-                        className="bg-gray-900/80 border border-yellow-600 rounded-3xl p-8 flex flex-col justify-around w-80 shadow-2xl backdrop-blur-sm mb-16 h-1/3 min-h-[300px]">
-                        <Input
-                            type="text"
-                            maxLength={12}
-                            placeholder={defaultUsername}
-                            value={username}
-                            onChange={(event) => setUsername(event.target.value)}
-                            className="text-lg bg-gray-800 text-white"
-                        />
-
-                        <Button
-                            size="lg"
-                            onClick={quickPlay}
-                            className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
-                        >
-                            Quick Play
-                        </Button>
-                        <Button
-                            size="lg"
-                            onClick={() => setDisplayingRooms(true)}
-                            className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
-                        >
-                            Join Game
-                        </Button>
-                        <Button
-                            size="lg"
-                            onClick={createGame}
-                            className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
-                        >
-                            Create Game
-                        </Button>
-                    </div>
-                )
-
-                : <RoomList quitButtonCallback={() => setDisplayingRooms(false)}/>
+                ? <MenuButtons displayRoomsCallback={() => setDisplayingRooms(true)} roomCallback={roomCallback}/>
+                : <RoomList quitButtonCallback={() => setDisplayingRooms(false)} roomCallback={roomCallback}/>
             }
 
             <svg

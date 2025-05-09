@@ -6,7 +6,8 @@ import LoadingSpinner from "@/components/ui/loading-spinner";
 import {ArrowLeft, RefreshCw} from "lucide-react";
 import {Button} from "@/components/ui/button";
 
-export default function RoomList(props: { quitButtonCallback: () => void }) {
+export default function RoomList(props: { quitButtonCallback: () => void, roomCallback: (status: boolean, room?: RoomData) => void }) {
+    const {quitButtonCallback, roomCallback} = props;
     const [roomsLoaded, setRoomsLoaded] = useState(false);
     const [rooms, setRooms] = useState<RoomData[]>([]);
 
@@ -29,7 +30,7 @@ export default function RoomList(props: { quitButtonCallback: () => void }) {
             className="flex flex-col -mt-5 gap-5 items-center bg-gray-900/80 border border-yellow-600 p-8 w-2/5 min-w-[500px] shadow-2xl backdrop-blur-sm relative overflow-y-scroll h-2/4 min-h-[300px]">
             <div className="absolute top-4 left-4 flex gap-3">
                 <Button
-                    onClick={props.quitButtonCallback}
+                    onClick={quitButtonCallback}
                     className="bg-yellow-600 hover:bg-yellow-500 text-black p-2 rounded-lg shadow-md transition-all"
                     title="Back to Menu"
                 >
@@ -49,7 +50,7 @@ export default function RoomList(props: { quitButtonCallback: () => void }) {
             {roomsLoaded ? (
                 rooms.length > 0 ? (
                     rooms.map((room: RoomData, idx) => (
-                        <RoomComponent room={room} key={idx}/>
+                        <RoomComponent room={room} roomCallback={roomCallback} key={idx}/>
                     ))
                 ) : (
                     <p className="text-lg text-yellow-100 italic opacity-70">

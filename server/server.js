@@ -21,7 +21,7 @@ function getRoomById(roomId) {
         room = rooms[i];
     }
 
-    if(room.id === roomId) {
+    if (room.id === roomId) {
         return room;
     }
 }
@@ -62,7 +62,7 @@ io.on("connection", (socket) => {
         console.log('Socket disconnected');
 
         let room = getPlayerRoom(socket.id);
-        if(room) {
+        if (room) {
             room.disconnectPlayer(socket.id);
 
             if (room.isEmpty()) {
@@ -72,18 +72,21 @@ io.on("connection", (socket) => {
         }
     });
 
-    socket.on("quick-play", function (playerName) {
+    socket.on("quick-play", function (playerName, callback) {
         let freeRoom = rooms.find(room => room.isFree());
         if (!freeRoom) {
             freeRoom = createRoom(io);
         }
-
         freeRoom.addPlayer(socket, playerName);
+
+        callback(true, freeRoom.serialize());
     });
 
-    socket.on("create-game", function (playerName) {
+    socket.on("create-game", function (playerName, callback) {
         const newRoom = createRoom(io);
         newRoom.addPlayer(socket, playerName);
+
+        callback(true, newRoom.serialize());
     })
 
     socket.on("send-message", function (message) {
@@ -91,11 +94,6 @@ io.on("connection", (socket) => {
         let roomId = Array.from(roomsIds).pop();
 
         socket.to(roomId).emit("chat-message", message);
-    });
-
-    socket.on("get-room-data", function () {
-        const room = getPlayerRoom(socket.id);
-        io.to(socket.id).emit("room-data", room.serialize());
     });
 
     socket.on("pass", function () {
@@ -119,14 +117,18 @@ io.on("connection", (socket) => {
     });
 
     socket.on("get-rooms", function (callback) {
-        const serializedRooms = rooms.map((room) => room.serialize());
-        callback(serializedRooms);
-    })
+        const serializedRooms =
+            rooms
+                .filter((room) => room.canJoin())
+                .map((room) => room.serialize());
 
-    socket.on("join", function(roomId, playerName, callback) {
+        callback(serializedRooms);
+    });
+
+    socket.on("join", function (roomId, playerName, callback) {
         const room = getRoomById(roomId);
 
-        if(room.canJoin()) {
+        if (room.canJoin()) {
             room.addPlayer(socket, playerName);
             callback(true, room.serialize());
         } else {

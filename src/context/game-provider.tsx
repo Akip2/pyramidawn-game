@@ -4,6 +4,7 @@ import React, {createContext, useState, useContext} from 'react';
 import PlayerData from "@/data/player-data";
 import {RoleEnum} from "@/enums/role.enum";
 import {socket} from "@/data/socket";
+import RoomData from "@/data/room-data";
 
 const GameContext = createContext<{
     players: PlayerData[];
@@ -31,6 +32,7 @@ const GameContext = createContext<{
     removeRole: (r: RoleEnum) => void;
     getPlayersNb: () => number;
     getRolesNb: () => number;
+    updateGameValues: (room: RoomData) => void;
 }>(null!);
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -117,7 +119,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
         return roles.length;
     }
 
-    const value = {players, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started, getRoleCount, addRole, removeRole, getPlayersNb, getRolesNb};
+    function updateGameValues(room: RoomData) {
+        const {players, gameMaster, roles, phase} = room;
+        setGameMaster(gameMaster.color);
+        setPlayers(players);
+        setRoles(roles);
+        setPhase(phase);
+    }
+
+    const value = {players, updateGameValues, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started, getRoleCount, addRole, removeRole, getPlayersNb, getRolesNb};
 
     return (
         <GameContext.Provider value={value}>

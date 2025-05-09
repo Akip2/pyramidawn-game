@@ -37,31 +37,12 @@ export default function GamePage() {
     const {setSelectNb, setAction, setActionType, clearSelectedPlayers, setUnselectableColors} = useAction();
     const {setVisibility, setChoiceType, setQuestion} = useChoice();
     const {addVote, removeVote, clearVotes} = useVote();
-    const {isMummy, setRole, setColor} = usePlayer();
+    const {isMummy, setRole} = usePlayer();
 
     const startingGame = useCallback(() => {
         setPhase("Starting");
         setPhaseEndTime(Date.now() + 10000);
     }, [setPhase, setPhaseEndTime])
-
-    const receiveRoomData = useCallback((data: {
-        players: PlayerData[],
-        roles: RoleEnum[],
-        phase: string,
-        gameMaster: PlayerData
-    }) => {
-        setPlayers(data.players);
-        setRoles(data.roles);
-        setPhase(data.phase);
-        setGameMaster(data.gameMaster.color);
-
-        const playerInfo = data.players[data.players.length - 1];
-        setColor(playerInfo.color);
-
-        if (data.phase === "Starting") {
-            startingGame();
-        }
-    }, [setColor, setGameMaster, setPhase, setPlayers, setRoles, startingGame])
 
     const death = useCallback((deathData: { victim: PlayerData, reason: string }) => {
         killPlayer(deathData.victim);
@@ -180,7 +161,6 @@ export default function GamePage() {
     }, [makeAvatar]);
 
     useEffect(() => {
-        socket.on("room-data", receiveRoomData);
         socket.on("player-join", playerJoin);
         socket.on("player-leave", playerLeave);
         socket.on("phase-change", phaseChange);
@@ -195,7 +175,6 @@ export default function GamePage() {
         socket.on("roles-change", setRoles);
 
         return () => {
-            socket.off("room-data", receiveRoomData);
             socket.off("player-join", playerJoin);
             socket.off("player-leave", playerLeave);
             socket.off("phase-change", phaseChange);
@@ -209,7 +188,7 @@ export default function GamePage() {
             socket.off("game-master", setGameMaster);
             socket.off("roles-change", setRoles);
         }
-    }, [action, death, gameEnd, godSummon, makePlayersWraith, phaseChange, playerJoin, playerLeave, receiveRole, receiveRoomData, setGameMaster, setRoles, updateVotes]);
+    }, [action, death, gameEnd, godSummon, makePlayersWraith, phaseChange, playerJoin, playerLeave, receiveRole, setGameMaster, setRoles, updateVotes]);
 
     useEffect(() => {
         if (phase === "Starting" && players.length < roles.length) {
@@ -218,8 +197,10 @@ export default function GamePage() {
     }, [phase, players, roles, setPhase]);
 
     useEffect(() => {
-        socket.emit("get-room-data");
-    }, []);
+        if(roles.length === players.length) {
+            startingGame();
+        }
+    }, [players.length, roles.length, startingGame]);
 
     return (
         <ChatProvider>

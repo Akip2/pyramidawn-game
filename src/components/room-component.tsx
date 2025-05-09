@@ -4,22 +4,15 @@ import Image from "next/image";
 import {getRoleImageLink} from "@/data/question/role/role-factory";
 import {Button} from "@/components/ui/button";
 import {socket} from "@/data/socket";
-import {useRouter} from "next/navigation";
 import {usePlayer} from "@/context/player-provider";
 
-export default function RoomComponent(props: { room: RoomData }) {
-    const {playerName} = usePlayer();
-    const router = useRouter();
-    const {room} = props;
+export default function RoomComponent(props: { room: RoomData, roomCallback: (status: boolean, room?: RoomData) => void }) {
+    const {room, roomCallback} = props;
     const {players, gameMaster, roles, id} = room;
+    const {playerName} = usePlayer();
 
     const joinHandler = () => {
-        socket.emit("join", id, playerName, (status:boolean, joinedRoom?: RoomData) => {
-            if(status) {
-                console.log(joinedRoom);
-                router.push("/game");
-            }
-        });
+        socket.emit("join", id, playerName, roomCallback);
     }
 
     return (
