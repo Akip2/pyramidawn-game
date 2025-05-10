@@ -7,43 +7,48 @@ const port = process.env.PORT || 3001;
 const hostname = "localhost";
 
 const nanoid = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8);
-const rooms = [];
+const rooms = new Map();
 
 function getPlayerRoom(playerId) {
-    return rooms.find(room => room.hasPlayer(playerId));
+    let roomFound = null;
+
+    for (const room of rooms.values()) {
+        if (room.hasPlayer(playerId)) {
+            roomFound = room;
+            break;
+        }
+    }
+
+    return roomFound;
+}
+
+function getFreeRoom() {
+    let freeRoom = null;
+    let bestRoomScore = 0;
+
+    for (const room of rooms.values()) {
+        const currentRoomScore = room.getJoinScore();
+        if (room.canJoin() && currentRoomScore >= bestRoomScore) {
+            freeRoom = room;
+            bestRoomScore = currentRoomScore;
+        }
+    }
+
+    return freeRoom;
 }
 
 function getRoomById(roomId) {
-    let i = 0;
-    let room = rooms[i];
-
-    while (i < rooms.length && room.id !== roomId) {
-        i++;
-        room = rooms[i];
-    }
-
-    if (room.id === roomId) {
-        return room;
-    }
+    return rooms.get(roomId);
 }
 
 function removeRoomById(roomId) {
-    let i = 0;
-    let room = rooms[i];
-
-    while (i < rooms.length && room.id !== roomId) {
-        i++;
-        room = rooms[i];
-    }
-
-    if (room && room.id === roomId) {
-        rooms.splice(i, 1);
-    }
+    rooms.delete(roomId);
 }
 
 function createRoom(io) {
-    const newRoom = new Room(io, nanoid(), (roomId) => removeRoomById(roomId));
-    rooms.push(newRoom);
+    const newId = nanoid();
+    const newRoom = new Room(io, newId, (roomId) => removeRoomById(roomId));
+    rooms.set(newId, newRoom);
 
     return newRoom;
 }
@@ -68,13 +73,13 @@ io.on("connection", (socket) => {
 
             if (room.isEmpty()) {
                 console.log("empty room, removing it");
-                rooms.splice(rooms.indexOf(room), 1);
+                removeRoomById(room.id);
             }
         }
     });
 
     socket.on("quick-play", function (playerName, callback) {
-        let freeRoom = rooms.find(room => room.isFree());
+        let freeRoom = getFreeRoom();
         if (!freeRoom) {
             freeRoom = createRoom(io);
         }
@@ -116,7 +121,7 @@ io.on("connection", (socket) => {
 
     socket.on("get-rooms", function (callback) {
         const serializedRooms =
-            rooms
+            [...rooms.values()]
                 .filter((room) => room.canJoin())
                 .map((room) => room.serialize());
 

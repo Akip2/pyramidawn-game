@@ -50,17 +50,16 @@ export default class Room {
         this.gameMaster = null;
     }
 
-    isFree() {
-        return (!this.started && this.getNbPlayers() < this.roles.length);
-    }
-
     hasPlayer(playerId) {
         return this.playerManager.hasPlayer(playerId);
     }
 
-    getNbPlayers() {
-        let socketRoom = this.io.sockets.adapter.rooms.get(this.id);
-        return socketRoom ? socketRoom.size : 0;
+    getJoinScore() {
+        const maxPlayers = this.roles.length;
+        const fillRatio = this.playerManager.getPlayerNb() / maxPlayers;
+        const capacityWeight = Math.sqrt(maxPlayers);
+
+        return fillRatio * 20 + capacityWeight / 1.85;
     }
 
     isEmpty() {
