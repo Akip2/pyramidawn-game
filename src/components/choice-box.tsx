@@ -5,8 +5,10 @@ import {JSX, useCallback} from "react";
 import {useAction} from "@/context/action-provider";
 import {socket} from "@/data/socket";
 import {ChoiceType} from "@/enums/choice-type.enum";
+import {useGame} from "@/context/game-provider";
 
 export default function ChoiceBox() {
+    const {id} = useGame();
     const {visible, question, choiceType, setVisibility} = useChoice();
     const {setAction, setSelectedPlayers, selectedPlayers} = useAction();
 
@@ -24,9 +26,9 @@ export default function ChoiceBox() {
     const validateHandler = useCallback(() => {
         setAction(false);
         setVisibility(false)
-        socket.emit("role-action", selectedPlayers);
+        socket.emit("role-action", id, selectedPlayers);
         setSelectedPlayers([]);
-    }, [setVisibility, setAction, setSelectedPlayers, selectedPlayers]);
+    }, [setAction, setVisibility, id, selectedPlayers, setSelectedPlayers]);
 
     const activateHandler = useCallback(() => {
         setAction(true);
@@ -35,8 +37,8 @@ export default function ChoiceBox() {
 
     const passHandler = useCallback(() => {
         setVisibility(false);
-        socket.emit("pass");
-    }, [setVisibility]);
+        socket.emit("pass", id);
+    }, [id, setVisibility]);
 
     let options: JSX.Element;
     switch (choiceType) {

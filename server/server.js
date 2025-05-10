@@ -1,12 +1,13 @@
 import {createServer} from "http";
+import {customAlphabet} from "nanoid";
 import {Server} from "socket.io";
 import Room from "./room.js";
 
 const port = process.env.PORT || 3001;
 const hostname = "localhost";
 
+const nanoid = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8);
 const rooms = [];
-let nextRoomId = 0;
 
 function getPlayerRoom(playerId) {
     return rooms.find(room => room.hasPlayer(playerId));
@@ -35,13 +36,13 @@ function removeRoomById(roomId) {
         room = rooms[i];
     }
 
-    if (room.id === roomId) {
+    if (room && room.id === roomId) {
         rooms.splice(i, 1);
     }
 }
 
 function createRoom(io) {
-    const newRoom = new Room(io, ++nextRoomId, (roomId) => removeRoomById(roomId));
+    const newRoom = new Room(io, nanoid(), (roomId) => removeRoomById(roomId));
     rooms.push(newRoom);
 
     return newRoom;
@@ -89,30 +90,27 @@ io.on("connection", (socket) => {
         callback(true, newRoom.serialize());
     })
 
-    socket.on("send-message", function (message) {
-        let roomsIds = socket.rooms;
-        let roomId = Array.from(roomsIds).pop();
-
+    socket.on("send-message", function (roomId, message) {
         socket.to(roomId).emit("chat-message", message);
     });
 
-    socket.on("pass", function () {
-        const room = getPlayerRoom(socket.id);
+    socket.on("pass", function (roomId) {
+        const room = getRoomById(roomId);
         room.nextPhase();
     });
 
-    socket.on("role-action", function (selectedPlayers) {
-        const room = getPlayerRoom(socket.id);
+    socket.on("role-action", function (roomId, selectedPlayers) {
+        const room = getRoomById(roomId);
         room.executeAction(selectedPlayers);
     });
 
-    socket.on("vote", function (voteData) {
-        const room = getPlayerRoom(socket.id);
+    socket.on("vote", function (roomId, voteData) {
+        const room = getRoomById(roomId);
         room.vote(voteData, socket);
     });
 
-    socket.on("role-modification", function (newRoles) {
-        const room = getPlayerRoom(socket.id);
+    socket.on("role-modification", function (roomId, newRoles) {
+        const room = getRoomById(roomId);
         room.changeRoles(newRoles, socket);
     });
 

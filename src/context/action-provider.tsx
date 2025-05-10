@@ -40,6 +40,7 @@ const ActionContext = createContext<{
 }>(null!);
 
 export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
+    const {id} = useGame();
     const [action, setAction] = useState(false);
     const [actionType, setActionType] = React.useState<ActionType>(ActionType.POWER);
     const [selectedPlayers, setSelectedPlayers] = useState<PlayerData[]>([]);
@@ -88,7 +89,7 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
             const voter = new PlayerData(playerName, color);
             const unvoted = selectedPlayers[0];
 
-            socket.emit("vote", {
+            socket.emit("vote", id, {
                 unvoted: unvoted, //previous vote
                 voted: player //current vote
             });
@@ -112,7 +113,7 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
         const voter = new PlayerData(playerName, color);
 
         if(actionType === ActionType.VOTE) {
-            socket.emit("vote", {
+            socket.emit("vote", id, {
                 unvoted: player,
             });
 

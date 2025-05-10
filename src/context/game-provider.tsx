@@ -22,6 +22,9 @@ const GameContext = createContext<{
     phaseEndTime: number;
     setPhaseEndTime: React.Dispatch<React.SetStateAction<number>>;
 
+    id: string;
+    setId: React.Dispatch<React.SetStateAction<string>>;
+
     addPlayer: (player: PlayerData) => number;
     killPlayer: (player: PlayerData) => void;
     makeAvatar: (player: PlayerData, godName: string) => void;
@@ -38,9 +41,10 @@ const GameContext = createContext<{
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [players, setPlayers] = useState<PlayerData[]>([]);
     const [roles, setRoles] = useState<RoleEnum[]>([]);
-    const [phase, setPhase] = useState<string>('day');
+    const [phase, setPhase] = useState<string>('Waiting');
     const [phaseEndTime, setPhaseEndTime] = useState<number>(0);
     const [gameMaster, setGameMaster] = useState<string>("");
+    const [id, setId] = useState<string>("");
 
     function killPlayer(player: PlayerData) {
         setPlayers(prevPlayers =>
@@ -92,7 +96,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
     function addRole(r:RoleEnum) {
         setRoles(prevRoles => {
             const newRoles = [...prevRoles, r];
-            socket.emit("role-modification", newRoles);
+            socket.emit("role-modification", id, newRoles);
             return newRoles;
         });
     }
@@ -104,7 +108,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
             if (indexToRemove !== -1) {
                 newRoles.splice(indexToRemove, 1);  // Retire seulement la première occurrence
-                socket.emit("role-modification", newRoles);
+                socket.emit("role-modification", id, newRoles);
             }
 
             return newRoles;
@@ -120,14 +124,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
     }
 
     function updateGameValues(room: RoomData) {
-        const {players, gameMaster, roles, phase} = room;
+        const {players, gameMaster, roles, phase, id} = room;
         setGameMaster(gameMaster.color);
         setPlayers(players);
         setRoles(roles);
         setPhase(phase);
+        setId(id);
     }
 
-    const value = {players, updateGameValues, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started, getRoleCount, addRole, removeRole, getPlayersNb, getRolesNb};
+    const value = {players, updateGameValues, id, setId, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started, getRoleCount, addRole, removeRole, getPlayersNb, getRolesNb};
 
     return (
         <GameContext.Provider value={value}>

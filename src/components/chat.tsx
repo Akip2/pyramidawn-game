@@ -4,8 +4,10 @@ import {usePlayer} from "@/context/player-provider";
 import PlayerData from "@/data/player-data";
 import PlayerMessage from "@/data/message/player-message";
 import {useChat} from "@/context/chat-provider";
+import {useGame} from "@/context/game-provider";
 
 export default function Chat() {
+    const {id} = useGame();
     const [inputValue, setInputValue] = useState('');
     const {messages, addMessage, canTalk} = useChat();
     const {playerName, color} = usePlayer();
@@ -31,7 +33,7 @@ export default function Chat() {
             const trimmedValue = inputValue.trim();
             if (trimmedValue.length > 0) {
                 const message = new PlayerMessage(trimmedValue, new PlayerData(playerName, color));
-                socket.emit("send-message", message);
+                socket.emit("send-message", id, message);
                 addMessage(message);
             }
             setInputValue('');
