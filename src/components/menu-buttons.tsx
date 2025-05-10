@@ -3,20 +3,30 @@ import {Button} from "@/components/ui/button";
 import {usePlayer} from "@/context/player-provider";
 import RoomData from "@/data/room-data";
 import {socket} from "@/data/socket";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
+import {Loader2} from "lucide-react";
+import {useLoading} from "@/context/loading-provider";
 
 const defaultUsername = "Seth";
 
 export default function MenuButtons(props: { displayRoomsCallback: () => void, roomCallback: (status: boolean, room?: RoomData) => void }) {
     const {displayRoomsCallback, roomCallback} = props;
     const {playerName, setPlayerName} = usePlayer();
+    const {isLoading, setIsLoading, clickedButton, setClickedButton} = useLoading();
     const [ currentPlayerName, setCurrentPlayerName ] = useState<string>("");
 
+    const quickPlayButtonRef = useRef<HTMLButtonElement>(null);
+    const createGameButtonRef = useRef<HTMLButtonElement>(null);
+
     const quickPlayHandler = () => {
+        setIsLoading(true);
+        setClickedButton(quickPlayButtonRef);
         socket.emit("quick-play", playerName, roomCallback);
     }
 
     const createGameHandler = () => {
+        setIsLoading(true);
+        setClickedButton(createGameButtonRef);
         socket.emit("create-game", playerName, roomCallback);
     }
 
@@ -61,13 +71,20 @@ export default function MenuButtons(props: { displayRoomsCallback: () => void, r
                 size="lg"
                 onClick={quickPlayHandler}
                 className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
+                disabled={isLoading}
+                ref={quickPlayButtonRef}
             >
-                Quick Play
+                {clickedButton === quickPlayButtonRef ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                    "Quick Play"
+                )}
             </Button>
             <Button
                 size="lg"
                 onClick={displayRoomsCallback}
                 className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
+                disabled={isLoading}
             >
                 Join Game
             </Button>
@@ -75,8 +92,14 @@ export default function MenuButtons(props: { displayRoomsCallback: () => void, r
                 size="lg"
                 onClick={createGameHandler}
                 className="bg-yellow-600 hover:bg-yellow-500 text-black transition-all duration-200"
+                disabled={isLoading}
+                ref={createGameButtonRef}
             >
-                Create Game
+                {clickedButton === createGameButtonRef ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                    "Create Game"
+                )}
             </Button>
         </div>
     )

@@ -5,13 +5,21 @@ import {getRoleImageLink} from "@/data/question/role/role-factory";
 import {Button} from "@/components/ui/button";
 import {socket} from "@/data/socket";
 import {usePlayer} from "@/context/player-provider";
+import {useLoading} from "@/context/loading-provider";
+import React, {useRef} from "react";
+import {Loader2} from "lucide-react";
 
 export default function RoomComponent(props: { room: RoomData, roomCallback: (status: boolean, room?: RoomData) => void }) {
     const {room, roomCallback} = props;
     const {players, gameMaster, roles, id} = room;
     const {playerName} = usePlayer();
+    const {isLoading, setIsLoading, clickedButton, setClickedButton} = useLoading();
+
+    const joinButtonRef = useRef<HTMLButtonElement>(null);
 
     const joinHandler = () => {
+        setIsLoading(true);
+        setClickedButton(joinButtonRef);
         socket.emit("join", id, playerName, roomCallback);
     }
 
@@ -38,8 +46,12 @@ export default function RoomComponent(props: { room: RoomData, roomCallback: (st
                 </div>
 
                 <div className="w-1/3 flex justify-end">
-                    <Button onClick={joinHandler} className="bg-yellow-600 hover:bg-yellow-500 text-black text-sm px-4 py-1 h-auto">
-                        Join
+                    <Button onClick={joinHandler} ref={joinButtonRef} disabled={isLoading} className="bg-yellow-600 hover:bg-yellow-500 text-black text-sm px-4 py-1 h-auto">
+                        {clickedButton === joinButtonRef ? (
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                        ) : (
+                            "Join"
+                        )}
                     </Button>
                 </div>
             </div>

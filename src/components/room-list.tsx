@@ -5,9 +5,11 @@ import {socket} from "@/data/socket";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import {ArrowLeft, RefreshCw} from "lucide-react";
 import {Button} from "@/components/ui/button";
+import {useLoading} from "@/context/loading-provider";
 
 export default function RoomList(props: { quitButtonCallback: () => void, roomCallback: (status: boolean, room?: RoomData) => void }) {
     const {quitButtonCallback, roomCallback} = props;
+    const {isLoading} = useLoading();
     const [roomsLoaded, setRoomsLoaded] = useState(false);
     const [rooms, setRooms] = useState<RoomData[]>([]);
 
@@ -33,6 +35,7 @@ export default function RoomList(props: { quitButtonCallback: () => void, roomCa
                     onClick={quitButtonCallback}
                     className="bg-yellow-600 hover:bg-yellow-500 text-black p-2 rounded-lg shadow-md transition-all"
                     title="Back to Menu"
+                    disabled={isLoading}
                 >
                     <ArrowLeft className="w-5 h-5"/>
                 </Button>
@@ -40,6 +43,7 @@ export default function RoomList(props: { quitButtonCallback: () => void, roomCa
                     onClick={updateRooms}
                     className="bg-yellow-600 hover:bg-yellow-500 text-black p-2 rounded-lg shadow-md transition-all"
                     title="Refresh Rooms"
+                    disabled={isLoading}
                 >
                     <RefreshCw className="w-5 h-5"/>
                 </Button>
