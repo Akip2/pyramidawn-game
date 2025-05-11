@@ -1,9 +1,11 @@
-import { RoleEnum } from "@/enums/role.enum";
+import {RoleEnum} from "@/enums/role.enum";
+import {RoleObjectiveEnum} from "@/enums/role-objective.enum";
 
-export const roleDescriptions: Record<RoleEnum, string> = {
-    [RoleEnum.NONE]: "",
-    [RoleEnum.SPHINX]: "Each night, the Sphinx chooses one player to protect. If that player is attacked, they survive.",
-    [RoleEnum.MUMMY]: "Each night, the Mummy selects one player to eliminate. Its goal is to eradicate all non-Mummies.",
-    [RoleEnum.PRIEST]: "Once per game, the Priest may summon Ra or Anubis. Ra reveals a player's role each morning. Anubis eliminates a player each morning.",
-    [RoleEnum.SLAVE]: "The Slave has no special abilities and can only vote during meetings."
+export const roleDescriptions: Record<RoleEnum, { objective: RoleObjectiveEnum, ability: string }> = {
+    [RoleEnum.NONE]: {objective: RoleObjectiveEnum.NONE, ability: ""},
+
+    [RoleEnum.SPHINX]: {objective: RoleObjectiveEnum.GOOD, ability: "Protects a player each night"},
+    [RoleEnum.MUMMY]: {objective: RoleObjectiveEnum.EVIL, ability: "Murders a player each night"},
+    [RoleEnum.PRIEST]: {objective: RoleObjectiveEnum.GOOD, ability: "TODO"},
+    [RoleEnum.SLAVE]: {objective: RoleObjectiveEnum.GOOD, ability: "None"}
 };
