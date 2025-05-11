@@ -28,7 +28,7 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
 
     let classNames = "";
     if (action) {
-        if(isPlayerSelectable(player)) {
+        if (isPlayerSelectable(player)) {
             classNames += "cursor-pointer ";
             if (selected) {
                 classNames += "brightness-125";
@@ -50,32 +50,37 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
         }
     }
 
-    return player.isAlive ? (
-        <div className="flex flex-col items-center h-full" onClick={avatarClick}>
-            <div className="ml-5 mb-1">
+    const horizontalMargin = player.isAlive ? "ml-5" : "-ml-3";
+
+    return (
+        <div className="flex flex-col items-center justify-end h-fit" onClick={avatarClick}>
+            <div className={"mb-1 " + horizontalMargin}>
                 {started()
-                    ? (<VoteContainer voters={votes.get(player.color) ?? []}/>)
+                    ? (<VoteContainer voters={votes.get(player.color) ?? []} />)
                     : gameMaster === player.color
-                        ? (<MasterCross/>)
+                        ? (<MasterCross />)
                         : (<div className={"h-8 w-full"}></div>)
                 }
-
             </div>
 
-            <p className={`px-2 py-1 bg-black bg-opacity-75 rounded-xl ml-5 w-fit mb-2 ${player.isWraith ? "text-red-300" : "text-white"}`}>
+            <p className={`px-2 py-1 bg-black bg-opacity-75 rounded-xl ${horizontalMargin} w-fit mb-2 ${player.isWraith ? "text-red-300" : "text-white"} ${!player.isAlive && "text-opacity-70"}`}>
+                {!player.isAlive && "💀 "}
                 {player.name}
-                {player.isAvatarOf ? ` (${player.isAvatarOf})` : ""}
+                {player.isAvatarOf && ` (${player.isAvatarOf})`}
             </p>
 
-            <Avatar
-                className={"transition duration-200 filter h-full " + classNames}
-                style={{fill: player.color}}
-            />
+            <div className="relative w-[150px] flex items-center justify-center">
+                {player.isAlive
+                    ? <Avatar
+                        className={"transition duration-200 filter h-full " + classNames}
+                        style={{ fill: player.color }}
+                    />
+                    : <Pot
+                        className="h-full"
+                        style={{ fill: player.color }}
+                    />
+                }
+            </div>
         </div>
-    ) : (
-        <Pot
-            className="h-1/3"
-            style={{fill: player.color}}
-        />
     );
 }

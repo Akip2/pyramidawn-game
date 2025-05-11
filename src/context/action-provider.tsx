@@ -132,7 +132,7 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
     }
 
     const isPlayerSelectable = (p: PlayerData) => {
-        return !unselectableColors.includes(p.color);
+        return !unselectableColors.includes(p.color) && p.isAlive;
     }
 
     return (
