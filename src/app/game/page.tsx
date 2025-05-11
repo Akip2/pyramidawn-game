@@ -75,7 +75,7 @@ export default function GamePage() {
 
     const receiveRole = useCallback((role: RoleEnum) => {
         setRole(role);
-        setChoiceType(ChoiceType.OK);
+        setChoiceType(ChoiceType.OK_BASIC);
         setQuestion(createRoleQuestion(role));
         setVisibility(true);
     }, [setChoiceType, setQuestion, setRole, setVisibility])
@@ -110,7 +110,7 @@ export default function GamePage() {
             setActionType(ActionType.POWER);
             switch (actionName) {
                 case RoleEnum.SPHINX:
-                    setChoiceType(ChoiceType.OK);
+                    setChoiceType(ChoiceType.OK_ACTION);
                     question = new DefaultQuestion("Choose a player to protect for this night.");
                     break;
 
@@ -134,7 +134,7 @@ export default function GamePage() {
             }
         } else {
             setActionType(ActionType.VOTE);
-            setChoiceType(ChoiceType.OK);
+            setChoiceType(ChoiceType.OK_ACTION);
             question = new DefaultQuestion("Vote a player to eliminate.");
         }
 

@@ -12,10 +12,14 @@ export default function ChoiceBox() {
     const {visible, question, choiceType, setVisibility} = useChoice();
     const {setAction, setSelectedPlayers, selectedPlayers} = useAction();
 
-    const okHandler = useCallback(() => {
+    const okHandlerAction = useCallback(() => {
         setAction(true);
         setVisibility(false);
-    }, [setVisibility, setAction]);
+    }, [setAction, setVisibility]);
+
+    const okHandlerBasic = useCallback(() => {
+        setVisibility(false);
+    }, [setVisibility]);
 
     const cancelHandler = useCallback(() => {
         setAction(true);
@@ -42,11 +46,17 @@ export default function ChoiceBox() {
 
     let options: JSX.Element;
     switch (choiceType) {
-        case ChoiceType.OK:
+        case ChoiceType.OK_ACTION:
             options = (
-                <Button size="lg" onClick={okHandler}>OK</Button>
+                <Button size="lg" onClick={okHandlerAction}>OK</Button>
             );
             break;
+            
+            case ChoiceType.OK_BASIC:
+                options = (
+                    <Button size="lg" onClick={okHandlerBasic}>OK</Button>
+                );
+                break;
 
         case ChoiceType.VALIDATE_CHOICE:
             options = (
