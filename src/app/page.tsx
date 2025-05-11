@@ -30,10 +30,9 @@ export default function Home() {
     return (
         <LoadingProvider>
             <div
-                className="h-screen w-screen flex flex-col gap-10 items-center bg-gradient-to-b from-yellow-900 via-gray-900 to-black text-white font-sans relative overflow-hidden">
-
-                <div className="mt-12 sm:mt-20 md:mt-28 text-center">
-                    <h1 className="text-6xl md:text-7xl font-extrabold text-yellow-300 drop-shadow-2xl tracking-[0.3em] mb-5">
+                className="h-screen w-screen flex flex-col gap-8 sm:gap-[5vh] items-center bg-gradient-to-b from-yellow-900 via-gray-900 to-black text-white font-sans relative overflow-hidden">
+                <div className="text-center flex flex-col gap-5 mt-[15vh]">
+                    <h1 className="text-6xl md:text-7xl font-extrabold text-yellow-300 drop-shadow-2xl tracking-[0.3em]">
                         PYRAMIDAWN
                     </h1>
                     <p className="text-yellow-100 italic text-md mb-12 opacity-70 tracking-wide">
@@ -41,13 +40,16 @@ export default function Home() {
                     </p>
                 </div>
 
-                {!displayingRooms
-                    ? <MenuButtons displayRoomsCallback={() => setDisplayingRooms(true)} roomCallback={roomCallback}/>
-                    : <RoomList quitButtonCallback={() => setDisplayingRooms(false)} roomCallback={roomCallback}/>
-                }
+                <div className="relative z-10">
+                    {!displayingRooms
+                        ?
+                        <MenuButtons displayRoomsCallback={() => setDisplayingRooms(true)} roomCallback={roomCallback}/>
+                        : <RoomList quitButtonCallback={() => setDisplayingRooms(false)} roomCallback={roomCallback}/>
+                    }
+                </div>
 
                 <svg
-                    className="absolute bottom-0 w-full h-40 md:h-60 lg:h-72 pointer-events-none"
+                    className="absolute bottom-0 w-full h-40 md:h-60 lg:h-72 pointer-events-none z-0"
                     viewBox="0 0 1440 320"
                     preserveAspectRatio="none"
                 >
