@@ -1,6 +1,6 @@
 'use client'
 
-import React, {createContext, useState, useContext} from 'react';
+import React, {createContext, useState, useContext, useEffect} from 'react';
 import PlayerData from "@/data/player-data";
 import {RoleEnum} from "@/enums/role.enum";
 import {socket} from "@/data/socket";
@@ -25,8 +25,11 @@ const GameContext = createContext<{
     id: string;
     setId: React.Dispatch<React.SetStateAction<string>>;
 
+    remainingRoles: RoleEnum[];
+    setRemainingRoles: React.Dispatch<React.SetStateAction<RoleEnum[]>>;
+
     addPlayer: (player: PlayerData) => number;
-    killPlayer: (player: PlayerData) => void;
+    killPlayer: (player: PlayerData, r: RoleEnum) => void;
     makeAvatar: (player: PlayerData, godName: string) => void;
     makePlayersWraith: (wraithsColors: string[]) => void;
     started: () => boolean;
@@ -45,13 +48,20 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
     const [phaseEndTime, setPhaseEndTime] = useState<number>(0);
     const [gameMaster, setGameMaster] = useState<string>("");
     const [id, setId] = useState<string>("");
+    const [remainingRoles, setRemainingRoles] = useState<RoleEnum[]>([]);
 
-    function killPlayer(player: PlayerData) {
+    useEffect(() => {
+        setRemainingRoles(roles);
+    }, [roles]);
+
+    function killPlayer(player: PlayerData, r: RoleEnum) {
         setPlayers(prevPlayers =>
             prevPlayers.map(p =>
                 p.color === player.color ? { ...p, isAlive: false } : p
             )
         );
+
+        roleDeath(r);
     }
 
     function makeAvatar(player: PlayerData, godName: string) {
@@ -81,14 +91,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     function getRoleCount(r: RoleEnum) {
         let count = 0;
+        const rolesArray: RoleEnum[] = started() ? remainingRoles : roles;
 
-        if(started()) {
-            //TODO
-        } else {
-            roles.forEach((role) => {
-                count += role === r ? 1 : 0;
-            });
-        }
+        rolesArray.forEach((role) => {
+            count += role === r ? 1 : 0;
+        });
 
         return count;
     }
@@ -107,11 +114,24 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
             const indexToRemove = newRoles.indexOf(r);
 
             if (indexToRemove !== -1) {
-                newRoles.splice(indexToRemove, 1);  // Retire seulement la première occurrence
+                newRoles.splice(indexToRemove, 1);
                 socket.emit("role-modification", id, newRoles);
             }
 
             return newRoles;
+        });
+    }
+
+    function roleDeath(r: RoleEnum) {
+        setRemainingRoles(prevRemainingRoles => {
+            const newRemainingRoles = [...prevRemainingRoles];
+            const indexToRemove = newRemainingRoles.indexOf(r);
+
+            if (indexToRemove !== -1) {
+                newRemainingRoles.splice(indexToRemove, 1);
+            }
+
+            return newRemainingRoles;
         });
     }
 
@@ -132,7 +152,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({children}
         setId(id);
     }
 
-    const value = {players, updateGameValues, id, setId, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started, getRoleCount, addRole, removeRole, getPlayersNb, getRolesNb};
+    const value = {players, updateGameValues, id, setId, remainingRoles, setRemainingRoles, setPlayers, roles, setRoles, phase, setPhase, phaseEndTime, setPhaseEndTime, killPlayer, addPlayer, makeAvatar, makePlayersWraith, gameMaster, setGameMaster, started, getRoleCount, addRole, removeRole, getPlayersNb, getRolesNb};
 
     return (
         <GameContext.Provider value={value}>

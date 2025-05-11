@@ -44,8 +44,8 @@ export default function GamePage() {
         setPhaseEndTime(Date.now() + 10000);
     }, [setPhase, setPhaseEndTime])
 
-    const death = useCallback((deathData: { victim: PlayerData, reason: string }) => {
-        killPlayer(deathData.victim);
+    const death = useCallback((deathData: { victim: PlayerData, reason: string, role: RoleEnum }) => {
+        killPlayer(deathData.victim, deathData.role);
     }, [killPlayer])
 
     const playerJoin = useCallback((player: PlayerData) => {
