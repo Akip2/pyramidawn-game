@@ -18,7 +18,7 @@ const ChoiceContext = createContext<{
 
 export const ChoiceProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [visible, setVisibility] = useState(false);
-    const [choiceType, setChoiceType] = useState(ChoiceType.OK);
+    const [choiceType, setChoiceType] = useState(ChoiceType.OK_BASIC);
     const [question, setQuestion] = useState<IQuestion>(new DefaultQuestion(""));
 
     return (
