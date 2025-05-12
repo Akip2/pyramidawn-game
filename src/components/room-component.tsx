@@ -26,14 +26,14 @@ export default function RoomComponent(props: { room: RoomData, roomCallback: (st
     return (
         <Card className="w-full bg-gray-800 border-yellow-600 text-white shadow-md hover:shadow-yellow-500/30 transition-shadow duration-200 px-4 py-3">
             <div className="flex items-center justify-between gap-4">
-                <div className="flex flex-col justify-center w-1/3">
+                <div className="flex flex-col justify-center flex-1">
                     <CardTitle className="text-yellow-300 text-md truncate">{`${gameMaster.name}'s game`}</CardTitle>
                     <p className="text-sm text-yellow-100 opacity-80">
                         {players.length}/{roles.length} players
                     </p>
                 </div>
 
-                <div className="flex gap-2 w-1/3 overflow-hidden justify-center">
+                <div className="flex flex-1 gap-2 min-w-[184px] overflow-hidden justify-center">
                     {roles.slice(0, 4).map((role, index) => (
                         <Image
                             key={index}
@@ -45,7 +45,7 @@ export default function RoomComponent(props: { room: RoomData, roomCallback: (st
                     ))}
                 </div>
 
-                <div className="w-1/3 flex justify-end">
+                <div className="flex flex-1 justify-end">
                     <Button onClick={joinHandler} ref={joinButtonRef} disabled={isLoading} className="bg-yellow-600 hover:bg-yellow-500 text-black text-sm px-4 py-1 h-auto">
                         {clickedButton === joinButtonRef ? (
                             <Loader2 className="h-5 w-5 animate-spin" />
