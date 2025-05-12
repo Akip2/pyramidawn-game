@@ -29,7 +29,7 @@ export default function RoomList(props: { quitButtonCallback: () => void, roomCa
 
     return (
         <div
-            className="flex flex-col gap-5 items-center bg-gray-900/90 border border-yellow-600 p-8 w-2/5 min-w-[500px] shadow-2xl backdrop-blur-sm relative overflow-y-scroll h-2/4 min-h-[300px]">
+            className="flex flex-col relative z-10 gap-5 items-center bg-gray-900/90 border border-yellow-600 p-8 w-2/5 min-w-[500px] shadow-2xl backdrop-blur-sm overflow-y-scroll h-2/4 min-h-[300px]">
             <div className="absolute top-4 left-4 flex gap-3">
                 <Button
                     onClick={quitButtonCallback}

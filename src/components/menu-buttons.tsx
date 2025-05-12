@@ -56,7 +56,7 @@ export default function MenuButtons(props: { displayRoomsCallback: () => void, r
     }, [currentPlayerName, setPlayerName]);
 
     return (
-        <div className="bg-gray-900/90 border border-yellow-600 rounded-3xl p-8 flex flex-col justify-around w-80 shadow-2xl backdrop-blur-sm h-1/3 min-h-[300px]">
+        <div className="bg-gray-900/90 border border-yellow-600 relative z-10 rounded-3xl p-8 flex flex-col justify-around w-80 shadow-2xl backdrop-blur-sm h-1/3 min-h-[300px]">
             <Input
                 type="text"
                 maxLength={12}
