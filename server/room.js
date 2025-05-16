@@ -1,6 +1,6 @@
 import {setTimeout} from "node:timers";
 import Game from "./game.js";
-import PriestPhase from "./phases/cyclic/priest-phase.js";
+import RaPhase from "./phases/cyclic/ra-phase.js";
 import SphinxPhase from "./phases/cyclic/sphinx-phase.js";
 import MummyPhase from "./phases/cyclic/mummy-phase.js";
 import MorningPhase from "./phases/cyclic/morning-phase.js";
@@ -12,11 +12,9 @@ import RequestSender from "./request-sender.js";
 import VotePhase from "./phases/cyclic/vote-phase.js";
 import ExecutionPhase from "./phases/cyclic/execution-phase.js";
 import {ROLES, STATUS} from "./const.js";
-import AnubisPhase from "./phases/cyclic/anubis-phase.js";
-import RaPhase from "./phases/cyclic/ra-phase.js";
 import {capitalizeFirstLetter} from "./utils.js";
 
-const defaultRoles = [ROLES.PRIEST, ROLES.MUMMY, ROLES.SLAVE, ROLES.SPHINX];
+const defaultRoles = [ROLES.RA, ROLES.MUMMY, ROLES.SLAVE, ROLES.SPHINX];
 
 export default class Room {
     constructor(io, id, gameEndCallback, roles = [...defaultRoles]) {
@@ -37,11 +35,9 @@ export default class Room {
         this.phaseIndex = -1;
         this.phases = [
             new SphinxPhase(this.requestSender, this.playerManager, this.game),
-            new PriestPhase(this.requestSender, this.playerManager, this.game),
+            new RaPhase(this.requestSender, this.playerManager, this.game),
             new MummyPhase(this.requestSender, this.playerManager),
             new MorningPhase(this.requestSender, this.playerManager, this.game),
-            new AnubisPhase(this.requestSender, this.playerManager),
-            new RaPhase(this.requestSender, this.playerManager),
             new VotePhase(this.requestSender, this.playerManager),
             new ExecutionPhase(this.requestSender, this.playerManager, this.game),
         ]

@@ -37,10 +37,6 @@ export default class MorningPhase extends Phase {
         const currentStatus = this.game.updateGameStatus(this.playerManager);
 
         if (currentStatus === STATUS.STILL_GOING) { //Check win condition
-            if (this.game.chosenAvatar) {
-                this.playerManager.summon(this.game.chosenAvatar, this.game.dayCount % 2);
-            }
-
             this.game.newDay();
         } else {
             this.requestSender.endRequest(currentStatus);

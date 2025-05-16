@@ -62,8 +62,8 @@ export const ActionProvider: React.FC<{ children: React.ReactNode }> = ({childre
                     question = new DefaultQuestion(`Shall ${selectedPlayers[0].name} be protected tonight?`);
                     break;
 
-                case capitalizeFirstLetter(ROLES.PRIEST):
-                    question = new DefaultQuestion(`Shall ${selectedPlayers[0].name} become the Avatar of a God?`);
+                case capitalizeFirstLetter(ROLES.RA):
+                    question = new DefaultQuestion(`Shall ${selectedPlayers[0].name}'s role be revealed?`);
                     break;
 
                 case "Ra":

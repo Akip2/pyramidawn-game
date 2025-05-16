@@ -13,7 +13,7 @@ export default function RoleList() {
             <div className="grid grid-cols-1 gap-5 px-2 py-4">
                 <Role editable={editable} roleName={RoleEnum.SLAVE} unique={false}/>
                 <Role editable={editable} roleName={RoleEnum.MUMMY} unique={false}/>
-                <Role editable={editable} roleName={RoleEnum.PRIEST} unique={true}/>
+                <Role editable={editable} roleName={RoleEnum.RA} unique={true}/>
                 <Role editable={editable} roleName={RoleEnum.SPHINX} unique={true}/>
             </div>
         </div>

@@ -6,6 +6,6 @@ export const roleDescriptions: Record<RoleEnum, { objective: RoleObjectiveEnum, 
 
     [RoleEnum.SPHINX]: {objective: RoleObjectiveEnum.GOOD, ability: "Protects a player each night"},
     [RoleEnum.MUMMY]: {objective: RoleObjectiveEnum.EVIL, ability: "Murders a player each night"},
-    [RoleEnum.PRIEST]: {objective: RoleObjectiveEnum.GOOD, ability: "TODO"},
+    [RoleEnum.RA]: {objective: RoleObjectiveEnum.GOOD, ability: "TODO"},
     [RoleEnum.SLAVE]: {objective: RoleObjectiveEnum.GOOD, ability: "None"}
 };

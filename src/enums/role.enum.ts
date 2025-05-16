@@ -2,6 +2,6 @@ export enum RoleEnum {
     NONE,
     SLAVE = "slave",
     SPHINX = "sphinx",
-    PRIEST = "priest",
+    RA = "ra",
     MUMMY = "mummy"
 }

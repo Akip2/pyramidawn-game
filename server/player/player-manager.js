@@ -1,5 +1,5 @@
 import Player from "./player.js";
-import {GODS, ROLES} from "../const.js";
+import {ROLES} from "../const.js";
 
 const possibleColors = [
     '#e6194b', // Red (bright)
@@ -53,6 +53,7 @@ export default class PlayerManager {
         })
     }
 
+    /*
     summon(chosenAvatar, god) {
         const player = this.getPlayerByColor(chosenAvatar.color);
         const godName = GODS[god];
@@ -71,6 +72,7 @@ export default class PlayerManager {
             });
         }
     }
+     */
 
     /**
      * Sends requests to allow players to vote
@@ -120,9 +122,11 @@ export default class PlayerManager {
         this.requestSender.action(player.id, player.role, selectNb, unselectableColors, data);
     }
 
+    /*
     godAction(player) {
         this.requestSender.action(player.id, player.isAvatarOf.toLowerCase());
     }
+     */
 
     addActivePlayerId(playerId) {
         this.activePlayersIds.push(playerId);
@@ -159,7 +163,7 @@ export default class PlayerManager {
 
     revealPlayer(playerColor) {
         const playerToReveal = this.getPlayerByColor(playerColor);
-        this.requestSender.reveal(playerToReveal);
+        this.requestSender.reveal(playerToReveal, this.activePlayersIds[0]);
     }
 
     /**
@@ -174,9 +178,11 @@ export default class PlayerManager {
         );
     }
 
+    /*
     getAvatarOf(godName) {
         return this.players.find(player => player.isGod(godName));
     }
+     */
 
     getLivingPlayers() {
         return this.players.filter(player => player.isAlive);

@@ -5,13 +5,11 @@ export default class Game {
         this.votes = new Map();
 
         this.powerAvailable = new Map();
-        this.powerAvailable.set(ROLES.PRIEST, true);
 
         this.dayCount = 0;
         this.status = STATUS.STILL_GOING;
 
         this.protectedPlayer = null;
-        this.chosenAvatar = null;
         this.playerManager = playerManager;
     }
 
@@ -88,18 +86,8 @@ export default class Game {
     usePower(power, selectedPlayers) {
         if(power === ROLES.SPHINX) {
             this.protectedPlayer = selectedPlayers[0];
-        } else if (power === "anubis") {
-            this.playerManager.kill(selectedPlayers[0].color, "killed by Anubis");
-        } else if(power === "ra") {
+        } else if(power === ROLES.RA) {
             this.playerManager.revealPlayer(selectedPlayers[0].color);
-        }
-        else if(power === ROLES.PRIEST) {
-            if (power === ROLES.PRIEST) {
-                this.chosenAvatar = selectedPlayers[0];
-            } else {
-                //TODO
-            }
-            this.powerAvailable.set(power, false);
         }
     }
  }

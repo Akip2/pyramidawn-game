@@ -114,19 +114,9 @@ export default function GamePage() {
                     question = new DefaultQuestion("Choose a player to protect for this night.");
                     break;
 
-                case RoleEnum.PRIEST:
-                    setChoiceType(ChoiceType.ACTIVATE_POWER);
-                    question = new DefaultQuestion(`Summon ${data.data}?`);
-                    break;
-
-                case "ra":
-                    setChoiceType(ChoiceType.ACTIVATE_POWER);
-                    question = new DefaultQuestion(`Reveal the role of a player?`);
-                    break;
-
-                case "anubis":
-                    setChoiceType(ChoiceType.ACTIVATE_POWER);
-                    question = new DefaultQuestion(`Kill a player?`);
+                case RoleEnum.RA:
+                    setChoiceType(ChoiceType.OK_ACTION);
+                    question = new DefaultQuestion("Reveal the role of a player.");
                     break;
 
                 default:
