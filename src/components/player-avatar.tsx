@@ -66,7 +66,6 @@ export default function PlayerAvatar(props: { player: PlayerData }) {
             <p className={`px-2 py-1 bg-black bg-opacity-75 rounded-xl ${horizontalMargin} w-fit mb-2 ${player.isWraith ? "text-red-300" : "text-white"} ${!player.isAlive && "text-opacity-70"}`}>
                 {!player.isAlive && "💀 "}
                 {player.name}
-                {player.isAvatarOf && ` (${player.isAvatarOf})`}
             </p>
 
             <div className="relative w-[150px] flex items-center justify-center">
