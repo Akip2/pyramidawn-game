@@ -18,6 +18,7 @@ import {ChoiceType} from "@/enums/choice-type.enum";
 import {RoleEnum} from "@/enums/role.enum";
 import SideTabs from "@/components/side-tabs";
 import {ChatProvider} from "@/context/chat-provider";
+import RevealQuestion from "@/data/question/reveal-question";
 
 export default function GamePage() {
     const {
@@ -150,6 +151,15 @@ export default function GamePage() {
         makeAvatar(data.avatar, data.godName);
     }, [makeAvatar]);
 
+    const reveal = useCallback((data: { name: string, color: string, role: string }) => {
+        setChoiceType(ChoiceType.OK_BASIC);
+        setQuestion(new RevealQuestion(new PlayerData(data.name, data.color), data.role));
+        setVisibility(true);
+        setTimeout(() => {
+            setVisibility(true);
+        }, 50);
+    }, [setChoiceType, setQuestion, setVisibility]);
+
     useEffect(() => {
         socket.on("player-join", playerJoin);
         socket.on("player-leave", playerLeave);
@@ -163,6 +173,7 @@ export default function GamePage() {
         socket.on("wraith-players", makePlayersWraith)
         socket.on("game-master", setGameMaster);
         socket.on("roles-change", setRoles);
+        socket.on("reveal", reveal);
 
         return () => {
             socket.off("player-join", playerJoin);
@@ -177,8 +188,9 @@ export default function GamePage() {
             socket.off("wraith-players", makePlayersWraith);
             socket.off("game-master", setGameMaster);
             socket.off("roles-change", setRoles);
+            socket.off("reveal", reveal);
         }
-    }, [action, death, gameEnd, godSummon, makePlayersWraith, phaseChange, playerJoin, playerLeave, receiveRole, setGameMaster, setRoles, updateVotes]);
+    }, [action, death, gameEnd, godSummon, makePlayersWraith, phaseChange, playerJoin, playerLeave, receiveRole, reveal, setGameMaster, setRoles, updateVotes]);
 
     useEffect(() => {
         if (phase === "Starting" && players.length < roles.length) {

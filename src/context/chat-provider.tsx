@@ -6,7 +6,6 @@ import EqualityMessage from "@/data/message/equality-message";
 import NoDeathMessage from "@/data/message/no-death-message";
 import PlayerData from "@/data/player-data";
 import SummonMessage from "@/data/message/summon-message";
-import RevealMessage from "@/data/message/reveal-message";
 import InfoMessage from "@/data/message/info-message";
 import PhaseMessage from "@/data/message/phase-message";
 import DeathMessage from "@/data/message/death-message";
@@ -47,11 +46,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     const failedSummoning = useCallback((data: { avatar: PlayerData, godName: string }) => {
         const message = new SummonMessage(data.avatar, data.godName, false);
-        addMessage(message);
-    }, [addMessage]);
-
-    const reveal = useCallback((data: { name: string, color: string, role: string }) => {
-        const message = new RevealMessage(new PlayerData(data.name, data.color), data.role);
         addMessage(message);
     }, [addMessage]);
 
@@ -110,8 +104,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({children}
         socket.on("equality", equality);
         socket.on("no-death", noDeath);
 
-        socket.on("reveal", reveal);
-
         return () => {
             socket.off("chat-message", receiveMessage);
             socket.off("chat-allowed", unmute);
@@ -124,9 +116,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({children}
             socket.off("failed-summoning", failedSummoning);
             socket.off("equality", equality);
             socket.off("no-death", noDeath);
-            socket.off("reveal", reveal);
         }
-    }, [deathMessage, equality, failedSummoning, godSummoning, mute, noDeath, playerJoin, playerLeave, receiveMessage, reveal, roleMessage, unmute]);
+    }, [deathMessage, equality, failedSummoning, godSummoning, mute, noDeath, playerJoin, playerLeave, receiveMessage, roleMessage, unmute]);
 
     return (
         <ChatContext.Provider value={{messages, addMessage, canTalk, mute, unmute}}>
